@@ -1,0 +1,7 @@
+{
+  "DataStream": "kUICHYZdYMrDItg4KdBvcQ==",
+  "InfoVault": "f41rJm0ZtSGprlHcQwlN3Q==",
+  "SqlConnection": "Server=D1MAYKER6;Database=PosnaiSQL;Trusted_Connection=True;TrustServerCertificate=True;",
+  "OptionsPath": "../Shared/Options",
+  "DatabaseImagesPath": "../Shared/Databases"
+}
