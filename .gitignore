@@ -23,9 +23,6 @@ sysinfo.txt
 *.stacktrace
 
 # Unity generated files
-*.csproj
-*.unityproj
-*.sln
 *.suo
 *.tmp
 *.user
