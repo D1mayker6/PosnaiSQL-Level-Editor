@@ -1,0 +1,239 @@
+﻿<Window x:Class="PosnaiSQLauncher.LevelEditor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:xc="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Title="Познай SQL. Редактор уровней"
+        ResizeMode="CanResize"
+        MinHeight="720"
+        MinWidth="1280"
+        Background="#F8F8F8"
+        Foreground="#848484"
+        WindowStartupLocation="CenterScreen">
+    
+    <Window.Resources>
+        <Style TargetType="FrameworkElement">
+            <Setter Property="Margin" Value="8,0,0,0"/>
+        </Style>
+
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="6,4"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" FontSize="16">
+            <MenuItem x:Name="SaveOptionMenu" Header="Сохранить вариант" />
+            <MenuItem Header="Действия с аккаунтом">
+                <MenuItem x:Name="CloseAccountMenu" Header="Выйти из аккаунта"/>
+                <MenuItem x:Name="ChangePasswordMenu" Header="Поменять пароль" Click="ChangePasswordMenu_Click"/>
+            </MenuItem>
+            <MenuItem x:Name="CloseAppMenu" Header="Выход из приложения"/>
+            <MenuItem x:Name="ExportAppMenu" Header="Экспорт"/>
+        </Menu>
+        <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> 
+            <RowDefinition Height="Auto"/> 
+            <RowDefinition Height="Auto"/> 
+            <RowDefinition Height="*"/>    
+            <RowDefinition Height="Auto"/> 
+        </Grid.RowDefinitions>
+
+            <GroupBox Header="Варианты" Grid.Row="0" >
+            <TabControl x:Name="OptionsTabControl"
+                        SelectionChanged="OptionsTabControl_SelectionChanged"
+                        Margin="0"
+                        Background="Transparent"
+                        Height="30"
+                        BorderThickness="0"
+                        Padding="0"
+                        TabStripPlacement="Top"
+                        FontSize="16">
+            </TabControl>
+            </GroupBox>
+        <Grid Grid.Row="1" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <GroupBox Header="Режим работы" Grid.Column="0" Margin="0,0,12,0" FontSize="16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <RadioButton x:Name="SelectedQueryRadio"
+                                 Content="Выбрать запрос из списка"
+                                 Grid.Column="0"
+                                 FontSize="18"
+                                 Height="40"
+                                 Width="260"
+                                 Padding="12,6"
+                                 HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 Checked="SelectQueryRadio_Checked"/>
+
+                    <RadioButton x:Name="NewQueryRadio"
+                                 Content="Новый запрос"
+                                 Grid.Column="1"
+                                 FontSize="18"
+                                 Height="40"
+                                 Width="180"
+                                 Padding="12,6"
+                                 HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 Checked="NewQueryRadio_Checked"/>
+                </Grid>
+            </GroupBox>
+
+            <GroupBox Header="Локация" Grid.Column="1" Margin="12,0,0,0" FontSize="16">
+                <ComboBox x:Name="LocationComboBox" 
+                          Height="32"
+                          FontSize="20"
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="IdLocation"/>
+            </GroupBox>
+        </Grid>
+            
+        <Grid Grid.Row="2" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <GroupBox Header="База данных" Grid.Column="0" Margin="0,0,12,0" FontSize="16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="40" /> 
+                    </Grid.ColumnDefinitions>
+
+                    <ComboBox x:Name="DatabaseComboBox" 
+                              Grid.Column="0"
+                              Height="32" 
+                              FontSize="20"
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="IdDatabase"
+                              SelectionChanged="DatabaseComboBox_SelectionChanged"/>
+
+                    <Button x:Name="AddDatabaseButton"
+                            Grid.Column="1"
+                            Content="+"
+                            Width="32"
+                            Height="32"
+                            FontSize="20"
+                            Click="AddDatabaseButton_Click"/>
+                </Grid>
+            </GroupBox>
+
+            <GroupBox Header="Название запроса" Grid.Column="1" Margin="12,0,0,0" FontSize="16">
+                <Grid>
+                    <ComboBox x:Name="QueryComboBox"
+                              Height="32"
+                              FontSize="16"
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="IdQuery"
+                              SelectionChanged="QueryComboBox_SelectionChanged"
+                              Visibility="Collapsed">
+
+                    </ComboBox>
+                    <xc:WatermarkTextBox x:Name="QueryNameTextBox"
+                                         Watermark="Название запроса..."
+                                         Height="32"
+                                         FontSize="16"
+                                         Visibility="Collapsed"/>
+                </Grid>
+            </GroupBox>
+        </Grid>
+            
+        <Grid Grid.Row="3" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <GroupBox Header="Запрос" Grid.Column="0" Margin="0,0,12,0" FontSize="16">
+                <xc:WatermarkTextBox x:Name="QueryStringTextBox"
+                                     Watermark="Запрос..."
+                                     FontFamily="Courier New"
+                                     FontSize="30"
+                                     AcceptsReturn="True"
+                                     VerticalScrollBarVisibility="Auto"
+                                     TextWrapping="Wrap"
+                                     TextAlignment="Left"
+                                     VerticalContentAlignment="Top"/>
+            </GroupBox>
+
+            <GroupBox Header="Условие для запроса" Grid.Column="1" Margin="12,0,0,0" FontSize="16">
+                <xc:WatermarkTextBox x:Name="QueryConditionTextBox"
+                                     Watermark="Условие запроса..."
+                                     AcceptsReturn="True"
+                                     TextWrapping="Wrap"
+                                     FontSize="30"
+                                     TextAlignment="Left"
+                                     VerticalContentAlignment="Top"/>
+            </GroupBox>
+        </Grid>
+            
+        <Grid Grid.Row="4" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <GroupBox Header="Доп. настройки" Grid.Column="0" FontSize="16" Margin="0,0,12,0">
+                <Grid Margin="12,6,12,6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Время:" Style="{StaticResource FieldLabel}"
+                               Grid.Row="0" Grid.Column="0"
+                               HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                    <TextBlock Text="Сложность:" Style="{StaticResource FieldLabel}"
+                               Grid.Row="0" Grid.Column="2"
+                               HorizontalAlignment="Center" Margin="0,0,0,6"/>
+
+                    <xc:TimePicker x:Name="TimeLimitTimePicker"
+                                   Format="Custom"
+                                   FormatString="mm:ss"
+                                   Value="00:05:00"
+                                   Width="100"
+                                   ShowDropDownButton="False"
+                                   Grid.Row="1" Grid.Column="0"
+                                   HorizontalAlignment="Center"/>
+
+                    <Slider x:Name="QueryDifficultySlider"
+                            Minimum="1"
+                            Maximum="10"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            Grid.Row="1" Grid.Column="2"
+                            VerticalAlignment="Center"/>
+
+                    <TextBox x:Name="QueryDifficultyTextbox" Width="40"
+                             Text="{Binding Path=Value, ElementName=QueryDifficultySlider}"
+                             IsReadOnly="True"
+                             HorizontalContentAlignment="Center"
+                             Grid.Row="1" Grid.Column="3"
+                             VerticalAlignment="Center"/>
+                </Grid>
+            </GroupBox>
+        </Grid>
+    </Grid>
+    </DockPanel>
+</Window>
