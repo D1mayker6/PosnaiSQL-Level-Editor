@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
@@ -7,84 +8,98 @@ namespace PosnaiSQLauncher
 {
     public partial class NewCreateOptionView : UserControl
     {
+        private string _selectedOption = null;
         private NewMainWindow _parent;
 
         public NewCreateOptionView(NewMainWindow parent)
         {
             InitializeComponent();
             _parent = parent;
-            
-            this.Loaded += (s, e) =>
-            {
-                var window = Window.GetWindow(this) as NewMainWindow;
-                if (window != null)
-                {
-                    window.StateChanged += Window_StateChanged;
-                    window.SizeChanged += Window_SizeChanged;
-                    UpdateScale(window);
-                }
-            };
         }
 
-        private void Window_StateChanged(object sender, System.EventArgs e)
+        private void Card1_Click(object sender, MouseButtonEventArgs e)
         {
-            if (sender is NewMainWindow window)
-            {
-                UpdateScale(window);
-            }
+            SelectCard(Card1, Card2, "create");
         }
 
-        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void Card2_Click(object sender, MouseButtonEventArgs e)
         {
-            if (sender is NewMainWindow window)
-            {
-                UpdateScale(window);
-            }
+            SelectCard(Card2, Card1, "existing");
         }
 
-        private void UpdateScale(NewMainWindow window)
+        private void SelectCard(Border selectedCard, Border otherCard, string option)
         {
-            double scale = 1.0;
+            // Анимация снятия выделения с другой карточки
+            AnimateBorder(otherCard, 
+                new SolidColorBrush(Color.FromArgb(255, 224, 224, 224)), 
+                new Thickness(2));
 
-            if (window.WindowState == WindowState.Maximized)
-            {
-                scale = 1.8;
-            }
-            else if (window.ActualWidth > 950 && window.ActualHeight > 750)
-            {
-                scale = 1.5;
-            }
-            else
-            {
-                scale = 1.0;
-            }
+            // Анимация выделения выбранной карточки
+            AnimateBorder(selectedCard, 
+                new SolidColorBrush(Color.FromArgb(255, 33, 150, 243)), 
+                new Thickness(3));
 
-            var scaleAnimation = new DoubleAnimation
+            _selectedOption = option;
+            NextButton.IsEnabled = true;
+        }
+
+        private void AnimateBorder(Border border, SolidColorBrush targetBrush, Thickness targetThickness)
+        {
+            // Анимация цвета обводки
+            var colorAnimation = new ColorAnimation
             {
-                From = (this.RenderTransform as ScaleTransform)?.ScaleX ?? 1.0,
-                To = scale,
-                Duration = new System.TimeSpan(0, 0, 0, 0, 300)
+                To = targetBrush.Color,
+                Duration = TimeSpan.FromMilliseconds(300),
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
             };
 
-            var easingFunction = new ExponentialEase();
-            easingFunction.EasingMode = EasingMode.EaseOut;
-            scaleAnimation.EasingFunction = easingFunction;
-
-            if (this.RenderTransform is ScaleTransform scaleTransform)
+            // Анимация толщины обводки
+            var thicknessAnimation = new ThicknessAnimation
             {
-                scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnimation);
-                scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnimation);
-            }
+                To = targetThickness,
+                Duration = TimeSpan.FromMilliseconds(300),
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+            };
+
+            // Создаём новую кисть для анимации
+            var animatedBrush = new SolidColorBrush(((SolidColorBrush)border.BorderBrush).Color);
+            border.BorderBrush = animatedBrush;
+
+            // Запускаем анимации
+            animatedBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            border.BeginAnimation(Border.BorderThicknessProperty, thicknessAnimation);
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            _parent.ShowMainMenu();
+            FadeOutAndSwitch(() => _parent.ShowMainMenu());
         }
 
         private void Next_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Переход на шаг 2: Query Configuration");
+            // Переход на следующий шаг
+            // TODO: Логика перехода на следующий шаг в зависимости от _selectedOption
+        }
+
+        private void FadeOutAndSwitch(System.Action switchAction)
+        {
+            var fadeOut = new DoubleAnimation
+            {
+                From = 1,
+                To = 0,
+                Duration = TimeSpan.FromMilliseconds(300)
+            };
+
+            var storyboard = new Storyboard();
+            Storyboard.SetTargetProperty(fadeOut, new PropertyPath("Opacity"));
+            storyboard.Children.Add(fadeOut);
+
+            storyboard.Completed += (s, e) =>
+            {
+                switchAction();
+            };
+
+            storyboard.Begin(this);
         }
     }
 }

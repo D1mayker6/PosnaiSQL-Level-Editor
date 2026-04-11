@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="NewMainWindow.xaml">
     <Application.Resources>
-                <!-- ====== АНИМАЦИИ ПОЯВЛЕНИЯ ====== -->
+        <!-- ====== АНИМАЦИИ ПОЯВЛЕНИЯ ====== -->
         
         <!-- Fade In (появление с прозрачностью) -->
         <Storyboard x:Key="FadeInAnimation">
@@ -101,6 +101,9 @@
                            Duration="0:0:0.3"
                            EasingFunction="ExponentialEase"/>
         </Storyboard>
+
+        <!-- ====== СТИЛИ КНОПОК ====== -->
+
         <!-- Стиль основной кнопки с анимацией -->
         <Style x:Key="PrimaryButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#2196F3"/>
@@ -241,7 +244,6 @@
             </Setter>
         </Style>
 
-        <!-- Стиль системных кнопок -->
         <!-- Стиль системных кнопок - ЧИСТО БЕЛЫЕ -->
         <Style x:Key="SystemButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
@@ -263,6 +265,22 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
+
+        <!-- ====== СТИЛЬ ДЛЯ КАРТОЧЕК ====== -->
+
+        <!-- Стиль кликабельной карточки -->
+        <Style x:Key="SelectableCardStyle" TargetType="Border">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect ShadowDepth="4" Color="#2196F3" Opacity="0.2" BlurRadius="12"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
         </Style>
         
     </Application.Resources>

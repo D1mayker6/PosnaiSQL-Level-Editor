@@ -1,372 +1,214 @@
 <UserControl x:Class="PosnaiSQLauncher.NewCreateOptionView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Opacity="0">
     
-    <!-- Главный контейнер с фоном и анимирующимися шарами -->
-    <Grid RenderTransformOrigin="0.5,0.5" Opacity="0">
-        <Grid.RenderTransform>
-            <ScaleTransform/>
-        </Grid.RenderTransform>
-        
-        <!-- Анимация появления -->
-        <Grid.Triggers>
-            <EventTrigger RoutedEvent="Loaded">
-                <BeginStoryboard>
-                    <Storyboard>
-                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                       From="0" To="1"
-                                       Duration="0:0:0.5"/>
-                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                       From="0.95" To="1"
-                                       Duration="0:0:0.5">
-                            <DoubleAnimation.EasingFunction>
-                                <ExponentialEase EasingMode="EaseOut"/>
-                            </DoubleAnimation.EasingFunction>
-                        </DoubleAnimation>
-                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                       From="0.95" To="1"
-                                       Duration="0:0:0.5">
-                            <DoubleAnimation.EasingFunction>
-                                <ExponentialEase EasingMode="EaseOut"/>
-                            </DoubleAnimation.EasingFunction>
-                        </DoubleAnimation>
-                    </Storyboard>
-                </BeginStoryboard>
-            </EventTrigger>
-        </Grid.Triggers>
+    <!-- Анимация появления -->
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                   From="0" To="1"
+                                   Duration="0:0:0.4"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
 
-        <!-- ФОНОВЫЙ ГРАДИЕНТ -->
-        <Grid.Background>
-            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#1565C0" Offset="0"/>
-                <GradientStop Color="#0D47A1" Offset="0.5"/>
-                <GradientStop Color="#1E88E5" Offset="1"/>
-            </LinearGradientBrush>
-        </Grid.Background>
+    <!-- БЕЛЫЙ БЛОК -->
+    <Border CornerRadius="20"
+            Background="#E8FFFFFF"
+            Margin="40"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center">
+        <Border.Effect>
+            <DropShadowEffect ShadowDepth="8" Color="#000000" Opacity="0.25" BlurRadius="16"/>
+        </Border.Effect>
 
-        <!-- ДЕКОРАТИВНЫЕ АНИМИРУЮЩИЕСЯ ОКРУЖНОСТИ -->
-        <Canvas IsHitTestVisible="False" Opacity="0.12">
-            <!-- ОКРУЖНОСТЬ 1 -->
-            <Ellipse Canvas.Left="-80" Canvas.Top="-100" Width="300" Height="300" 
-                    Fill="#FFFFFF" RenderTransformOrigin="0.5,0.5">
-                <Ellipse.RenderTransform>
-                    <TransformGroup>
-                        <TranslateTransform x:Name="Circle1Translate"/>
-                    </TransformGroup>
-                </Ellipse.RenderTransform>
-                <Ellipse.Triggers>
-                    <EventTrigger RoutedEvent="Loaded">
-                        <BeginStoryboard>
-                            <Storyboard RepeatBehavior="Forever">
-                                <DoubleAnimation Storyboard.TargetName="Circle1Translate"
-                                               Storyboard.TargetProperty="Y"
-                                               From="0" To="500" Duration="0:0:20"
-                                               AutoReverse="True"/>
-                                <DoubleAnimation Storyboard.TargetName="Circle1Translate"
-                                               Storyboard.TargetProperty="X"
-                                               From="0" To="200" Duration="0:0:20"
-                                               AutoReverse="True"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </EventTrigger>
-                </Ellipse.Triggers>
-            </Ellipse>
+        <StackPanel>
+            <!-- STEPPER С МОСТИКАМИ -->
+            <Border Margin="30,25,30,20" BorderThickness="0,0,0,0">
+                <Grid HorizontalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-            <!-- ОКРУЖНОСТЬ 2 -->
-            <Ellipse Canvas.Right="-120" Canvas.Bottom="-80" Width="280" Height="280" 
-                    Fill="#FFFFFF" RenderTransformOrigin="0.5,0.5">
-                <Ellipse.RenderTransform>
-                    <TransformGroup>
-                        <TranslateTransform x:Name="Circle2Translate"/>
-                    </TransformGroup>
-                </Ellipse.RenderTransform>
-                <Ellipse.Triggers>
-                    <EventTrigger RoutedEvent="Loaded">
-                        <BeginStoryboard>
-                            <Storyboard RepeatBehavior="Forever">
-                                <DoubleAnimation Storyboard.TargetName="Circle2Translate"
-                                               Storyboard.TargetProperty="Y"
-                                               From="0" To="-450" Duration="0:0:24"
-                                               AutoReverse="True"/>
-                                <DoubleAnimation Storyboard.TargetName="Circle2Translate"
-                                               Storyboard.TargetProperty="X"
-                                               From="0" To="-250" Duration="0:0:24"
-                                               AutoReverse="True"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </EventTrigger>
-                </Ellipse.Triggers>
-            </Ellipse>
-
-            <!-- ОКРУЖНОСТЬ 3 -->
-            <Ellipse Canvas.Left="-100" Canvas.Bottom="-120" Width="260" Height="260" 
-                    Fill="#FFFFFF" RenderTransformOrigin="0.5,0.5">
-                <Ellipse.RenderTransform>
-                    <TransformGroup>
-                        <TranslateTransform x:Name="Circle3Translate"/>
-                    </TransformGroup>
-                </Ellipse.RenderTransform>
-                <Ellipse.Triggers>
-                    <EventTrigger RoutedEvent="Loaded">
-                        <BeginStoryboard>
-                            <Storyboard RepeatBehavior="Forever">
-                                <DoubleAnimation Storyboard.TargetName="Circle3Translate"
-                                               Storyboard.TargetProperty="Y"
-                                               From="0" To="-400" Duration="0:0:22"
-                                               AutoReverse="True"/>
-                                <DoubleAnimation Storyboard.TargetName="Circle3Translate"
-                                               Storyboard.TargetProperty="X"
-                                               From="0" To="300" Duration="0:0:22"
-                                               AutoReverse="True"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </EventTrigger>
-                </Ellipse.Triggers>
-            </Ellipse>
-
-            <!-- ОКРУЖНОСТЬ 4 -->
-            <Ellipse Canvas.Right="-90" Canvas.Top="-110" Width="240" Height="240" 
-                    Fill="#FFFFFF" RenderTransformOrigin="0.5,0.5">
-                <Ellipse.RenderTransform>
-                    <TransformGroup>
-                        <TranslateTransform x:Name="Circle4Translate"/>
-                    </TransformGroup>
-                </Ellipse.RenderTransform>
-                <Ellipse.Triggers>
-                    <EventTrigger RoutedEvent="Loaded">
-                        <BeginStoryboard>
-                            <Storyboard RepeatBehavior="Forever">
-                                <DoubleAnimation Storyboard.TargetName="Circle4Translate"
-                                               Storyboard.TargetProperty="Y"
-                                               From="0" To="480" Duration="0:0:18"
-                                               AutoReverse="True"/>
-                                <DoubleAnimation Storyboard.TargetName="Circle4Translate"
-                                               Storyboard.TargetProperty="X"
-                                               From="0" To="-200" Duration="0:0:18"
-                                               AutoReverse="True"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </EventTrigger>
-                </Ellipse.Triggers>
-            </Ellipse>
-
-            <!-- ОКРУЖНОСТЬ 5 -->
-            <Ellipse Canvas.Left="350" Canvas.Top="250" Width="200" Height="200" 
-                    Fill="#FFFFFF" RenderTransformOrigin="0.5,0.5">
-                <Ellipse.RenderTransform>
-                    <TransformGroup>
-                        <TranslateTransform x:Name="Circle5Translate"/>
-                    </TransformGroup>
-                </Ellipse.RenderTransform>
-                <Ellipse.Triggers>
-                    <EventTrigger RoutedEvent="Loaded">
-                        <BeginStoryboard>
-                            <Storyboard RepeatBehavior="Forever">
-                                <DoubleAnimation Storyboard.TargetName="Circle5Translate"
-                                               Storyboard.TargetProperty="Y"
-                                               From="0" To="300" Duration="0:0:19"
-                                               AutoReverse="True"/>
-                                <DoubleAnimation Storyboard.TargetName="Circle5Translate"
-                                               Storyboard.TargetProperty="X"
-                                               From="0" To="-350" Duration="0:0:19"
-                                               AutoReverse="True"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </EventTrigger>
-                </Ellipse.Triggers>
-            </Ellipse>
-        </Canvas>
-
-        <!-- БЕЛЫЙ ПОЛУПРОЗРАЧНЫЙ БЛОК С ИНТЕРФЕЙСОМ -->
-        <Border CornerRadius="20"
-                Background="#E8FFFFFF"
-                Margin="40"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center"
-                x:Name="MainContentBorder">
-            <Border.Effect>
-                <DropShadowEffect ShadowDepth="8" Color="#000000" Opacity="0.25" BlurRadius="16"/>
-            </Border.Effect>
-
-            <Border.RenderTransform>
-                <ScaleTransform x:Name="ContentScale" ScaleX="1" ScaleY="1"/>
-            </Border.RenderTransform>
-
-            <StackPanel>
-                <!-- STEPPER С МОСТИКАМИ -->
-                <Border Margin="30,25,30,20" BorderThickness="0,0,0,0">
-                    <Grid HorizontalAlignment="Center">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="50"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="50"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="50"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <!-- ШАГ 1 - АКТИВНЫЙ -->
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <Border Width="36" Height="36" CornerRadius="18" Background="#2196F3" 
-                                   HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <TextBlock Text="1" FontSize="16" FontWeight="Bold" Foreground="White"
-                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <TextBlock Text="БД" FontSize="10" Foreground="#666666" Margin="0,6,0,0"
-                                      HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                        </StackPanel>
-
-                        <!-- МОСТИК 1 -->
-                        <Rectangle Grid.Column="1" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
-
-                        <!-- ШАГ 2 -->
-                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Opacity="0.5">
-                            <Border Width="36" Height="36" CornerRadius="18" Background="White" 
-                                   BorderThickness="2" BorderBrush="#CCCCCC" HorizontalAlignment="Center">
-                                <TextBlock Text="2" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC"
-                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <TextBlock Text="Запрос" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
-                                      HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                        </StackPanel>
-
-                        <!-- МОСТИК 2 -->
-                        <Rectangle Grid.Column="3" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
-
-                        <!-- ШАГ 3 -->
-                        <StackPanel Grid.Column="4" VerticalAlignment="Center" Opacity="0.5">
-                            <Border Width="36" Height="36" CornerRadius="18" Background="White" 
-                                   BorderThickness="2" BorderBrush="#CCCCCC" HorizontalAlignment="Center">
-                                <TextBlock Text="3" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC"
-                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <TextBlock Text="Настройки" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
-                                      HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                        </StackPanel>
-
-                        <!-- МОСТИК 3 -->
-                        <Rectangle Grid.Column="5" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
-
-                        <!-- ШАГ 4 -->
-                        <StackPanel Grid.Column="6" VerticalAlignment="Center" Opacity="0.5">
-                            <Border Width="36" Height="36" CornerRadius="18" Background="White" 
-                                   BorderThickness="2" BorderBrush="#CCCCCC" HorizontalAlignment="Center">
-                                <TextBlock Text="4" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC"
-                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <TextBlock Text="Экспорт" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
-                                      HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                        </StackPanel>
-                    </Grid>
-                </Border>
-
-                <!-- КОНТЕНТ -->
-                <StackPanel Margin="30,20,30,30" VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <!-- ЗАГОЛОВОК -->
-                    <TextBlock Text="Настройка базы данных" 
-                              FontSize="24" FontWeight="Bold" Foreground="#1a1a1a"
-                              Margin="0,0,0,8" TextAlignment="Center"/>
-                    <TextBlock Text="Выберите способ настройки базы данных"
-                              FontSize="13" Foreground="#666666" Margin="0,0,0,25" TextAlignment="Center"/>
-
-                    <!-- КАРТОЧКИ - БЕЗ MAX WIDTH, РАСШИРЯЮТСЯ ПОЛНОСТЬЮ -->
-                    <Grid Width="550">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <!-- КАРТОЧКА 1 -->
-                        <Border Grid.Column="0"
-                               CornerRadius="10"
-                               Background="White"
-                               BorderThickness="2"
-                               BorderBrush="#E0E0E0">
-                            <Border.Effect>
-                                <DropShadowEffect ShadowDepth="2" Color="#000000" Opacity="0.08" BlurRadius="6"/>
-                            </Border.Effect>
-
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <!-- ИКОНКА -->
-                                <Grid Grid.Row="0" Height="80" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,10">
-                                    <Ellipse Width="80" Height="80" Fill="#E3F2FD"/>
-                                    <TextBlock Text="+" FontSize="48" Foreground="#2196F3" 
-                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Grid>
-
-                                <!-- ТЕКСТ -->
-                                <TextBlock Grid.Row="1" Text="Добавить"
-                                          FontSize="16" FontWeight="SemiBold" Foreground="#1a1a1a"
-                                          TextAlignment="Center" Margin="15,0,15,5"/>
-                                <TextBlock Grid.Row="2" Text="Создать новую БД"
-                                          FontSize="12" Foreground="#888888" TextAlignment="Center" Margin="15,0,15,20"/>
-                            </Grid>
+                    <!-- ШАГ 1 - АКТИВНЫЙ -->
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <Border Width="36" Height="36" CornerRadius="18" Background="#2196F3" 
+                               HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="1" FontSize="16" FontWeight="Bold" Foreground="White"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
+                        <TextBlock Text="БД" FontSize="10" Foreground="#666666" Margin="0,6,0,0"
+                                  HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    </StackPanel>
 
-                        <!-- КАРТОЧКА 2 -->
-                        <Border Grid.Column="2"
-                               CornerRadius="10"
-                               Background="White"
-                               BorderThickness="2"
-                               BorderBrush="#E0E0E0">
-                            <Border.Effect>
-                                <DropShadowEffect ShadowDepth="2" Color="#000000" Opacity="0.08" BlurRadius="6"/>
-                            </Border.Effect>
+                    <!-- МОСТИК 1 -->
+                    <Rectangle Grid.Column="1" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
 
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <!-- ИКОНКА -->
-                                <Grid Grid.Row="0" Height="80" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,10">
-                                    <Ellipse Width="80" Height="80" Fill="#F3E5F5"/>
-                                    <TextBlock Text="⊙" FontSize="44" Foreground="#7B1FA2" 
-                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Grid>
-
-                                <!-- ТЕКСТ -->
-                                <TextBlock Grid.Row="1" Text="Выбрать"
-                                          FontSize="16" FontWeight="SemiBold" Foreground="#1a1a1a"
-                                          TextAlignment="Center" Margin="15,0,15,5"/>
-                                <TextBlock Grid.Row="2" Text="Выбрать и редактировать существующую БД из списка"
-                                          FontSize="12" Foreground="#888888" TextAlignment="Center" Margin="15,0,15,20"/>
-                            </Grid>
+                    <!-- ШАГ 2 -->
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Opacity="0.5">
+                        <Border Width="36" Height="36" CornerRadius="18" Background="White" 
+                               BorderThickness="2" BorderBrush="#CCCCCC" HorizontalAlignment="Center">
+                            <TextBlock Text="2" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                    </Grid>
-                </StackPanel>
+                        <TextBlock Text="Запрос" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
+                                  HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    </StackPanel>
 
-                <!-- КНОПКИ -->
-                <Border Margin="30,10,30,30" BorderThickness="0,0,0,0">
-                    <Grid HorizontalAlignment="Right">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                    <!-- МОСТИК 2 -->
+                    <Rectangle Grid.Column="3" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
 
-                        <Button Grid.Column="0"
-                               Content="← Назад"
-                               Style="{StaticResource SecondaryButtonStyle}"
-                               Click="Back_Click"/>
+                    <!-- ШАГ 3 -->
+                    <StackPanel Grid.Column="4" VerticalAlignment="Center" Opacity="0.5">
+                        <Border Width="36" Height="36" CornerRadius="18" Background="White" 
+                               BorderThickness="2" BorderBrush="#CCCCCC" HorizontalAlignment="Center">
+                            <TextBlock Text="3" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="Уровень" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
+                                  HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    </StackPanel>
 
-                        <Button Grid.Column="2"
-                               Content="Далее →"
-                               Style="{StaticResource PrimaryButtonStyle}"
-                               Click="Next_Click"/>
-                    </Grid>
-                </Border>
+                    <!-- МОСТИК 3 -->
+                    <Rectangle Grid.Column="5" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
+
+                    <!-- ШАГ 4 -->
+                    <StackPanel Grid.Column="6" VerticalAlignment="Center" Opacity="0.5">
+                        <Border Width="36" Height="36" CornerRadius="18" Background="White" 
+                               BorderThickness="2" BorderBrush="#CCCCCC" HorizontalAlignment="Center">
+                            <TextBlock Text="4" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="Обзор" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
+                                  HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- КОНТЕНТ -->
+            <StackPanel Margin="30,20,30,30" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <!-- ЗАГОЛОВОК -->
+                <TextBlock Text="Настройка базы данных" 
+                          FontSize="24" FontWeight="Bold" Foreground="#1a1a1a"
+                          Margin="0,0,0,8" TextAlignment="Center"/>
+                <TextBlock Text="Выберите способ настройки базы данных"
+                          FontSize="13" Foreground="#666666" Margin="0,0,0,25" TextAlignment="Center"/>
+
+                <!-- КАРТОЧКИ -->
+                <Grid Width="550">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- КАРТОЧКА 1 - СОЗДАТЬ БД -->
+                    <Border x:Name="Card1"
+                           Grid.Column="0"
+                           CornerRadius="10"
+                           Background="White"
+                           BorderThickness="2"
+                           BorderBrush="#E0E0E0"
+                           MouseLeftButtonDown="Card1_Click"
+                           Style="{StaticResource SelectableCardStyle}">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="2" Color="#000000" Opacity="0.08" BlurRadius="6"/>
+                        </Border.Effect>
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- ИКОНКА -->
+                            <Grid Grid.Row="0" Height="80" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,10">
+                                <Image Width="80" Height="80" 
+                                       Source="pack://application:,,,/Assets/add.png"
+                                       Stretch="Uniform"/>
+                            </Grid>
+
+                            <!-- ТЕКСТ -->
+                            <TextBlock Grid.Row="1" Text="Создать БД"
+                                      FontSize="16" FontWeight="SemiBold" Foreground="#1a1a1a"
+                                      TextAlignment="Center" Margin="15,0,15,5"/>
+                            <TextBlock Grid.Row="2" Text="Новая база данных"
+                                      FontSize="12" Foreground="#888888" TextAlignment="Center" Margin="15,0,15,20"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- КАРТОЧКА 2 - СУЩЕСТВУЮЩАЯ БД -->
+                    <Border x:Name="Card2"
+                           Grid.Column="2"
+                           CornerRadius="10"
+                           Background="White"
+                           BorderThickness="2"
+                           BorderBrush="#E0E0E0"
+                           MouseLeftButtonDown="Card2_Click"
+                           Style="{StaticResource SelectableCardStyle}">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="2" Color="#000000" Opacity="0.08" BlurRadius="6"/>
+                        </Border.Effect>
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- ИКОНКА -->
+                            <Grid Grid.Row="0" Height="80" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,10">
+                                <Image Width="80" Height="80" 
+                                       Source="pack://application:,,,/Assets/choose.png"
+                                       Stretch="Uniform"/>
+                            </Grid>
+
+                            <!-- ТЕКСТ -->
+                            <TextBlock Grid.Row="1" Text="Существующая"
+                                      FontSize="16" FontWeight="SemiBold" Foreground="#1a1a1a"
+                                      TextAlignment="Center" Margin="15,0,15,5"/>
+                            <TextBlock Grid.Row="2" Text="Подключиться к БД"
+                                      FontSize="12" Foreground="#888888" TextAlignment="Center" Margin="15,0,15,20"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+                
             </StackPanel>
-        </Border>
-    </Grid>
+
+            <!-- КНОПКИ -->
+            <Border Margin="30,10,30,30" BorderThickness="0,0,0,0">
+                <Grid HorizontalAlignment="Right">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0"
+                           Content="← Назад"
+                           Style="{StaticResource SecondaryButtonStyle}"
+                           Click="Back_Click"/>
+
+                    <Button Grid.Column="2"
+                           Content="Далее →"
+                           Style="{StaticResource PrimaryButtonStyle}"
+                           Click="Next_Click"
+                           x:Name="NextButton"
+                           IsEnabled="False"/>
+                </Grid>
+            </Border>
+        </StackPanel>
+    </Border>
 </UserControl>

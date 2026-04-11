@@ -4,6 +4,8 @@
         Title="Познай SQL!"
         Height="650"
         Width="850"
+        MinHeight="650"
+        MinWidth="850"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -16,7 +18,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- ФОНОВЫЙ ГРАДИЕНТ ДЛЯ ВСЕГО ОКНА -->
+        <!-- ФОНОВЫЙ ГРАДИЕНТ -->
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#1565C0" Offset="0"/>
@@ -25,21 +27,16 @@
             </LinearGradientBrush>
         </Grid.Background>
 
-        <!-- Панель управления окном БЕЗ ВЫДЕЛЕНИЯ -->
+        <!-- Панель управления окном -->
         <Grid Grid.Row="0" MouseDown="TitleBar_MouseDown" Background="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Перетаскиваемая область -->
             <Rectangle Grid.Column="0" Fill="Transparent"/>
 
-            <!-- Системные кнопки - БЕЛЫЕ И МАЛЕНЬКИЕ -->
-            <StackPanel Grid.Column="1" 
-                       Orientation="Horizontal" 
-                       Margin="0,0,8,0"
-                       VerticalAlignment="Center">
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,8,0" VerticalAlignment="Center">
                 <Button Style="{StaticResource SystemButtonStyle}" 
                        Content="−" 
                        Click="Minimize_Click"
@@ -62,7 +59,140 @@
             </StackPanel>
         </Grid>
 
-        <!-- Контейнер для контента -->
+        <!-- ДЕКОРАТИВНЫЕ АНИМИРУЮЩИЕСЯ ОКРУЖНОСТИ (ОДИН РАЗ) -->
+        <Canvas Grid.Row="1" IsHitTestVisible="False" Opacity="0.12">
+            <!-- ОКРУЖНОСТЬ 1 -->
+            <Ellipse Canvas.Left="-80" Canvas.Top="-100" Width="300" Height="300" 
+                    Fill="#FFFFFF" RenderTransformOrigin="0.5,0.5">
+                <Ellipse.RenderTransform>
+                    <TransformGroup>
+                        <TranslateTransform x:Name="Circle1Translate"/>
+                    </TransformGroup>
+                </Ellipse.RenderTransform>
+                <Ellipse.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard>
+                            <Storyboard RepeatBehavior="Forever">
+                                <DoubleAnimation Storyboard.TargetName="Circle1Translate"
+                                               Storyboard.TargetProperty="Y"
+                                               From="0" To="500" Duration="0:0:20"
+                                               AutoReverse="True"/>
+                                <DoubleAnimation Storyboard.TargetName="Circle1Translate"
+                                               Storyboard.TargetProperty="X"
+                                               From="0" To="200" Duration="0:0:20"
+                                               AutoReverse="True"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Ellipse.Triggers>
+            </Ellipse>
+
+            <!-- ОКРУЖНОСТЬ 2 -->
+            <Ellipse Canvas.Right="-120" Canvas.Bottom="-80" Width="280" Height="280" 
+                    Fill="#FFFFFF" RenderTransformOrigin="0.5,0.5">
+                <Ellipse.RenderTransform>
+                    <TransformGroup>
+                        <TranslateTransform x:Name="Circle2Translate"/>
+                    </TransformGroup>
+                </Ellipse.RenderTransform>
+                <Ellipse.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard>
+                            <Storyboard RepeatBehavior="Forever">
+                                <DoubleAnimation Storyboard.TargetName="Circle2Translate"
+                                               Storyboard.TargetProperty="Y"
+                                               From="0" To="-450" Duration="0:0:24"
+                                               AutoReverse="True"/>
+                                <DoubleAnimation Storyboard.TargetName="Circle2Translate"
+                                               Storyboard.TargetProperty="X"
+                                               From="0" To="-250" Duration="0:0:24"
+                                               AutoReverse="True"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Ellipse.Triggers>
+            </Ellipse>
+
+            <!-- ОКРУЖНОСТЬ 3 -->
+            <Ellipse Canvas.Left="-100" Canvas.Bottom="-120" Width="260" Height="260" 
+                    Fill="#FFFFFF" RenderTransformOrigin="0.5,0.5">
+                <Ellipse.RenderTransform>
+                    <TransformGroup>
+                        <TranslateTransform x:Name="Circle3Translate"/>
+                    </TransformGroup>
+                </Ellipse.RenderTransform>
+                <Ellipse.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard>
+                            <Storyboard RepeatBehavior="Forever">
+                                <DoubleAnimation Storyboard.TargetName="Circle3Translate"
+                                               Storyboard.TargetProperty="Y"
+                                               From="0" To="-400" Duration="0:0:22"
+                                               AutoReverse="True"/>
+                                <DoubleAnimation Storyboard.TargetName="Circle3Translate"
+                                               Storyboard.TargetProperty="X"
+                                               From="0" To="300" Duration="0:0:22"
+                                               AutoReverse="True"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Ellipse.Triggers>
+            </Ellipse>
+
+            <!-- ОКРУЖНОСТЬ 4 -->
+            <Ellipse Canvas.Right="-90" Canvas.Top="-110" Width="240" Height="240" 
+                    Fill="#FFFFFF" RenderTransformOrigin="0.5,0.5">
+                <Ellipse.RenderTransform>
+                    <TransformGroup>
+                        <TranslateTransform x:Name="Circle4Translate"/>
+                    </TransformGroup>
+                </Ellipse.RenderTransform>
+                <Ellipse.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard>
+                            <Storyboard RepeatBehavior="Forever">
+                                <DoubleAnimation Storyboard.TargetName="Circle4Translate"
+                                               Storyboard.TargetProperty="Y"
+                                               From="0" To="480" Duration="0:0:18"
+                                               AutoReverse="True"/>
+                                <DoubleAnimation Storyboard.TargetName="Circle4Translate"
+                                               Storyboard.TargetProperty="X"
+                                               From="0" To="-200" Duration="0:0:18"
+                                               AutoReverse="True"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Ellipse.Triggers>
+            </Ellipse>
+
+            <!-- ОКРУЖНОСТЬ 5 -->
+            <Ellipse Canvas.Left="350" Canvas.Top="250" Width="200" Height="200" 
+                    Fill="#FFFFFF" RenderTransformOrigin="0.5,0.5">
+                <Ellipse.RenderTransform>
+                    <TransformGroup>
+                        <TranslateTransform x:Name="Circle5Translate"/>
+                    </TransformGroup>
+                </Ellipse.RenderTransform>
+                <Ellipse.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard>
+                            <Storyboard RepeatBehavior="Forever">
+                                <DoubleAnimation Storyboard.TargetName="Circle5Translate"
+                                               Storyboard.TargetProperty="Y"
+                                               From="0" To="300" Duration="0:0:19"
+                                               AutoReverse="True"/>
+                                <DoubleAnimation Storyboard.TargetName="Circle5Translate"
+                                               Storyboard.TargetProperty="X"
+                                               From="0" To="-350" Duration="0:0:19"
+                                               AutoReverse="True"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Ellipse.Triggers>
+            </Ellipse>
+        </Canvas>
+
+        <!-- ДИНАМИЧЕСКИЙ КОНТЕНТ -->
         <ContentControl x:Name="MainContent" Grid.Row="1"/>
     </Grid>
 </Window>
