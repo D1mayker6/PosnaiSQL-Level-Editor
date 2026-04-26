@@ -177,9 +177,9 @@
 
                             <!-- ТЕКСТ -->
                             <TextBlock Grid.Row="1" Text="Существующая"
-                                      FontSize="16" FontWeight="SemiBold" Foreground="#1a1a1a"
-                                      TextAlignment="Center" Margin="15,0,15,5"/>
-                            <TextBlock Grid.Row="2" Text="Подключиться к БД"
+                                       FontSize="16" FontWeight="SemiBold" Foreground="#1a1a1a"
+                                       TextAlignment="Center" Margin="15,0,15,5"/>
+                            <TextBlock Grid.Row="2" Text="Выбрать БД из списка"
                                       FontSize="12" Foreground="#888888" TextAlignment="Center" Margin="15,0,15,20"/>
                         </Grid>
                     </Border>

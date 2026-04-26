@@ -1,0 +1,168 @@
+<UserControl x:Class="PosnaiSQLauncher.NewQueryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Opacity="0">
+    
+    <!-- Анимация появления -->
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                   From="0" To="1"
+                                   Duration="0:0:0.4"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <Grid>
+        <!-- БЕЛЫЙ БЛОК -->
+        <Border x:Name="MainBorder"
+                CornerRadius="20"
+                Background="#E8FFFFFF"
+                Margin="40"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center">
+            <Border.Effect>
+                <DropShadowEffect ShadowDepth="8" Color="#000000" Opacity="0.25" BlurRadius="16"/>
+            </Border.Effect>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- STEPPER С МОСТИКАМИ -->
+                <Border Grid.Row="0" Margin="30,25,30,20" BorderThickness="0,0,0,0">
+                    <Grid HorizontalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- ШАГ 1 -->
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Opacity="0.5">
+                            <Border Width="36" Height="36" CornerRadius="18" Background="White" 
+                                   BorderThickness="2" BorderBrush="#CCCCCC" HorizontalAlignment="Center">
+                                <TextBlock Text="1" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="БД" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
+                                      HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                        </StackPanel>
+
+                        <!-- МОСТИК 1 -->
+                        <Rectangle Grid.Column="1" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
+
+                        <!-- ШАГ 2 - АКТИВНЫЙ -->
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                            <Border Width="36" Height="36" CornerRadius="18" Background="#2196F3" 
+                                   HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="2" FontSize="16" FontWeight="Bold" Foreground="White"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Запрос" FontSize="10" Foreground="#666666" Margin="0,6,0,0"
+                                      HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                        </StackPanel>
+
+                        <!-- МОСТИК 2 -->
+                        <Rectangle Grid.Column="3" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
+
+                        <!-- ШАГ 3 -->
+                        <StackPanel Grid.Column="4" VerticalAlignment="Center" Opacity="0.5">
+                            <Border Width="36" Height="36" CornerRadius="18" Background="White" 
+                                   BorderThickness="2" BorderBrush="#CCCCCC" HorizontalAlignment="Center">
+                                <TextBlock Text="3" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Уровень" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
+                                      HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                        </StackPanel>
+
+                        <!-- МОСТИК 3 -->
+                        <Rectangle Grid.Column="5" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
+
+                        <!-- ШАГ 4 -->
+                        <StackPanel Grid.Column="6" VerticalAlignment="Center" Opacity="0.5">
+                            <Border Width="36" Height="36" CornerRadius="18" Background="White" 
+                                   BorderThickness="2" BorderBrush="#CCCCCC" HorizontalAlignment="Center">
+                                <TextBlock Text="4" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Обзор" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
+                                      HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- КОНТЕНТ -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Margin="30,20,30,20" VerticalAlignment="Top" HorizontalAlignment="Center">
+                        
+                        <TextBlock Text="Создание запроса" FontSize="24" FontWeight="Bold" Foreground="#1a1a1a" Margin="0,0,0,8" TextAlignment="Center"/>
+                        <TextBlock Text="Укажите параметры SQL запроса" FontSize="13" Foreground="#666666" Margin="0,0,0,25" TextAlignment="Center"/>
+
+                        <StackPanel MinWidth="550">
+                            <!-- ВЫПАДАШКА + ПЛЮСИК -->
+                            <StackPanel Margin="0,0,0,25">
+                                <TextBlock Text="Выбрать существующий запрос" FontSize="14" Foreground="#1a1a1a" Margin="0,0,0,8" FontWeight="SemiBold"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox Grid.Column="0" x:Name="QueriesComboBox" Height="40" FontSize="13" SelectionChanged="QueriesComboBox_SelectionChanged">
+                                        <ComboBoxItem Content="Выберите запрос..."/>
+                                        <ComboBoxItem Content="Запрос 1"/>
+                                        <ComboBoxItem Content="Запрос 2"/>
+                                    </ComboBox>
+                                    <Button Grid.Column="2" Content="➕" Height="40" Width="40" Style="{StaticResource SecondaryButtonStyle}" Click="NewQuery_Click" FontSize="16"/>
+                                </Grid>
+                            </StackPanel>
+
+                            <!-- ИМЯ -->
+                            <StackPanel Margin="0,0,0,25">
+                                <TextBlock Text="Имя запроса" FontSize="14" Foreground="#1a1a1a" Margin="0,0,0,8" FontWeight="SemiBold"/>
+                                <TextBox x:Name="QueryNameTextBox" Height="40" FontSize="13" Padding="12,0,12,0" VerticalContentAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- УСЛОВИЕ -->
+                            <StackPanel Margin="0,0,0,25">
+                                <TextBlock Text="Условие запроса (описание задачи)" FontSize="14" Foreground="#1a1a1a" Margin="0,0,0,8" FontWeight="SemiBold"/>
+                                <TextBox x:Name="QueryConditionTextBox" Height="80" FontSize="13" Padding="12,8,12,8" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                            </StackPanel>
+
+                            <!-- КОД -->
+                            <StackPanel Margin="0,0,0,25">
+                                <TextBlock Text="Текст SQL запроса" FontSize="14" Foreground="#1a1a1a" Margin="0,0,0,8" FontWeight="SemiBold"/>
+                                <TextBox x:Name="QueryCodeTextBox" Height="150" FontSize="12" Padding="12,8,12,8" TextWrapping="Wrap" AcceptsReturn="True" FontFamily="Consolas" VerticalScrollBarVisibility="Auto"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- КНОПКИ -->
+                <Border Grid.Row="2" Margin="30,10,30,30">
+                    <Grid HorizontalAlignment="Right">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Content="← Назад" Style="{StaticResource SecondaryButtonStyle}" Click="Back_Click"/>
+                        <Button Grid.Column="2" Content="Далее →" Style="{StaticResource PrimaryButtonStyle}" Click="Next_Click"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

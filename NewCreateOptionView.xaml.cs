@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -77,11 +78,17 @@ namespace PosnaiSQLauncher
 
         private void Next_Click(object sender, RoutedEventArgs e)
         {
-            // Переход на следующий шаг
-            // TODO: Логика перехода на следующий шаг в зависимости от _selectedOption
+            if (string.IsNullOrEmpty(_selectedOption))
+            {
+                MessageBox.Show("Выберите способ настройки БД", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Переход на окно настройки БД
+            FadeOutAndSwitch(() => _parent.ShowDatabaseConfig(_selectedOption));
         }
 
-        private void FadeOutAndSwitch(System.Action switchAction)
+        private void FadeOutAndSwitch(Action switchAction)
         {
             var fadeOut = new DoubleAnimation
             {

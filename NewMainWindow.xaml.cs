@@ -25,6 +25,16 @@ namespace PosnaiSQLauncher
         {
             MainContent.Content = new NewEditOptionView(this);
         }
+        
+        public void ShowQueryView()
+        {
+            MainContent.Content = new NewQueryView(this);
+        }
+
+        public void ShowDatabaseConfig(string option)
+        {
+            MainContent.Content = new DatabaseConfigView(this, option);
+        }
 
         private void TitleBar_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
