@@ -30,6 +30,16 @@ namespace PosnaiSQLauncher
         {
             MainContent.Content = new NewQueryView(this);
         }
+        
+        public void ShowLevelView() 
+        { 
+            MainContent.Content = new NewLevelView(this); 
+        }
+        
+        public void ShowExportView() 
+        { 
+            MainContent.Content = new NewExportView(this); 
+        }
 
         public void ShowDatabaseConfig(string option)
         {

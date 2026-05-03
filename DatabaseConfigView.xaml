@@ -97,7 +97,7 @@
                                 <TextBlock Text="4" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC"
                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
-                            <TextBlock Text="Обзор" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
+                            <TextBlock Text="Экспорт" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
                                       HorizontalAlignment="Center" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Grid>
