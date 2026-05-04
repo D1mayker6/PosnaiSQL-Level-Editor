@@ -3,89 +3,87 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Opacity="0">
     
-    <!-- Анимация появления -->
     <UserControl.Triggers>
         <EventTrigger RoutedEvent="Loaded">
             <BeginStoryboard>
                 <Storyboard>
-                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                   From="0" To="1"
-                                   Duration="0:0:0.4"/>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.4"/>
                 </Storyboard>
             </BeginStoryboard>
         </EventTrigger>
     </UserControl.Triggers>
 
-    <!-- БЕЛЫЙ БЛОК -->
+    <!-- Уменьшил внешний Margin с 40 до 20, чтобы дать больше места контенту -->
     <Border CornerRadius="20"
             Background="#E8FFFFFF"
-            Margin="40"
+            Margin="20" 
             VerticalAlignment="Center"
             HorizontalAlignment="Center">
         <Border.Effect>
             <DropShadowEffect ShadowDepth="8" Color="#000000" Opacity="0.25" BlurRadius="16"/>
         </Border.Effect>
 
-        <StackPanel>
-    <!-- КОНТЕНТ -->
-    <StackPanel Margin="30,15,30,30" VerticalAlignment="Center" HorizontalAlignment="Center">
-        
-        <!-- Логотип -->
-        <Image Width="350" Height="200" 
-               Source="pack://application:,,,/Assets/logo.png"
-               Stretch="Uniform"
-               HorizontalAlignment="Center"
-               Margin="0,0,0,15"
-               RenderOptions.BitmapScalingMode="HighQuality"/>
+        <StackPanel Margin="30,10,30,25"> <!-- Немного уменьшил верхний отступ -->
+            
+            <!-- Уменьшил высоту логотипа с 200 до 150 - это даст 50px для новой кнопки -->
+            <Image Width="300" Height="150" 
+                   Source="pack://application:,,,/Assets/logo.png"
+                   Stretch="Uniform"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,10"
+                   RenderOptions.BitmapScalingMode="HighQuality"/>
 
-        <!-- Название -->
-        <TextBlock Text="Добро пожаловать!"
-                  FontSize="28"
-                  FontWeight="Bold"
-                  Foreground="#1a1a1a"
-                  HorizontalAlignment="Center"
-                  TextAlignment="Center"
-                  Margin="0,0,0,12"/>
+            <!-- Название -->
+            <TextBlock Text="Добро пожаловать!"
+                      FontSize="26" 
+                      FontWeight="Bold"
+                      Foreground="#1a1a1a"
+                      HorizontalAlignment="Center"
+                      Margin="0,0,0,5"/>
 
-        <TextBlock Text="Редактор уровней"
-                  FontSize="16"
-                  Foreground="#1E88E5"
-                  HorizontalAlignment="Center"
-                  TextAlignment="Center"
-                  Margin="0,0,0,8"/>
+            <TextBlock Text="Редактор уровней"
+                      FontSize="15"
+                      Foreground="#1E88E5"
+                      HorizontalAlignment="Center"
+                      Margin="0,0,0,2"/>
 
-        <TextBlock Text="«Создавайте и управляйте SQL задачами»"
-                  FontSize="12"
-                  Foreground="#888888"
-                  HorizontalAlignment="Center"
-                  TextAlignment="Center"
-                  Margin="0,0,0,25"/>
+            <TextBlock Text="«SQL - Твой запрос на мастерство!»"
+                      FontSize="11"
+                      Foreground="#888888"
+                      HorizontalAlignment="Center"
+                      Margin="0,0,0,15"/> 
 
-        <!-- Кнопки -->
-        <Grid HorizontalAlignment="Center">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="15"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+            <!-- Кнопки -->
+            <Grid HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/> <!-- Уменьшил межкнопочный интервал с 15 до 10 -->
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/> 
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <!-- Кнопка 1 -->
-            <Button Grid.Row="0"
-                   Content="✚  Создать новый вариант"
-                   Style="{StaticResource PrimaryButtonStyle}"
-                   Height="60"
-                   MinWidth="350"
-                   Click="CreateButton_Click"/>
+                <Button Grid.Row="0"
+                        Content="✚  Создать новый вариант"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Height="55" 
+                        MinWidth="350"
+                        Click="CreateButton_Click"/>
 
-            <!-- Кнопка 2 -->
-            <Button Grid.Row="2"
-                   Content="✎  Редактировать существующий"
-                   Style="{StaticResource SecondaryButtonStyle}"
-                   Height="60"
-                   MinWidth="350"
-                   Click="EditButton_Click"/>
-        </Grid>
-    </StackPanel>
-</StackPanel>
+                <Button Grid.Row="2"
+                        Content="✎  Редактировать существующий вариант"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Height="55"
+                        MinWidth="350"
+                        Click="EditButton_Click"/>
+
+                <Button Grid.Row="4"
+                        Content="📩  Экспорт вариантов"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Height="55"
+                        MinWidth="350"
+                        Click="ExportButton_Click"/>
+            </Grid>
+        </StackPanel>
     </Border>
 </UserControl>

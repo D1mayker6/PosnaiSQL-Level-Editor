@@ -40,6 +40,11 @@ namespace PosnaiSQLauncher
         { 
             MainContent.Content = new NewExportView(this); 
         }
+        
+        public void ShowSaveView() 
+        { 
+            MainContent.Content = new NewSaveView(this); 
+        }
 
         public void ShowDatabaseConfig(string option)
         {

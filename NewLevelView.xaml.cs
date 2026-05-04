@@ -95,7 +95,7 @@ namespace PosnaiSQLauncher
         private void Next_Click(object sender, RoutedEventArgs e)
         {
             // Здесь будет метод ShowOverviewView
-            FadeOutAndSwitch(() => _parent?.ShowExportView());
+            FadeOutAndSwitch(() => _parent?.ShowSaveView());
         }
 
         private void FadeOutAndSwitch(Action switchAction)

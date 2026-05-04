@@ -97,7 +97,7 @@
                                 <TextBlock Text="4" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC"
                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
-                            <TextBlock Text="Экспорт" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
+                            <TextBlock Text="Обзор" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
                                       HorizontalAlignment="Center" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Grid>
@@ -188,24 +188,30 @@
                 </ScrollViewer>
 
                 <!-- КНОПКИ -->
-                <Border Grid.Row="2" Margin="30,10,30,30" BorderThickness="0,0,0,0">
-                    <Grid HorizontalAlignment="Right">
+                <Border Grid.Row="2" Margin="30,10,30,30">
+                    <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
+                        <!-- Назад -->
                         <Button Grid.Column="0"
-                               Content="← Назад"
-                               Style="{StaticResource SecondaryButtonStyle}"
-                               Click="Back_Click"/>
+                                Content="← Назад"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                HorizontalAlignment="Stretch"
+                                Height="50"
+                                Click="Back_Click"/>
 
-                        <Button x:Name="NextButton"
-                               Grid.Column="2"
-                               Content="Далее →"
-                               Style="{StaticResource PrimaryButtonStyle}"
-                               Click="Next_Click"/>
+                        <!-- Далее -->
+                        <Button Grid.Column="2"
+                                Content="Далее →"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                HorizontalAlignment="Stretch"
+                                Height="50"
+                                Name="NextButton"
+                                Click="Next_Click"/>
                     </Grid>
                 </Border>
             </Grid>

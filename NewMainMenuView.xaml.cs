@@ -22,5 +22,10 @@ namespace PosnaiSQLauncher
         {
             _parent.ShowEditOption();
         }
+        
+        private void ExportButton_Click(object sender, RoutedEventArgs e)
+        {
+            _parent.ShowExportView();
+        }
     }
 }

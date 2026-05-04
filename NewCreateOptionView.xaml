@@ -188,25 +188,30 @@
             </StackPanel>
 
             <!-- КНОПКИ -->
-            <Border Margin="30,10,30,30" BorderThickness="0,0,0,0">
-                <Grid HorizontalAlignment="Right">
+            <Border Margin="30,10,30,30">
+                <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
+                    <!-- Назад -->
                     <Button Grid.Column="0"
-                           Content="← Назад"
-                           Style="{StaticResource SecondaryButtonStyle}"
-                           Click="Back_Click"/>
+                            Content="← Назад"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            HorizontalAlignment="Stretch"
+                            Height="50"
+                            Click="Back_Click"/>
 
+                    <!-- Далее -->
                     <Button Grid.Column="2"
-                           Content="Далее →"
-                           Style="{StaticResource PrimaryButtonStyle}"
-                           Click="Next_Click"
-                           x:Name="NextButton"
-                           IsEnabled="False"/>
+                            Content="Далее →"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            HorizontalAlignment="Stretch"
+                            Height="50"
+                            Name="NextButton"
+                            Click="Next_Click"/>
                 </Grid>
             </Border>
         </StackPanel>

@@ -120,7 +120,7 @@
                             <Border Width="36" Height="36" CornerRadius="18" BorderThickness="2" BorderBrush="#CCCCCC" Background="White">
                                 <TextBlock Text="4" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
-                            <TextBlock Text="Экспорт" FontSize="10" Foreground="#999999" Margin="0,6,0,0" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Text="Обзор" FontSize="10" Foreground="#999999" Margin="0,6,0,0" HorizontalAlignment="Center" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -129,7 +129,7 @@
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel Margin="30,10,30,20">
                         <TextBlock Text="Настройка запроса" FontSize="24" FontWeight="Bold" Foreground="#1a1a1a" Margin="0,0,0,8" TextAlignment="Center"/>
-                        <TextBlock Text="Параметры SQL задачи" FontSize="13" Foreground="#666666" Margin="0,0,0,30" TextAlignment="Center"/>
+                        <TextBlock Text="Параметры SQL-запроса" FontSize="13" Foreground="#666666" Margin="0,0,0,30" TextAlignment="Center"/>
 
                         <StackPanel Margin="0,0,0,25">
                             <TextBlock Text="Выберите запрос" FontSize="14" Foreground="#1a1a1a" Margin="0,0,0,8" FontWeight="SemiBold"/>
