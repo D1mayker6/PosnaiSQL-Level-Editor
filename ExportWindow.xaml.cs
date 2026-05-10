@@ -142,8 +142,7 @@ public partial class ExportWindow : Window
                 ws.Cell(row, 4).Value = data[i].DecryptedName;
                 ws.Cell(row, 5).Value = data[i].DecryptedCondition;
                 ws.Cell(row, 6).Value = data[i].DecryptedQueryString;
-                ws.Cell(row, 7).Value = data[i].Difficulty;
-                ws.Cell(row, 8).Value = data[i].TimeLimit.ToString();
+                ws.Cell(row, 7).Value = data[i].TimeLimit.ToString();
 
                 for (int col = 1; col <= 8; col++)
                 {
@@ -215,7 +214,6 @@ public partial class ExportWindow : Window
         DecryptedName = o.DecryptedName,
         DecryptedCondition = o.DecryptedCondition,
         DecryptedQueryString = o.DecryptedQueryString,
-        Difficulty = o.Difficulty,
         TimeLimit = o.TimeLimit
     }).ToList();
 

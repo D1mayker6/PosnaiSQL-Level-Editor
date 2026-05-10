@@ -47,9 +47,50 @@ namespace PosnaiSQLauncher
             DatabaseSelectorPanel.BeginAnimation(OpacityProperty, fadeIn);
         }
 
+// Обновляем метод выбора: включаем сразу обе кнопки
         private void DatabaseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SelectDatabaseButton.IsEnabled = DatabaseComboBox.SelectedItem != null;
+            bool isSelected = DatabaseComboBox.SelectedItem != null;
+    
+            if (SelectDatabaseButton != null) 
+                SelectDatabaseButton.IsEnabled = isSelected;
+        
+            if (DeleteDatabaseButton != null) 
+                DeleteDatabaseButton.IsEnabled = isSelected;
+        }
+
+// НОВЫЙ МЕТОД: Обработка удаления
+        private void DeleteDatabase_Click(object sender, RoutedEventArgs e)
+        {
+            if (DatabaseComboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                string dbName = selectedItem.Content.ToString();
+
+                // Защитный вопрос
+                var result = MessageBox.Show(
+                    $"Вы уверены, что хотите безвозвратно удалить базу данных «{dbName}»?",
+                    "Удаление базы данных",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    // Удаляем итем из UI
+                    DatabaseComboBox.Items.Remove(selectedItem);
+            
+                    // Сбрасываем выбор
+                    DatabaseComboBox.SelectedItem = null;
+            
+                    MessageBox.Show($"База данных «{dbName}» успешно удалена.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // Если список баз опустел, можно автоматически вернуть пользователя назад
+                    if (DatabaseComboBox.Items.Count == 0)
+                    {
+                        MessageBox.Show("Список баз данных пуст. Создайте новую базу.", "Внимание", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                        Back_Click(sender, e);
+                    }
+                }
+            }
         }
 
         private void SelectDatabase_Click(object sender, RoutedEventArgs e)

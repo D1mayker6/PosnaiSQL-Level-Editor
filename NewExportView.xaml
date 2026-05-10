@@ -56,7 +56,7 @@
     </UserControl.Triggers>
 
     <Grid>
-        <!-- MainBorder теперь VerticalAlignment="Center" и без фиксированной высоты (Auto) -->
+        <!-- Блок адаптируется по высоте контента -->
         <Border x:Name="MainBorder" CornerRadius="20" Background="#E8FFFFFF" 
                 Margin="30" Width="800" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Border.Effect>
@@ -72,12 +72,12 @@
 
                 <!-- 1. ЗАГОЛОВОК -->
                 <StackPanel Grid.Row="0" Margin="30,25,30,10">
-                    <TextBlock Text="Экспорт вариантов" FontSize="28" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Экспорт вариантов" FontSize="28" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#1a1a1a"/>
                     <TextBlock Text="Массовая выгрузка созданных задач" FontSize="13" Foreground="#666666" HorizontalAlignment="Center"/>
                 </StackPanel>
 
                 <!-- 2. КОНТЕНТ -->
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" MaxHeight="450">
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" MaxHeight="480">
                     <StackPanel Margin="40,5,40,20">
                         
                         <!-- ВЫБОР -->
@@ -107,37 +107,131 @@
                         </Border>
                         <TextBlock x:Name="SelectedCountText" Text="Выбрано: 0" FontSize="12" FontWeight="SemiBold" Foreground="#2196F3" Margin="5,5,0,20"/>
 
-                        <!-- ФОРМАТ -->
-                        <TextBlock Text="2. Выберите формат" FontSize="15" FontWeight="Bold" Margin="0,0,0,8" Foreground="#2196F3"/>
-                        <UniformGrid Columns="2" Height="90" Margin="0,0,0,20">
-                            <Border x:Name="CardJson" CornerRadius="12" Background="White" BorderThickness="2" BorderBrush="#E0E0E0" Cursor="Hand" MouseLeftButtonDown="CardJson_Click" Margin="0,0,8,0">
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <TextBlock Text="{}{ }" FontSize="26" FontWeight="Bold" Foreground="#E65100" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                                    <TextBlock Text="JSON" FontSize="17" FontWeight="Bold" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Border>
-                            <Border x:Name="CardExcel" CornerRadius="12" Background="White" BorderThickness="2" BorderBrush="#E0E0E0" Cursor="Hand" MouseLeftButtonDown="CardExcel_Click" Margin="8,0,0,0">
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <TextBlock Text="📊" FontSize="26" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                                    <TextBlock Text="EXCEL" FontSize="17" FontWeight="Bold" Foreground="#2E7D32" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Border>
-                        </UniformGrid>
+                        <!-- ФОРМАТ (КРУПНЫЕ КАРТОЧКИ) -->
+<!-- ФОРМАТ (КАК В ВЫБОРЕ УРОВНЯ) -->
+<TextBlock Text="2. Выберите формат"
+           FontSize="16"
+           FontWeight="Bold"
+           Margin="0,0,0,15"
+           Foreground="#2196F3"/>
+
+<Grid HorizontalAlignment="Center" Margin="0,0,0,25">
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="20"/>
+        <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+
+    <!-- JSON -->
+    <Border x:Name="CardJson"
+            Grid.Column="0"
+            CornerRadius="15"
+            Background="White"
+            BorderThickness="2"
+            BorderBrush="#E0E0E0"
+            Cursor="Hand"
+            MouseLeftButtonDown="CardJson_Click"
+            MinWidth="280"
+            MaxWidth="320">
+
+        <Border.Effect>
+            <DropShadowEffect ShadowDepth="2"
+                              Color="#000000"
+                              Opacity="0.08"
+                              BlurRadius="6"/>
+        </Border.Effect>
+
+        <StackPanel Margin="20">
+            <Border Width="80"
+                    Height="80"
+                    Background="#FFF3E0"
+                    CornerRadius="40"
+                    Margin="0,5,0,15"
+                    HorizontalAlignment="Center">
+                <TextBlock Text="{}{ }"
+                           FontSize="30"
+                           FontWeight="Bold"
+                           Foreground="#E65100"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+            </Border>
+
+            <TextBlock Text="Формат JSON"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       Foreground="#E65100"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,8"/>
+
+            <TextBlock Text="Для связи с игровым клиентом"
+                       FontSize="11"
+                       Foreground="#777777"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"/>
+        </StackPanel>
+    </Border>
+
+    <!-- EXCEL -->
+    <Border x:Name="CardExcel"
+            Grid.Column="2"
+            CornerRadius="15"
+            Background="White"
+            BorderThickness="2"
+            BorderBrush="#E0E0E0"
+            Cursor="Hand"
+            MouseLeftButtonDown="CardExcel_Click"
+            MinWidth="280"
+            MaxWidth="320">
+
+        <Border.Effect>
+            <DropShadowEffect ShadowDepth="2"
+                              Color="#000000"
+                              Opacity="0.08"
+                              BlurRadius="6"/>
+        </Border.Effect>
+
+        <StackPanel Margin="20">
+            <Border Width="80"
+                    Height="80"
+                    Background="#E8F5E9"
+                    CornerRadius="40"
+                    Margin="0,5,0,15"
+                    HorizontalAlignment="Center">
+                <TextBlock Text="📊"
+                           FontSize="30"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+            </Border>
+
+            <TextBlock Text="Формат Excel"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       Foreground="#2E7D32"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,8"/>
+
+            <TextBlock Text="Для учета и анализа"
+                       FontSize="11"
+                       Foreground="#777777"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"/>
+        </StackPanel>
+    </Border>
+</Grid>
 
                         <!-- ПАПКА -->
                         <TextBlock Text="3. Папка сохранения" FontSize="15" FontWeight="Bold" Margin="0,0,0,8" Foreground="#2196F3"/>
                         <Grid Height="55">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/> <!-- Автоматическая ширина под кнопку -->
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <Border BorderBrush="#E0E0E0" BorderThickness="2" CornerRadius="10" Background="#F9F9F9">
                                 <TextBox x:Name="PathTextBox" IsReadOnly="True" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center" Padding="15,0" FontSize="13"/>
                             </Border>
-                            <!-- Кнопка теперь сама берет сколько ей нужно места -->
                             <Button Grid.Column="1" Content="📁 Обзор" Click="Browse_Click" 
                                     Style="{StaticResource SecondaryButtonStyle}" 
-                                    Height="55" Margin="15,0,0,0" MinWidth="140" Padding="10,0"/>
+                                    Height="55" Margin="15,0,0,0" MinWidth="110" Padding="15,0"/>
                         </Grid>
                     </StackPanel>
                 </ScrollViewer>
@@ -150,8 +244,8 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Button Content="← Назад" Style="{StaticResource SecondaryButtonStyle}" Click="Back_Click" Width="150" Height="55"/>
-                        <Button Grid.Column="2" x:Name="ExportButton" Content="📩 Начать экспорт" Style="{StaticResource PrimaryButtonStyle}" IsEnabled="False" Click="Export_Click" Width="280" Height="55"/>
+                        <Button Content="← Назад" Style="{StaticResource SecondaryButtonStyle}" Click="Back_Click" MinWidth="140" Height="50" Padding="15,0"/>
+                        <Button Grid.Column="2" x:Name="ExportButton" Content="📩 Начать экспорт" Style="{StaticResource PrimaryButtonStyle}" IsEnabled="False" Click="Export_Click" MinWidth="260" Height="50" Padding="15,0"/>
                     </Grid>
                 </Border>
             </Grid>

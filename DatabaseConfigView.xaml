@@ -353,12 +353,33 @@
                     </ComboBox>
 
                     <!-- КНОПКА ВЫБРАТЬ -->
-                    <Button Content="Выбрать"
-                           Height="50"
-                           Style="{StaticResource PrimaryButtonStyle}"
-                           Click="SelectDatabase_Click"
-                           x:Name="SelectDatabaseButton"
-                           IsEnabled="False"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Кнопка Удалить (Вторичный стиль с красным акцентом) -->
+                        <Button x:Name="DeleteDatabaseButton"
+                                Grid.Column="0"
+                                Content="🗑  Удалить"
+                                Height="50"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Foreground="#E53935"
+                                BorderBrush="#E53935"
+                                IsEnabled="False"
+                                Click="DeleteDatabase_Click"/>
+
+                        <!-- Кнопка Выбрать -->
+                        <Button x:Name="SelectDatabaseButton"
+                                Grid.Column="2"
+                                Content="Выбрать"
+                                Height="50"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                IsEnabled="False"
+                                Click="SelectDatabase_Click"/>
+                    </Grid>
                 </StackPanel>
             </Border>
         </Grid>

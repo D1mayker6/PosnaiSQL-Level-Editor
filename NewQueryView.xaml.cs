@@ -30,10 +30,36 @@ namespace PosnaiSQLauncher
 
         private void QueriesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (QueriesComboBox.SelectedIndex > 0)
+            bool hasRealSelection = QueriesComboBox.SelectedIndex > 0;
+
+            DeleteQueryButton.IsEnabled = hasRealSelection;
+
+            if (hasRealSelection)
             {
-                // Заглушка логики загрузки
                 QueryNameTextBox.Text = (QueriesComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+            }
+        }
+        
+        private void DeleteQuery_Click(object sender, RoutedEventArgs e)
+        {
+            if (QueriesComboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                var result = MessageBox.Show(
+                    $"Удалить запрос:\n\n{selectedItem.Content} ?",
+                    "Подтверждение удаления",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    QueriesComboBox.Items.Remove(selectedItem);
+                    QueriesComboBox.SelectedIndex = 0;
+                    DeleteQueryButton.IsEnabled = false;
+
+                    QueryNameTextBox.Clear();
+                    QueryConditionTextBox.Clear();
+                    QueryCodeTextBox.Clear();
+                }
             }
         }
 

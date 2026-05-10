@@ -1,0 +1,217 @@
+<UserControl x:Class="PosnaiSQLauncher.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Opacity="0">
+
+    <UserControl.Resources>
+        <!-- Стиль для TextBox -->
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Padding" Value="15,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border"
+                                Background="White"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                        Margin="{TemplateBinding Padding}"
+                                        VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#2196F3"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#2196F3"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для PasswordBox -->
+        <Style x:Key="ModernPasswordBox" TargetType="PasswordBox">
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Padding" Value="15,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border x:Name="border"
+                                Background="White"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                        Margin="{TemplateBinding Padding}"
+                                        VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#2196F3"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#2196F3"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль кнопки показать/скрыть пароль -->
+        <Style x:Key="TogglePasswordButtonStyle" TargetType="ToggleButton">
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="8">
+                            <TextBlock x:Name="EyeIcon" 
+                                     Text="👁" 
+                                     HorizontalAlignment="Center" 
+                                     VerticalAlignment="Center"
+                                     FontSize="{TemplateBinding FontSize}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="EyeIcon" Property="Text" Value="👁"/>
+                                <Setter TargetName="EyeIcon" Property="Foreground" Value="#2196F3"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter TargetName="EyeIcon" Property="Text" Value="👁"/>
+                                <Setter TargetName="EyeIcon" Property="Foreground" Value="#999999"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#10000000"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity" 
+                                   From="0" To="1" Duration="0:0:0.4"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <Grid Background="#B0000000">
+        <!-- Центральная карточка входа -->
+        <Border Background="White" 
+                CornerRadius="20" 
+                Width="450" 
+                VerticalAlignment="Center" 
+                HorizontalAlignment="Center"
+                Padding="50,40">
+            <Border.Effect>
+                <DropShadowEffect ShadowDepth="10" 
+                                Color="Black" 
+                                Opacity="0.3" 
+                                BlurRadius="20"/>
+            </Border.Effect>
+
+            <StackPanel>
+                <!-- Иконка замка -->
+                <Border Width="80" Height="80" 
+                       Background="#E3F2FD" 
+                       CornerRadius="40" 
+                       Margin="0,0,0,25">
+                    <TextBlock Text="🔐" 
+                             FontSize="40" 
+                             HorizontalAlignment="Center" 
+                             VerticalAlignment="Center"/>
+                </Border>
+
+                <!-- Заголовок -->
+                <TextBlock Text="Вход в редактор уровней" 
+                          FontSize="26" 
+                          FontWeight="Bold" 
+                          HorizontalAlignment="Center" 
+                          Margin="0,0,0,10"/>
+
+                <TextBlock Text="Пройдите аутентификацию" 
+                          FontSize="14" 
+                          Foreground="#666666" 
+                          HorizontalAlignment="Center" 
+                          Margin="0,0,0,35"/>
+
+                <!-- Поле логина -->
+                <TextBlock Text="Логин" 
+                          FontSize="14" 
+                          FontWeight="SemiBold" 
+                          Margin="0,0,0,8"/>
+                <TextBox x:Name="LoginTextBox"
+                        Style="{StaticResource ModernTextBox}"
+                        Margin="0,0,0,20"/>
+
+                <!-- Поле пароля -->
+                <TextBlock Text="Пароль" 
+                          FontSize="14" 
+                          FontWeight="SemiBold" 
+                          Margin="0,0,0,8"/>
+                
+                <Grid Margin="0,0,0,30">
+                    <!-- PasswordBox (скрытый пароль) -->
+                    <PasswordBox x:Name="PasswordBox"
+                                Style="{StaticResource ModernPasswordBox}"
+                                PasswordChanged="PasswordBox_PasswordChanged"/>
+                    
+                    <!-- TextBox (видимый пароль) -->
+                    <TextBox x:Name="PasswordTextBox"
+                            Style="{StaticResource ModernTextBox}"
+                            Visibility="Collapsed"
+                            TextChanged="PasswordTextBox_TextChanged"/>
+                    
+                    <!-- Кнопка показать/скрыть пароль -->
+                    <ToggleButton x:Name="ShowPasswordToggle"
+                                 Style="{StaticResource TogglePasswordButtonStyle}"
+                                 HorizontalAlignment="Right"
+                                 Margin="0,0,5,0"
+                                 Checked="ShowPasswordToggle_Checked"
+                                 Unchecked="ShowPasswordToggle_Unchecked"/>
+                </Grid>
+
+                <!-- Сообщение об ошибке -->
+                <TextBlock x:Name="ErrorMessage"
+                          Text="Неверный логин или пароль"
+                          Foreground="#E53935"
+                          FontSize="13"
+                          HorizontalAlignment="Center"
+                          Margin="0,0,0,15"
+                          Visibility="Collapsed"/>
+
+                <!-- Кнопка входа -->
+                <Button Content="Войти" 
+                       Style="{StaticResource PrimaryButtonStyle}"
+                       Click="Login_Click"
+                       Margin="0,0,0,15"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

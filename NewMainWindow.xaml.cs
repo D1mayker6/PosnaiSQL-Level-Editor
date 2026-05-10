@@ -5,15 +5,30 @@ namespace PosnaiSQLauncher
 {
     public partial class NewMainWindow : Window
     {
+        
         public NewMainWindow()
         {
             InitializeComponent();
-            ShowMainMenu();
+            ShowLoginScreen();
+
+        }
+        
+        private void ShowLoginScreen()
+        {
+            var loginView = new LoginView();
+            loginView.LoginSuccessful += (s, e) =>
+            { 
+                ShowMainMenu();
+            };
+            MainContent.Content = loginView;
+        
+            SettingsButton.Visibility = Visibility.Collapsed;
         }
 
         public void ShowMainMenu()
         {
             MainContent.Content = new NewMainMenuView(this);
+            SettingsButton.Visibility = Visibility.Visible;
         }
 
         public void ShowCreateOption()
@@ -44,6 +59,12 @@ namespace PosnaiSQLauncher
         public void ShowSaveView() 
         { 
             MainContent.Content = new NewSaveView(this); 
+        }
+        
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            MainContent.Content = new SettingsView(this);
+            MessageBox.Show("Открытие настроек");
         }
 
         public void ShowDatabaseConfig(string option)

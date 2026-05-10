@@ -136,26 +136,74 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="15"/>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="Auto"/>  <!-- плюс -->
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="Auto"/>  <!-- корзина -->
                                 </Grid.ColumnDefinitions>
-                                <ComboBox x:Name="QueriesComboBox" Grid.Column="0" Height="45" Style="{StaticResource StyledComboBox}" SelectionChanged="QueriesComboBox_SelectionChanged">
+
+                                <!-- ComboBox -->
+                                <ComboBox x:Name="QueriesComboBox"
+                                          Grid.Column="0"
+                                          Height="45"
+                                          Style="{StaticResource StyledComboBox}"
+                                          SelectionChanged="QueriesComboBox_SelectionChanged">
                                     <ComboBoxItem Content="Новый запрос (пустой)"/>
                                 </ComboBox>
-                                <Button Grid.Column="2" Click="NewQuery_Click" Cursor="Hand" VerticalAlignment="Center">
+
+                                <!-- Кнопка плюс -->
+                                <Button Grid.Column="2"
+                                        Click="NewQuery_Click"
+                                        Cursor="Hand"
+                                        VerticalAlignment="Center">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <Border Background="Transparent">
-                                                <TextBlock x:Name="BtnTxt" Text="➕" FontSize="26" Foreground="#2196F3"/>
+                                                <TextBlock x:Name="BtnTxt"
+                                                           Text="➕"
+                                                           FontSize="26"
+                                                           Foreground="#2196F3"/>
                                             </Border>
                                             <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="BtnTxt" Property="Foreground" Value="#1976D2"/></Trigger>
-                                                <Trigger Property="IsPressed" Value="True"><Setter TargetName="BtnTxt" Property="Opacity" Value="0.7"/></Trigger>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="BtnTxt" Property="Foreground" Value="#1976D2"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter TargetName="BtnTxt" Property="Opacity" Value="0.7"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+
+                                <!-- Кнопка корзина -->
+                                <Button Grid.Column="4"
+                                        x:Name="DeleteQueryButton"
+                                        Click="DeleteQuery_Click"
+                                        Cursor="Hand"
+                                        VerticalAlignment="Center"
+                                        IsEnabled="False">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="Transparent">
+                                                <TextBlock x:Name="TrashTxt"
+                                                           Text="🗑"
+                                                           FontSize="24"
+                                                           Foreground="#E53935"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="TrashTxt" Property="Foreground" Value="#C62828"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter TargetName="TrashTxt" Property="Opacity" Value="0.7"/>
+                                                </Trigger>
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>
                                     </Button.Template>
                                 </Button>
                             </Grid>
+                            
                         </StackPanel>
 
                         <TextBlock Text="Имя запроса" FontSize="14" Foreground="#1a1a1a" Margin="0,0,0,8" FontWeight="SemiBold"/>

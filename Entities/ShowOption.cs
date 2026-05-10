@@ -26,8 +26,7 @@ public partial class ShowOption
     
     [NotMapped]
     public string DecryptedQueryString => CryptoManager.SafeDecrypt(QueryString);
-
-    public int Difficulty { get; set; }
+    
 
     public int TimeLimit { get; set; }
 }
