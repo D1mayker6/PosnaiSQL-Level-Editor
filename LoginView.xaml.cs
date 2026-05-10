@@ -106,7 +106,7 @@ namespace PosnaiSQLauncher
 
         private void PasswordTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            // Скрываем ошибку при вводе нового текста
+            
             if (ErrorMessage.Visibility == Visibility.Visible)
                 ErrorMessage.Visibility = Visibility.Collapsed;
         }

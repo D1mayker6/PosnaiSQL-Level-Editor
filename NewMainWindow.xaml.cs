@@ -34,11 +34,13 @@ namespace PosnaiSQLauncher
         public void ShowCreateOption()
         {
             MainContent.Content = new NewCreateOptionView(this);
+            SettingsButton.Visibility = Visibility.Collapsed;
         }
 
         public void ShowEditOption()
         {
             MainContent.Content = new NewEditOptionView(this);
+            SettingsButton.Visibility = Visibility.Collapsed;
         }
         
         public void ShowQueryView()
@@ -54,6 +56,7 @@ namespace PosnaiSQLauncher
         public void ShowExportView() 
         { 
             MainContent.Content = new NewExportView(this); 
+            SettingsButton.Visibility = Visibility.Collapsed;
         }
         
         public void ShowSaveView() 
@@ -64,7 +67,7 @@ namespace PosnaiSQLauncher
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
             MainContent.Content = new SettingsView(this);
-            MessageBox.Show("Открытие настроек");
+            SettingsButton.Visibility = Visibility.Collapsed;
         }
 
         public void ShowDatabaseConfig(string option)
