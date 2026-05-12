@@ -15,5 +15,5 @@ public partial class Option
 
     public virtual Location? IdLocationNavigation { get; set; }
 
-    public virtual Query IdQueryNavigation { get; set; } = null!;
+    public virtual Query? IdQueryNavigation { get; set; }
 }
