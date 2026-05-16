@@ -1,4 +1,3 @@
-// NewQueryView.xaml.cs
 using System;
 using System.Linq;
 using System.Windows;
@@ -7,6 +6,8 @@ using System.Windows.Media.Animation;
 using PosnaiSQLauncher.Context;
 using PosnaiSQLauncher.Services;
 using PosnaiSQLauncher.Entities;
+using PosnaiSQLauncher.Models;
+using PosnaiSQLauncher.Helpers;
 
 namespace PosnaiSQLauncher
 {
@@ -14,61 +15,206 @@ namespace PosnaiSQLauncher
     {
         private MainWindow _parent;
         private int _databaseId;
+        private string _mode;
         
         private readonly QueryService _queryService;
         private readonly DatabaseService _databaseService;
         private Query _currentQuery;
 
-        public QueryView(MainWindow parent, int databaseId)
+        public QueryView(MainWindow parent, int databaseId, string mode = "new")
         {
             InitializeComponent();
             _parent = parent;
             _databaseId = databaseId;
+            _mode = mode;
 
-            // Инициализируем сервисы
             var context = new AppDbContext();
             _queryService = new QueryService(context);
             _databaseService = new DatabaseService(context);
 
-            // Загружаем запросы для текущей БД
-            LoadQueries();
+            if (_mode == "existing")
+            {
+                this.Loaded += (s, e) => ShowQuerySelector();
+            }
+            else
+            {
+                QuerySelectorSection.Visibility = Visibility.Collapsed;
+                SubtitleText.Text = "Создайте новый SQL запрос";
+                ClearFields();
+            }
         }
 
-        /// <summary>
-        /// Загружает список запросов для выбранной БД
-        /// </summary>
-        private async void LoadQueries()
+        private async void LoadQueriesAsync()
         {
             try
             {
-                QueriesComboBox.Items.Clear();
-                
-                // Добавляем "Новый запрос"
-                QueriesComboBox.Items.Add(new ComboBoxItem 
-                { 
-                    Content = "Новый запрос (пустой)",
-                    Tag = 0
+                // ← ПОКАЗЫВАЕМ загрузку
+                this.Dispatcher.Invoke(() =>
+                {
+                    var loading = new LoadingOverlay("Загрузка запросов...");
+                    LoadingOverlayContainer.Children.Clear();
+                    LoadingOverlayContainer.Children.Add(loading);
+                    LoadingOverlayContainer.Visibility = Visibility.Visible;
                 });
 
-                // Загружаем существующие запросы
                 var queries = await _queryService.GetByDatabaseIdAsync(_databaseId);
-                
-                foreach (var query in queries)
+        
+                this.Dispatcher.Invoke(() =>
                 {
-                    QueriesComboBox.Items.Add(new ComboBoxItem 
-                    { 
-                        Content = query.Name,
-                        Tag = query.IdQuery
-                    });
-                }
+                    // ← СКРЫВАЕМ загрузку
+                    LoadingOverlayContainer.Visibility = Visibility.Collapsed;
 
-                // Выбираем первый элемент по умолчанию
-                QueriesComboBox.SelectedIndex = 0;
+                    if (queries == null || queries.Count == 0)
+                    {
+                        HideQuerySelector();
+                        MessageBoxHelper.ShowInfo(
+                            "В этой базе данных нет сохраненных запросов.\n\n" +
+                            "Создайте новый запрос.",
+                            "Запросы не найдены"
+                        );
+                        return;
+                    }
+
+                    QuerySelectorComboBox.Items.Clear();
+            
+                    foreach (var query in queries)
+                    {
+                        QuerySelectorComboBox.Items.Add(new QueryComboItem 
+                        { 
+                            Id = query.IdQuery,
+                            Name = query.Name
+                        });
+                    }
+
+                    if (QuerySelectorComboBox.Items.Count > 0)
+                        QuerySelectorComboBox.SelectedIndex = 0;
+                });
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки запросов: {ex.Message}", 
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                this.Dispatcher.Invoke(() =>
+                {
+                    LoadingOverlayContainer.Visibility = Visibility.Collapsed;
+                    HideQuerySelector();
+                    MessageBoxHelper.ShowError(
+                        $"Ошибка загрузки запросов: {ex.Message}",
+                        "Ошибка при загрузке"
+                    );
+                });
+            }
+        }
+        private void ShowQuerySelector()
+        {
+            QuerySelectorOverlay.Visibility = Visibility.Visible;
+
+            System.Threading.Tasks.Task.Run(() => LoadQueriesAsync());
+
+            var fadeIn = new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromMilliseconds(500),
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+            };
+
+            QuerySelectorPanel.BeginAnimation(OpacityProperty, fadeIn);
+        }
+
+        private void CloseQuerySelector_Click(object sender, RoutedEventArgs e)
+        {
+            HideQuerySelector();
+        }
+
+        private void HideQuerySelector()
+        {
+            var fadeOut = new DoubleAnimation
+            {
+                From = 1,
+                To = 0,
+                Duration = TimeSpan.FromMilliseconds(500),
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn }
+            };
+
+            fadeOut.Completed += (s, args) =>
+            {
+                QuerySelectorOverlay.Visibility = Visibility.Collapsed;
+            };
+
+            QuerySelectorPanel.BeginAnimation(OpacityProperty, fadeOut);
+        }
+
+        private void QuerySelectorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            bool isSelected = QuerySelectorComboBox.SelectedItem != null;
+            SelectQueryButton.IsEnabled = isSelected;
+            DeleteQueryButton.IsEnabled = isSelected;
+        }
+
+        private async void SelectQuery_Click(object sender, RoutedEventArgs e)
+        {
+            if (QuerySelectorComboBox.SelectedItem is not QueryComboItem selectedItem)
+            {
+                MessageBoxHelper.ShowWarning("Выберите запрос из списка");
+                return;
+            }
+
+            try
+            {
+                _currentQuery = await _queryService.GetByIdAsync(selectedItem.Id);
+                
+                if (_currentQuery == null)
+                {
+                    MessageBoxHelper.ShowError(
+                        $"Запрос «{selectedItem.Name}» не найден.\n\n" +
+                        $"Он был удален из системы. Обновляю список...",
+                        "Запрос не найден"
+                    );
+                    
+                    System.Threading.Tasks.Task.Run(() => LoadQueriesAsync());
+                    return;
+                }
+                
+                QueryNameTextBox.Text = _currentQuery.Name;
+                QueryConditionTextBox.Text = _currentQuery.Condition ?? "";
+                QueryCodeTextBox.Text = _currentQuery.QueryString ?? "";
+                SubtitleText.Text = "Отредактируйте выбранный запрос";
+
+                _parent.CurrentOption.QueryId = _currentQuery.IdQuery;
+                _parent.CurrentOption.QueryName = _currentQuery.Name;
+                _parent.CurrentOption.QueryCondition = _currentQuery.Condition;
+                _parent.CurrentOption.QueryString = _currentQuery.QueryString;
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError(
+                    $"Ошибка загрузки запроса: {ex.Message}",
+                    "Ошибка при загрузке"
+                );
+                return;
+            }
+
+            HideQuerySelector();
+        }
+
+        private async void DeleteQuery_Click(object sender, RoutedEventArgs e)
+        {
+            if (QuerySelectorComboBox.SelectedItem is not QueryComboItem selectedItem)
+                return;
+
+            var result = MessageBoxHelper.ShowDeleteConfirmation(selectedItem.Name);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    await _queryService.DeleteAsync(selectedItem.Id);
+                    System.Threading.Tasks.Task.Run(() => LoadQueriesAsync());
+                    MessageBoxHelper.ShowSuccess("Запрос успешно удален");
+                }
+                catch (Exception ex)
+                {
+                    MessageBoxHelper.ShowError($"Ошибка удаления: {ex.Message}");
+                }
             }
         }
 
@@ -84,120 +230,29 @@ namespace PosnaiSQLauncher
             }
         }
 
-        /// <summary>
-        /// Обработка выбора запроса из ComboBox
-        /// </summary>
-        private async void QueriesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (QueriesComboBox.SelectedItem is not ComboBoxItem selectedItem)
-                return;
-
-            int queryId = (int)selectedItem.Tag;
-            bool hasRealSelection = queryId > 0;
-
-            DeleteQueryButton.IsEnabled = hasRealSelection;
-
-            if (hasRealSelection)
-            {
-                try
-                {
-                    _currentQuery = await _queryService.GetByIdAsync(queryId);
-                    
-                    // Заполняем поля
-                    QueryNameTextBox.Text = _currentQuery.Name;
-                    QueryConditionTextBox.Text = _currentQuery.Condition ?? "";
-                    QueryCodeTextBox.Text = _currentQuery.QueryString ?? "";
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Ошибка загрузки запроса: {ex.Message}", 
-                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-            else
-            {
-                _currentQuery = null;
-                ClearFields();
-            }
-        }
-
-        /// <summary>
-        /// Очистка всех полей
-        /// </summary>
         private void ClearFields()
         {
             QueryNameTextBox.Clear();
             QueryConditionTextBox.Clear();
             QueryCodeTextBox.Clear();
-        }
-
-        /// <summary>
-        /// Удаление запроса
-        /// </summary>
-        private async void DeleteQuery_Click(object sender, RoutedEventArgs e)
-        {
-            if (QueriesComboBox.SelectedItem is not ComboBoxItem selectedItem || _currentQuery == null)
-                return;
-
-            var result = MessageBox.Show(
-                $"Удалить запрос:\n\n{selectedItem.Content} ?",
-                "Подтверждение удаления",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
-
-            if (result == MessageBoxResult.Yes)
-            {
-                try
-                {
-                    await _queryService.DeleteAsync(_currentQuery.IdQuery);
-                    
-                    QueriesComboBox.Items.Remove(selectedItem);
-                    QueriesComboBox.SelectedIndex = 0;
-                    DeleteQueryButton.IsEnabled = false;
-
-                    ClearFields();
-
-                    MessageBox.Show("Запрос успешно удален", 
-                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Ошибка удаления: {ex.Message}", 
-                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Создание нового пустого запроса
-        /// </summary>
-        private void NewQuery_Click(object sender, RoutedEventArgs e)
-        {
-            QueriesComboBox.SelectedIndex = 0;
-            ClearFields();
-            QueryNameTextBox.Focus();
+            _currentQuery = null;
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            FadeOutAndSwitch(() => _parent?.ShowDatabaseConfig("existing"));
+            FadeOutAndSwitch(() => _parent?.ShowQueryModeView(_databaseId));
         }
 
-        /// <summary>
-        /// Переход на следующий шаг (сохраняем запрос)
-        /// </summary>
         private async void Next_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(QueryNameTextBox.Text))
             {
-                MessageBox.Show("Введите имя запроса!", 
-                    "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBoxHelper.ShowWarning("Введите имя запроса!");
                 return;
             }
 
             try
             {
-                // Если создаем новый запрос
                 if (_currentQuery == null)
                 {
                     _currentQuery = await _queryService.CreateAsync(
@@ -207,7 +262,6 @@ namespace PosnaiSQLauncher
                         QueryCodeTextBox.Text.Trim()
                     );
                 }
-                // Если редактируем существующий
                 else
                 {
                     _currentQuery = await _queryService.UpdateAsync(
@@ -218,19 +272,28 @@ namespace PosnaiSQLauncher
                     );
                 }
 
-                // Переход к выбору уровня (передаем ID запроса)
+                _parent.CurrentOption.QueryId = _currentQuery.IdQuery;
+                _parent.CurrentOption.QueryName = _currentQuery.Name;
+                _parent.CurrentOption.QueryCondition = _currentQuery.Condition;
+                _parent.CurrentOption.QueryString = _currentQuery.QueryString;
+
                 FadeOutAndSwitch(() => _parent?.ShowLevelView(_currentQuery.IdQuery));
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка сохранения: {ex.Message}", 
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxHelper.ShowError($"Ошибка сохранения: {ex.Message}");
             }
         }
 
         private void FadeOutAndSwitch(Action switchAction)
         {
-            var fadeOut = new DoubleAnimation { From = 1, To = 0, Duration = TimeSpan.FromMilliseconds(300) };
+            var fadeOut = new DoubleAnimation 
+            { 
+                From = 1, 
+                To = 0, 
+                Duration = TimeSpan.FromMilliseconds(300) 
+            };
+            
             var storyboard = new Storyboard();
             Storyboard.SetTargetProperty(fadeOut, new PropertyPath("Opacity"));
             storyboard.Children.Add(fadeOut);

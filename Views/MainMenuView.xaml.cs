@@ -15,7 +15,7 @@ namespace PosnaiSQLauncher
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            _parent.ShowCreateOption();
+            _parent.ShowDatabaseModeView();
         }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)

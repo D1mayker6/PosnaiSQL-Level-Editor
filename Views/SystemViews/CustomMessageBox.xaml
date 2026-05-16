@@ -1,0 +1,87 @@
+<Window x:Class="PosnaiSQLauncher.CustomMessageBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Уведомление"
+        Width="450"
+        Height="Auto"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Topmost="True">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="0"/>
+    </WindowChrome.WindowChrome>
+
+    <Grid>
+        <!-- ← УБРАЛИ затемняющий Rectangle -->
+
+        <!-- ЦЕНТРАЛЬНАЯ КАРТОЧКА -->
+        <Border CornerRadius="20"
+                Background="White"
+                Width="400"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Padding="30">
+            <Border.Effect>
+                <DropShadowEffect ShadowDepth="10" Color="Black" Opacity="0.3" BlurRadius="20"/>
+            </Border.Effect>
+
+            <StackPanel>
+                <!-- ИКОНКА И ТИП -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
+                    <TextBlock x:Name="IconBlock"
+                              FontSize="32"
+                              Margin="0,0,12,0"
+                              VerticalAlignment="Center"/>
+                    
+                    <TextBlock x:Name="TitleBlock"
+                              FontSize="18"
+                              FontWeight="Bold"
+                              Foreground="#1a1a1a"
+                              VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- СООБЩЕНИЕ -->
+                <TextBlock x:Name="MessageBlock"
+                          FontSize="14"
+                          Foreground="#555555"
+                          TextWrapping="Wrap"
+                          LineHeight="20"
+                          Margin="0,0,0,25"
+                          TextAlignment="Center"/>
+
+                <!-- КНОПКИ -->
+                <Grid x:Name="ButtonPanel" Margin="0,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="15"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Кнопка 1 (ОК / Отмена / Нет) -->
+                    <Button x:Name="Button1"
+                            Grid.Column="0"
+                            Content="ОК"
+                            Height="50"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            HorizontalAlignment="Stretch"
+                            Click="Button1_Click"/>
+
+                    <!-- Кнопка 2 (Да / Удалить) - опциональная -->
+                    <Button x:Name="Button2"
+                            Grid.Column="2"
+                            Content="Да"
+                            Height="50"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            HorizontalAlignment="Stretch"
+                            Click="Button2_Click"
+                            Visibility="Collapsed"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

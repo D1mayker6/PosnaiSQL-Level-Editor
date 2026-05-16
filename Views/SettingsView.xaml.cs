@@ -1,9 +1,11 @@
+// SettingsView.cs
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using Newtonsoft.Json.Linq;
+using PosnaiSQLauncher.Helpers;
 
 namespace PosnaiSQLauncher
 {
@@ -11,6 +13,7 @@ namespace PosnaiSQLauncher
     {
         private MainWindow _parent;
         private const string SETTINGS_FILE = "settings.json";
+        private const string CONFIG_FILE = "databin.json";
 
         public SettingsView(MainWindow parent)
         {
@@ -32,8 +35,7 @@ namespace PosnaiSQLauncher
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки настроек: {ex.Message}", 
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxHelper.ShowError($"Ошибка загрузки настроек: {ex.Message}");
             }
         }
 
@@ -50,8 +52,7 @@ namespace PosnaiSQLauncher
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка сохранения настроек: {ex.Message}", 
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxHelper.ShowError($"Ошибка сохранения настроек: {ex.Message}");
             }
         }
 
@@ -63,19 +64,16 @@ namespace PosnaiSQLauncher
                 if (!string.IsNullOrWhiteSpace(url))
                 {
                     Clipboard.SetText(url);
-                    MessageBox.Show("Ссылка скопирована в буфер обмена!", 
-                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBoxHelper.ShowSuccess("Ссылка скопирована в буфер обмена!");
                 }
                 else
                 {
-                    MessageBox.Show("Поле ссылки пустое!", 
-                        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBoxHelper.ShowWarning("Поле ссылки пустое!");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка копирования: {ex.Message}", 
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxHelper.ShowError($"Ошибка копирования: {ex.Message}");
             }
         }
 
@@ -96,35 +94,75 @@ namespace PosnaiSQLauncher
                     }
                     else
                     {
-                        MessageBox.Show("Некорректная ссылка!", 
-                            "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBoxHelper.ShowWarning("Некорректная ссылка!");
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Поле ссылки пустое!", 
-                        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBoxHelper.ShowWarning("Поле ссылки пустое!");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка открытия ссылки: {ex.Message}", 
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxHelper.ShowError($"Ошибка открытия ссылки: {ex.Message}");
             }
-        }
-
-        private void GenerateTable_Click(object sender, RoutedEventArgs e)
-        {
-            // Здесь будет логика генерации таблицы результатов
-            MessageBox.Show("Функция генерации таблицы будет реализована позже.", 
-                "Генерация таблицы", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             SaveSettings();
-            MessageBox.Show("Настройки успешно сохранены!", 
-                "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBoxHelper.ShowSuccess("Настройки успешно сохранены!");
+        }
+
+        private void ChangePassword_Click(object sender, RoutedEventArgs e)
+        {
+            // Показываем диалог смены пароля
+            var dialog = new ChangePasswordDialog();
+            if (dialog.ShowDialog() == true)
+            {
+                string oldPassword = dialog.OldPassword;
+                string newPassword = dialog.NewPassword;
+
+                if (VerifyAndChangePassword(oldPassword, newPassword))
+                {
+                    MessageBoxHelper.ShowSuccess("Пароль успешно изменён!");
+                    
+                    // Возвращаем пользователя в окно авторизации
+                    _parent.ShowLoginScreen();
+                }
+                else
+                {
+                    MessageBoxHelper.ShowError("Неверный старый пароль!");
+                }
+            }
+        }
+
+        private bool VerifyAndChangePassword(string oldPassword, string newPassword)
+        {
+            try
+            {
+                if (!File.Exists(CONFIG_FILE))
+                    return false;
+
+                string json = File.ReadAllText(CONFIG_FILE);
+                JObject authData = JObject.Parse(json);
+
+                string storedPassword = authData["InfoVault"]?.ToString();
+
+                if (storedPassword == null || !BCrypt.Net.BCrypt.Verify(oldPassword, storedPassword))
+                    return false;
+
+                authData["InfoVault"] = BCrypt.Net.BCrypt.HashPassword(newPassword);
+                
+                File.WriteAllText(CONFIG_FILE, authData.ToString());
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError($"Ошибка изменения пароля: {ex.Message}");
+                return false;
+            }
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)

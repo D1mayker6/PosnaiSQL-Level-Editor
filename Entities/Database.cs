@@ -9,5 +9,7 @@ public partial class Database
 
     public string Name { get; set; } = null!;
 
+    public string? SchemaImage { get; set; }
+
     public virtual ICollection<Query> Queries { get; set; } = new List<Query>();
 }

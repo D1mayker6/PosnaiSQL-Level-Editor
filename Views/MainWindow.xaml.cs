@@ -1,10 +1,20 @@
+// MainWindow.cs
+using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using PosnaiSQLauncher.Context;
+using PosnaiSQLauncher.Models;
+using PosnaiSQLauncher.Services;
+using PosnaiSQLauncher.Helpers;
 
 namespace PosnaiSQLauncher
 {
     public partial class MainWindow : Window
     {
+        public OptionData CurrentOption { get; set; } = new OptionData();
+        private AppDbContext _dbContext;
+        private DataLoadService _dataLoadService;
         
         public MainWindow()
         {
@@ -12,16 +22,56 @@ namespace PosnaiSQLauncher
             ShowLoginScreen();
         }
         
-        private void ShowLoginScreen()
+        public void ShowLoginScreen()
         {
             var loginView = new LoginView();
-            loginView.LoginSuccessful += (s, e) =>
-            { 
-                ShowMainMenu();
-            };
+            loginView.LoginSuccessful += LoginView_LoginSuccessful;
             MainContent.Content = loginView;
-        
             SettingsButton.Visibility = Visibility.Collapsed;
+        }
+
+        private void LoginView_LoginSuccessful(object sender, EventArgs e)
+        {
+            // После успешной авторизации инициализируем БД и загружаем данные
+            InitializeDatabaseAndLoadData();
+        }
+
+        private async void InitializeDatabaseAndLoadData()
+        {
+            try
+            {
+                // Показываем экран загрузки
+                ShowLoadingScreen("Загрузка данных...");
+
+                // Инициализируем контекст БД
+                _dbContext = new AppDbContext();
+                _dataLoadService = new DataLoadService(_dbContext);
+
+                // Загружаем все необходимые данные в фоне
+                await _dataLoadService.LoadAllDataAsync();
+
+                // Скрываем загрузку и показываем меню
+                HideLoadingScreen();
+                ShowMainMenu();
+            }
+            catch (Exception ex)
+            {
+                HideLoadingScreen();
+                MessageBoxHelper.ShowError($"Ошибка загрузки данных: {ex.Message}");
+                ShowLoginScreen();
+            }
+        }
+
+        private void ShowLoadingScreen(string message)
+        {
+            var loadingOverlay = new LoadingOverlay(message);
+            MainContent.Content = loadingOverlay;
+            SettingsButton.Visibility = Visibility.Collapsed;
+        }
+
+        private void HideLoadingScreen()
+        {
+            // Загрузка просто заменяется на следующий контент
         }
 
         public void ShowMainMenu()
@@ -30,9 +80,9 @@ namespace PosnaiSQLauncher
             SettingsButton.Visibility = Visibility.Visible;
         }
 
-        public void ShowCreateOption()
+        public void ShowDatabaseModeView()
         {
-            MainContent.Content = new CreateOptionView(this);
+            MainContent.Content = new DatabaseModeView(this);
             SettingsButton.Visibility = Visibility.Collapsed;
         }
 
@@ -44,12 +94,23 @@ namespace PosnaiSQLauncher
         
         public void ShowDatabaseConfig(string option)
         {
-            MainContent.Content = new DatabaseConfigView(this, option);
+            MainContent.Content = new DatabaseView(this, option);
+        }
+
+        public void ShowQueryModeView(int databaseId)
+        {
+            MainContent.Content = new QueryModeView(this, databaseId);
+            SettingsButton.Visibility = Visibility.Collapsed;
+        }
+
+        public void ShowQueryView(int databaseId, string mode = "new")
+        {
+            MainContent.Content = new QueryView(this, databaseId, mode);
         }
 
         public void ShowQueryView(int databaseId)
         {
-            MainContent.Content = new QueryView(this, databaseId);
+            ShowQueryView(databaseId, "new");
         }
 
         public void ShowQueryView()
@@ -57,14 +118,12 @@ namespace PosnaiSQLauncher
             ShowQueryView(0);
         }
         
-        // ← НОВОЕ: Перегрузка с queryId
         public void ShowLevelView(int queryId)
         {
             MainContent.Content = new LevelView(this, queryId);
             SettingsButton.Visibility = Visibility.Collapsed;
         }
 
-        // Старый метод для совместимости
         public void ShowLevelView() 
         { 
             ShowLevelView(0);
@@ -79,6 +138,7 @@ namespace PosnaiSQLauncher
         public void ShowSaveView() 
         { 
             MainContent.Content = new SaveView(this); 
+            SettingsButton.Visibility = Visibility.Collapsed;
         }
         
         private void Settings_Click(object sender, RoutedEventArgs e)

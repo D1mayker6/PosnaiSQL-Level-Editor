@@ -18,26 +18,57 @@ namespace PosnaiSQLauncher.Services
         }
 
         /// <summary>
-        /// Создать новую базу данных
+        /// Создать новую базу данных с изображением (Base64)
         /// </summary>
-        public async Task<Database> CreateAsync(string name)
+        public async Task<Database> CreateAsync(string name, string imagePath = null)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Имя базы данных не может быть пустым");
 
-            // Проверка на дубликаты
             bool exists = await _context.Databases.AnyAsync(d => d.Name == name);
             if (exists)
                 throw new Exception($"База данных с именем '{name}' уже существует");
 
+            // Конвертируем изображение в Base64
+            string imageBase64 = null;
+            if (!string.IsNullOrEmpty(imagePath))
+            {
+                imageBase64 = ImageService.ImageToBase64(imagePath);
+            }
+
             var database = new Database
             {
-                Name = name.Trim()
+                Name = name.Trim(),
+                SchemaImage = imageBase64
             };
 
             _context.Databases.Add(database);
             await _context.SaveChangesAsync();
 
+            return database;
+        }
+
+        /// <summary>
+        /// Обновить базу данных с новым изображением
+        /// </summary>
+        public async Task<Database> UpdateAsync(int id, string newName, string imagePath = null)
+        {
+            var database = await _context.Databases.FindAsync(id);
+            if (database == null)
+                throw new Exception($"База данных с ID {id} не найдена");
+
+            if (string.IsNullOrWhiteSpace(newName))
+                throw new ArgumentException("Имя базы данных не может быть пустым");
+
+            database.Name = newName.Trim();
+
+            // Если передано новое изображение, конвертируем его
+            if (!string.IsNullOrEmpty(imagePath))
+            {
+                database.SchemaImage = ImageService.ImageToBase64(imagePath);
+            }
+
+            await _context.SaveChangesAsync();
             return database;
         }
 
@@ -67,25 +98,7 @@ namespace PosnaiSQLauncher.Services
         }
 
         /// <summary>
-        /// Обновить название базы данных
-        /// </summary>
-        public async Task<Database> UpdateAsync(int id, string newName)
-        {
-            var database = await _context.Databases.FindAsync(id);
-            if (database == null)
-                throw new Exception($"База данных с ID {id} не найдена");
-
-            if (string.IsNullOrWhiteSpace(newName))
-                throw new ArgumentException("Имя базы данных не может быть пустым");
-
-            database.Name = newName.Trim();
-            await _context.SaveChangesAsync();
-
-            return database;
-        }
-
-        /// <summary>
-        /// Удалить базу данных (с проверкой связей)
+        /// Удалить базу данных
         /// </summary>
         public async Task DeleteAsync(int id)
         {
@@ -96,7 +109,6 @@ namespace PosnaiSQLauncher.Services
             if (database == null)
                 throw new Exception($"База данных с ID {id} не найдена");
 
-            // Проверяем наличие связанных запросов
             if (database.Queries.Any())
             {
                 throw new Exception(

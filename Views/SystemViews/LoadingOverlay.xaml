@@ -1,0 +1,62 @@
+<UserControl x:Class="PosnaiSQLauncher.LoadingOverlay"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Background="#B0000000" Panel.ZIndex="1000">
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,30">
+                <Ellipse Width="12" Height="12" Fill="#2196F3" Margin="5,0">
+                    <Ellipse.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard RepeatBehavior="Forever">
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                   From="0.3" To="1" Duration="0:0:0.6"
+                                                   AutoReverse="True"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Ellipse.Triggers>
+                </Ellipse>
+                <Ellipse Width="12" Height="12" Fill="#2196F3" Margin="5,0">
+                    <Ellipse.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard RepeatBehavior="Forever" BeginTime="0:0:0.2">
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                   From="0.3" To="1" Duration="0:0:0.6"
+                                                   AutoReverse="True"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Ellipse.Triggers>
+                </Ellipse>
+                <Ellipse Width="12" Height="12" Fill="#2196F3" Margin="5,0">
+                    <Ellipse.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard RepeatBehavior="Forever" BeginTime="0:0:0.4">
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                   From="0.3" To="1" Duration="0:0:0.6"
+                                                   AutoReverse="True"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Ellipse.Triggers>
+                </Ellipse>
+            </StackPanel>
+
+
+            <!-- ТЕКСТ -->
+            <TextBlock x:Name="LoadingText"
+                      Text="Загрузка..."
+                      FontSize="16" 
+                      Foreground="White"
+                      TextAlignment="Center"
+                      FontWeight="SemiBold"
+                      Margin="0,20,0,0"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

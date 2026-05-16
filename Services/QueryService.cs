@@ -1,4 +1,3 @@
-// Services/QueryService.cs
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +25,6 @@ namespace PosnaiSQLauncher.Services
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Имя запроса не может быть пустым");
 
-            // Проверяем существование базы данных
             bool databaseExists = await _context.Databases.AnyAsync(d => d.IdDatabase == databaseId);
             if (!databaseExists)
                 throw new Exception($"База данных с ID {databaseId} не найдена");
@@ -93,7 +91,7 @@ namespace PosnaiSQLauncher.Services
         }
 
         /// <summary>
-        /// Удалить запрос (с проверкой связей)
+        /// Удалить запрос
         /// </summary>
         public async Task DeleteAsync(int id)
         {
@@ -104,7 +102,6 @@ namespace PosnaiSQLauncher.Services
             if (query == null)
                 throw new Exception($"Запрос с ID {id} не найден");
 
-            // Проверяем наличие связанных вариантов
             if (query.Options.Any())
             {
                 throw new Exception(

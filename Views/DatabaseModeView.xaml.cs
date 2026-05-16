@@ -7,12 +7,12 @@ using System.Windows.Media.Animation;
 
 namespace PosnaiSQLauncher
 {
-    public partial class CreateOptionView : UserControl
+    public partial class DatabaseModeView : UserControl
     {
         private string _selectedOption = null;
         private MainWindow _parent;
 
-        public CreateOptionView(MainWindow parent)
+        public DatabaseModeView(MainWindow parent)
         {
             InitializeComponent();
             _parent = parent;

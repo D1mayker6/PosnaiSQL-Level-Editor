@@ -9,8 +9,6 @@ public partial class ShowOption
 
     public string NameLocation { get; set; } = null!;
 
-    public string NameDatabase { get; set; } = null!;
-
     public string? NameQuery { get; set; }
 
     public string? Condition { get; set; }
@@ -18,4 +16,6 @@ public partial class ShowOption
     public string? QueryString { get; set; }
 
     public int TimeLimit { get; set; }
+
+    public string? SchemaImage { get; set; }
 }

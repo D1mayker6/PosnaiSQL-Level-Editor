@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using PosnaiSQLauncher.Context;
 using PosnaiSQLauncher.Services;
+using PosnaiSQLauncher.Helpers;
 
 namespace PosnaiSQLauncher
 {
@@ -15,10 +16,12 @@ namespace PosnaiSQLauncher
         private int _queryId;
         
         private readonly QueryService _queryService;
+        private readonly LocationService _locationService;
         private int _selectedLocationId;
         private int _totalSeconds = 300;
+        private bool _locationSelected = false;  // ← НОВОЕ: флаг выбора
 
-        public LevelView(MainWindow parent, int queryId = 0)
+        public LevelView(MainWindow parent, int queryId)
         {
             InitializeComponent();
             _parent = parent;
@@ -26,15 +29,17 @@ namespace PosnaiSQLauncher
 
             var context = new AppDbContext();
             _queryService = new QueryService(context);
+            _locationService = new LocationService(context);
 
             UpdateTimeDisplay();
             
-            // По умолчанию выбираем пустыню
-            AnimateBorder(CardDesert, (Color)ColorConverter.ConvertFromString("#2196F3"), 3);
-            _selectedLocationId = 1;
+            // ← УБИРАЕМ автоматический выбор пустыни
+            // AnimateBorder(CardDesert, (Color)ColorConverter.ConvertFromString("#2196F3"), 3);
+            // _selectedLocationId = 1;
+            
+            NextButton.IsEnabled = false;  // ← Кнопка отключена по умолчанию
         }
 
-        // ===== ТАЙМЕР =====
         private void TimePlus5_Click(object sender, RoutedEventArgs e) => AddTime(5);
         private void TimePlus30_Click(object sender, RoutedEventArgs e) => AddTime(30);
         private void TimeMinus5_Click(object sender, RoutedEventArgs e) => AddTime(-5);
@@ -52,12 +57,19 @@ namespace PosnaiSQLauncher
             SecDisplay.Text = (_totalSeconds % 60).ToString("D2");
         }
 
-        // ===== ВЫБОР ЛОКАЦИИ =====
+        // ← НОВОЕ: Метод для включения кнопки
+        private void EnableNextButton()
+        {
+            NextButton.IsEnabled = _locationSelected;
+        }
+
         private void CardDesert_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             AnimateBorder(CardDesert, (Color)ColorConverter.ConvertFromString("#2196F3"), 3);
             AnimateBorder(CardForest, (Color)ColorConverter.ConvertFromString("#E0E0E0"), 2);
             _selectedLocationId = 1;
+            _locationSelected = true;  // ← НОВОЕ
+            EnableNextButton();          // ← НОВОЕ
         }
 
         private void CardForest_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -65,6 +77,8 @@ namespace PosnaiSQLauncher
             AnimateBorder(CardForest, (Color)ColorConverter.ConvertFromString("#2196F3"), 3);
             AnimateBorder(CardDesert, (Color)ColorConverter.ConvertFromString("#E0E0E0"), 2);
             _selectedLocationId = 2;
+            _locationSelected = true;  // ← НОВОЕ
+            EnableNextButton();          // ← НОВОЕ
         }
 
         private void AnimateBorder(Border border, Color targetColor, double targetThickness)
@@ -95,7 +109,6 @@ namespace PosnaiSQLauncher
             border.BeginAnimation(Border.BorderThicknessProperty, thickAnim);
         }
 
-        // ===== НАВИГАЦИЯ =====
         private void Back_Click(object sender, RoutedEventArgs e)
         {
             FadeOutAndSwitch(() => _parent?.ShowQueryView());
@@ -103,16 +116,73 @@ namespace PosnaiSQLauncher
 
         private void Next_Click(object sender, RoutedEventArgs e)
         {
-            FadeOutAndSwitch(() => _parent?.ShowSaveView());
+            try
+            {
+                // ← ПРОВЕРЯЕМ выбор локации
+                if (!_locationSelected)
+                {
+                    MessageBoxHelper.ShowWarning("Выберите локацию");
+                    return;
+                }
+
+                if (_parent == null)
+                {
+                    MessageBoxHelper.ShowError("Parent is null");
+                    return;
+                }
+
+                if (_parent.CurrentOption == null)
+                {
+                    MessageBoxHelper.ShowError("CurrentVariant is null");
+                    return;
+                }
+
+                // ← СОХРАНЯЕМ локацию и время
+                _parent.CurrentOption.LocationId = _selectedLocationId;
+                _parent.CurrentOption.LocationName = _selectedLocationId == 1 ? "Пустыня" : "Лес";
+                _parent.CurrentOption.TimeLimit = _totalSeconds;
+
+                System.Diagnostics.Debug.WriteLine($"QueryId: {_parent.CurrentOption.QueryId}");
+                System.Diagnostics.Debug.WriteLine($"LocationId: {_parent.CurrentOption.LocationId}");
+                System.Diagnostics.Debug.WriteLine($"TimeLimit: {_parent.CurrentOption.TimeLimit}");
+
+                FadeOutAndSwitch(() => 
+                {
+                    if (_parent != null)
+                    {
+                        _parent.ShowSaveView();
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError($"Ошибка: {ex.Message}\n\n{ex.StackTrace}");
+            }
         }
 
         private void FadeOutAndSwitch(Action switchAction)
         {
-            var fadeOut = new DoubleAnimation { From = 1, To = 0, Duration = TimeSpan.FromMilliseconds(300) };
+            var fadeOut = new DoubleAnimation 
+            { 
+                From = 1, 
+                To = 0, 
+                Duration = TimeSpan.FromMilliseconds(300) 
+            };
+            
             var storyboard = new Storyboard();
             Storyboard.SetTargetProperty(fadeOut, new PropertyPath("Opacity"));
             storyboard.Children.Add(fadeOut);
-            storyboard.Completed += (s, e) => { switchAction(); };
+            storyboard.Completed += (s, e) => 
+            { 
+                try
+                {
+                    switchAction?.Invoke();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error during navigation: {ex.Message}\n\n{ex.StackTrace}", "Navigation Error");
+                }
+            };
             storyboard.Begin(this);
         }
     }

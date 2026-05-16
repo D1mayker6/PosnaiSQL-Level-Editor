@@ -3,87 +3,86 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Opacity="0">
     
-<UserControl.Resources>
-    <!-- Стиль ComboBox -->
-    <Style x:Key="StyledComboBox" TargetType="ComboBox">
-        <Setter Property="Height" Value="45"/>
-        <Setter Property="FontSize" Value="15"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ComboBox">
-                    <Grid>
-                        <ToggleButton x:Name="ToggleButton" 
-                                    Focusable="false" 
-                                    IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" 
-                                    ClickMode="Press">
-                            <ToggleButton.Template>
-                                <ControlTemplate>
-                                    <Border Background="White" BorderBrush="#2196F3" BorderThickness="2" CornerRadius="8">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition Width="40"/>
-                                            </Grid.ColumnDefinitions>
-                                            <ContentPresenter Grid.Column="0" Margin="12,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                                            <Path Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#2196F3"/>
-                                        </Grid>
+    <UserControl.Resources>
+        <!-- Стиль ComboBox -->
+        <Style x:Key="StyledComboBox" TargetType="ComboBox">
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton" 
+                                        Focusable="false" 
+                                        IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" 
+                                        ClickMode="Press">
+                                <ToggleButton.Template>
+                                    <ControlTemplate>
+                                        <Border Background="White" BorderBrush="#2196F3" BorderThickness="2" CornerRadius="8">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition Width="40"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ContentPresenter Grid.Column="0" Margin="12,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                <Path Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#2196F3"/>
+                                            </Grid>
+                                        </Border>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            
+                            <ContentPresenter x:Name="ContentSite" 
+                                            IsHitTestVisible="False" 
+                                            Content="{TemplateBinding SelectionBoxItem}"
+                                            ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" 
+                                            Margin="12,0,40,0" 
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Left"/>
+                            
+                            <Popup x:Name="Popup" 
+                                  Placement="Bottom" 
+                                  IsOpen="{TemplateBinding IsDropDownOpen}" 
+                                  AllowsTransparency="True" 
+                                  Focusable="False" 
+                                  PopupAnimation="Slide">
+                                <Grid x:Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200">
+                                    <Border Background="White" BorderBrush="#2196F3" BorderThickness="2" CornerRadius="8" Margin="0,5,0,0">
+                                        <Border.Effect>
+                                            <DropShadowEffect ShadowDepth="4" Color="#000000" Opacity="0.1" BlurRadius="10"/>
+                                        </Border.Effect>
+                                        <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                        </ScrollViewer>
                                     </Border>
-                                </ControlTemplate>
-                            </ToggleButton.Template>
-                        </ToggleButton>
-                        
-                        <!-- ← ГЛАВНОЕ: ContentPresenter для отображения выбранного элемента -->
-                        <ContentPresenter x:Name="ContentSite" 
-                                        IsHitTestVisible="False" 
-                                        Content="{TemplateBinding SelectionBoxItem}"
-                                        ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" 
-                                        Margin="12,0,40,0" 
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Left"/>
-                        
-                        <Popup x:Name="Popup" 
-                              Placement="Bottom" 
-                              IsOpen="{TemplateBinding IsDropDownOpen}" 
-                              AllowsTransparency="True" 
-                              Focusable="False" 
-                              PopupAnimation="Slide">
-                            <Grid x:Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200">
-                                <Border Background="White" BorderBrush="#2196F3" BorderThickness="2" CornerRadius="8" Margin="0,5,0,0">
-                                    <Border.Effect>
-                                        <DropShadowEffect ShadowDepth="4" Color="#000000" Opacity="0.1" BlurRadius="10"/>
-                                    </Border.Effect>
-                                    <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
-                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
-                                    </ScrollViewer>
-                                </Border>
-                            </Grid>
-                        </Popup>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-    <!-- Стиль для элементов ComboBox -->
-    <Style TargetType="ComboBoxItem">
-        <Setter Property="Height" Value="40"/>
-        <Setter Property="Padding" Value="10,0,10,0"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ComboBoxItem">
-                    <Border x:Name="Border" Background="Transparent" Padding="{TemplateBinding Padding}">
-                        <ContentPresenter VerticalAlignment="Center"/>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsHighlighted" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="#E3F2FD"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-</UserControl.Resources>
+        <!-- Стиль для элементов ComboBox -->
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="10,0,10,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Border" Background="Transparent" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#E3F2FD"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
 
     <UserControl.Triggers>
         <EventTrigger RoutedEvent="Loaded">
@@ -149,82 +148,20 @@
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel Margin="30,10,30,20">
                         <TextBlock Text="Настройка запроса" FontSize="24" FontWeight="Bold" Foreground="#1a1a1a" Margin="0,0,0,8" TextAlignment="Center"/>
-                        <TextBlock Text="Параметры SQL-запроса" FontSize="13" Foreground="#666666" Margin="0,0,0,30" TextAlignment="Center"/>
+                        <TextBlock x:Name="SubtitleText" Text="Создайте новый SQL запрос" FontSize="13" Foreground="#666666" Margin="0,0,0,30" TextAlignment="Center"/>
 
-                        <StackPanel Margin="0,0,0,25">
+                        <!-- СЕКЦИЯ ВЫБОРА ЗАПРОСА (только для режима existing) -->
+                        <StackPanel x:Name="QuerySelectorSection" Margin="0,0,0,25" Visibility="Collapsed">
                             <TextBlock Text="Выберите запрос" FontSize="14" Foreground="#1a1a1a" Margin="0,0,0,8" FontWeight="SemiBold"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="10"/>
-                                    <ColumnDefinition Width="Auto"/>  <!-- плюс -->
-                                    <ColumnDefinition Width="10"/>
-                                    <ColumnDefinition Width="Auto"/>  <!-- корзина -->
-                                </Grid.ColumnDefinitions>
-
-                                <!-- ComboBox -->
-                                <ComboBox x:Name="QueriesComboBox"
-                                          Grid.Column="0"
-                                          Height="45"
-                                          Style="{StaticResource StyledComboBox}"
-                                          SelectionChanged="QueriesComboBox_SelectionChanged">
-\                                </ComboBox>
-
-                                <!-- Кнопка плюс -->
-                                <Button Grid.Column="2"
-                                        Click="NewQuery_Click"
-                                        Cursor="Hand"
-                                        VerticalAlignment="Center">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="Transparent">
-                                                <TextBlock x:Name="BtnTxt"
-                                                           Text="➕"
-                                                           FontSize="26"
-                                                           Foreground="#2196F3"/>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="BtnTxt" Property="Foreground" Value="#1976D2"/>
-                                                </Trigger>
-                                                <Trigger Property="IsPressed" Value="True">
-                                                    <Setter TargetName="BtnTxt" Property="Opacity" Value="0.7"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
-
-                                <!-- Кнопка корзина -->
-                                <Button Grid.Column="4"
-                                        x:Name="DeleteQueryButton"
-                                        Click="DeleteQuery_Click"
-                                        Cursor="Hand"
-                                        VerticalAlignment="Center"
-                                        IsEnabled="False">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="Transparent">
-                                                <TextBlock x:Name="TrashTxt"
-                                                           Text="🗑"
-                                                           FontSize="24"
-                                                           Foreground="#E53935"/>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="TrashTxt" Property="Foreground" Value="#C62828"/>
-                                                </Trigger>
-                                                <Trigger Property="IsPressed" Value="True">
-                                                    <Setter TargetName="TrashTxt" Property="Opacity" Value="0.7"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
-                            </Grid>
-                            
+                            <ComboBox x:Name="QueriesComboBox"
+                                      Height="45"
+                                      Style="{StaticResource StyledComboBox}"
+                                      SelectionChanged="QuerySelectorComboBox_SelectionChanged"
+                                      Margin="0,0,0,15">
+                            </ComboBox>
                         </StackPanel>
 
+                        <!-- ПОЛЯ ЗАПРОСА -->
                         <TextBlock Text="Имя запроса" FontSize="14" Foreground="#1a1a1a" Margin="0,0,0,8" FontWeight="SemiBold"/>
                         <TextBox x:Name="QueryNameTextBox" Height="45" FontSize="18" Padding="10,0" VerticalContentAlignment="Center" Margin="0,0,0,20"/>
 
@@ -236,12 +173,12 @@
                     </StackPanel>
                 </ScrollViewer>
 
-                <!-- КНОПКИ (РАСТЯНУТЫ НА ВЕСЬ БЛОК) -->
+                <!-- КНОПКИ -->
                 <Border Grid.Row="2" Margin="30,10,30,30">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="20"/> <!-- Отступ между кнопками -->
+                            <ColumnDefinition Width="20"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         
@@ -250,17 +187,127 @@
                                 Style="{StaticResource SecondaryButtonStyle}" 
                                 Click="Back_Click" 
                                 HorizontalAlignment="Stretch"
-                                MinWidth="0" Width="Auto"/> <!-- Убираем фиксированную ширину -->
+                                Height="50"
+                                MinWidth="0"/>
                         
                         <Button Grid.Column="2" 
                                 Content="Далее →" 
                                 Style="{StaticResource PrimaryButtonStyle}" 
                                 Click="Next_Click" 
                                 HorizontalAlignment="Stretch"
-                                MinWidth="0" Width="Auto"/> <!-- Убираем фиксированную ширину -->
+                                Height="50"
+                                MinWidth="0"/>
                     </Grid>
                 </Border>
             </Grid>
         </Border>
+
+<!-- ОВЕРЛЕЙ С ВЫБОРОМ ЗАПРОСА (для режима existing) -->
+        <Grid x:Name="QuerySelectorOverlay" Visibility="Collapsed" Background="Transparent" Panel.ZIndex="100">
+    <Border Background="#E8FFFFFF"
+            CornerRadius="15"
+            Width="500"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Opacity="0"
+            x:Name="QuerySelectorPanel">
+        <Border.Effect>
+            <DropShadowEffect ShadowDepth="10" Color="#000000" Opacity="0.3" BlurRadius="20"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- ЗАГОЛОВОК С КРЕСТИКОМ -->
+            <Grid Grid.Row="0" Background="White" Margin="0,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                          Text="Выберите запрос"
+                          FontSize="22" FontWeight="Bold" Foreground="#1a1a1a"
+                          Margin="30,20,0,20" VerticalAlignment="Center"/>
+
+                <!-- КРЕСТИК -->
+                <Button Grid.Column="1"
+                       Content="✕"
+                       Click="CloseQuerySelector_Click"
+                       Width="50"
+                       Height="50"
+                       Background="Transparent"
+                       BorderThickness="0"
+                       FontSize="24"
+                       Foreground="#999999"
+                       Cursor="Hand"
+                       VerticalAlignment="Top">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" Background="Transparent">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#F0F0F0"/>
+                                    <Setter Property="Foreground" Value="#E53935"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+
+            <!-- КОНТЕНТ -->
+            <StackPanel Grid.Row="1" Margin="30,15,30,30">
+                <TextBlock Text="Выберите существующий запрос для редактирования"
+                          FontSize="13" Foreground="#666666" 
+                          Margin="0,0,0,20" TextAlignment="Center"/>
+
+                <!-- КОМБОБОКС В ОВЕРЛЕЕ -->
+                <ComboBox x:Name="QuerySelectorComboBox"
+                         Height="50"
+                         FontSize="15"
+                         Margin="0,0,0,25"
+                         SelectionChanged="QuerySelectorComboBox_SelectionChanged"
+                         Style="{StaticResource StyledComboBox}">
+                </ComboBox>
+
+                <!-- КНОПКИ -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="15"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Кнопка Удалить -->
+                    <Button x:Name="DeleteQueryButton"
+                            Grid.Column="0"
+                            Content="🗑  Удалить"
+                            Height="50"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Foreground="#E53935"
+                            BorderBrush="#E53935"
+                            IsEnabled="False"
+                            Click="DeleteQuery_Click"/>
+
+                    <!-- Кнопка Выбрать -->
+                    <Button x:Name="SelectQueryButton"
+                            Grid.Column="2"
+                            Content="Выбрать"
+                            Height="50"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            IsEnabled="False"
+                            Click="SelectQuery_Click"/>
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Grid>
+    <Grid x:Name="LoadingOverlayContainer" Visibility="Collapsed" Panel.ZIndex="1000"/>
     </Grid>
 </UserControl>
