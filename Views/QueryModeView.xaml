@@ -64,7 +64,7 @@
                         <Border Width="36" Height="36" CornerRadius="18" BorderThickness="2" BorderBrush="#CCCCCC" Background="White">
                             <TextBlock Text="3" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <TextBlock Text="Уровень" FontSize="10" Foreground="#999999" Margin="0,6,0,0" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBlock Text="Параметры" FontSize="10" Foreground="#999999" Margin="0,6,0,0" HorizontalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
 
                     <Rectangle Grid.Column="5" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
@@ -74,7 +74,7 @@
                         <Border Width="36" Height="36" CornerRadius="18" BorderThickness="2" BorderBrush="#CCCCCC" Background="White">
                             <TextBlock Text="4" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <TextBlock Text="Обзор" FontSize="10" Foreground="#999999" Margin="0,6,0,0" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBlock Text="Сохранение" FontSize="10" Foreground="#999999" Margin="0,6,0,0" HorizontalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -124,10 +124,10 @@
                             </Grid>
 
                             <!-- ТЕКСТ -->
-                            <TextBlock Grid.Row="1" Text="Новый запрос"
+                            <TextBlock Grid.Row="1" Text="Создать запрос"
                                       FontSize="16" FontWeight="SemiBold" Foreground="#1a1a1a"
                                       TextAlignment="Center" Margin="15,0,15,5"/>
-                            <TextBlock Grid.Row="2" Text="Создать новый SQL запрос"
+                            <TextBlock Grid.Row="2" Text="Новый SQL запрос"
                                       FontSize="12" Foreground="#888888" TextAlignment="Center" Margin="15,0,15,20"/>
                         </Grid>
                     </Border>

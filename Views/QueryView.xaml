@@ -132,46 +132,54 @@
                             <Border Width="36" Height="36" CornerRadius="18" BorderThickness="2" BorderBrush="#CCCCCC" Background="White">
                                 <TextBlock Text="3" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
-                            <TextBlock Text="Уровень" FontSize="10" Foreground="#999999" Margin="0,6,0,0" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Text="Параметры" FontSize="10" Foreground="#999999" Margin="0,6,0,0" HorizontalAlignment="Center" FontWeight="SemiBold"/>
                         </StackPanel>
                         <Rectangle Grid.Column="5" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
                         <StackPanel Grid.Column="6" Opacity="0.5">
                             <Border Width="36" Height="36" CornerRadius="18" BorderThickness="2" BorderBrush="#CCCCCC" Background="White">
                                 <TextBlock Text="4" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
-                            <TextBlock Text="Обзор" FontSize="10" Foreground="#999999" Margin="0,6,0,0" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Text="Сохранение" FontSize="10" Foreground="#999999" Margin="0,6,0,0" HorizontalAlignment="Center" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Grid>
                 </Border>
 
                 <!-- КОНТЕНТ -->
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <StackPanel Margin="30,10,30,20">
-                        <TextBlock Text="Настройка запроса" FontSize="24" FontWeight="Bold" Foreground="#1a1a1a" Margin="0,0,0,8" TextAlignment="Center"/>
-                        <TextBlock x:Name="SubtitleText" Text="Создайте новый SQL запрос" FontSize="13" Foreground="#666666" Margin="0,0,0,30" TextAlignment="Center"/>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="30,10,30,20">
+                    <TextBlock Text="Настройка запроса" FontSize="24" FontWeight="Bold" Foreground="#1a1a1a" Margin="0,0,0,8" TextAlignment="Center"/>
+                    <TextBlock x:Name="SubtitleText" Text="Создайте новый SQL запрос" FontSize="13" Foreground="#666666" Margin="0,0,0,15" TextAlignment="Center"/>
 
-                        <!-- СЕКЦИЯ ВЫБОРА ЗАПРОСА (только для режима existing) -->
-                        <StackPanel x:Name="QuerySelectorSection" Margin="0,0,0,25" Visibility="Collapsed">
-                            <TextBlock Text="Выберите запрос" FontSize="14" Foreground="#1a1a1a" Margin="0,0,0,8" FontWeight="SemiBold"/>
-                            <ComboBox x:Name="QueriesComboBox"
-                                      Height="45"
-                                      Style="{StaticResource StyledComboBox}"
-                                      SelectionChanged="QuerySelectorComboBox_SelectionChanged"
-                                      Margin="0,0,0,15">
-                            </ComboBox>
-                        </StackPanel>
+                    <Button x:Name="ToggleEditButton"
+                            Content="🔒 Разрешить изменение"
+                            Height="42"
+                            Padding="15,0"
+                            FontSize="13"
+                            Visibility="Collapsed"
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="ToggleEditButton_Click"/>
 
-                        <!-- ПОЛЯ ЗАПРОСА -->
-                        <TextBlock Text="Имя запроса" FontSize="14" Foreground="#1a1a1a" Margin="0,0,0,8" FontWeight="SemiBold"/>
-                        <TextBox x:Name="QueryNameTextBox" Height="45" FontSize="18" Padding="10,0" VerticalContentAlignment="Center" Margin="0,0,0,20"/>
-
-                        <TextBlock Text="Условие задачи" FontSize="14" Foreground="#1a1a1a" Margin="0,0,0,8" FontWeight="SemiBold"/>
-                        <TextBox x:Name="QueryConditionTextBox" Height="100" FontSize="16" Padding="10" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,20" TextChanged="TextBox_TextChanged"/>
-
-                        <TextBlock Text="Текст SQL кода" FontSize="14" Foreground="#1a1a1a" Margin="0,0,0,8" FontWeight="SemiBold"/>
-                        <TextBox x:Name="QueryCodeTextBox" Height="150" FontSize="16" Padding="10" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" FontFamily="Courier New" TextChanged="TextBox_TextChanged"/>
+                    <StackPanel x:Name="QuerySelectorSection" Margin="0,0,0,25" Visibility="Collapsed">
+                        <TextBlock Text="Выберите запрос" FontSize="14" Foreground="#1a1a1a" Margin="0,0,0,8" FontWeight="SemiBold"/>
+                        <ComboBox x:Name="QueriesComboBox"
+                                  Height="45"
+                                  Style="{StaticResource StyledComboBox}"
+                                  SelectionChanged="QuerySelectorComboBox_SelectionChanged"
+                                  Margin="0,0,0,15">
+                        </ComboBox>
                     </StackPanel>
-                </ScrollViewer>
+
+                    <TextBlock Text="Имя запроса" FontSize="14" Foreground="#1a1a1a" Margin="0,0,0,8" FontWeight="SemiBold"/>
+                    <TextBox x:Name="QueryNameTextBox" Height="45" FontSize="18" Padding="10,0" VerticalContentAlignment="Center" Margin="0,0,0,20"/>
+
+                    <TextBlock Text="Условие задачи" FontSize="14" Foreground="#1a1a1a" Margin="0,0,0,8" FontWeight="SemiBold"/>
+                    <TextBox x:Name="QueryConditionTextBox" Height="100" FontSize="16" Padding="10" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,20" TextChanged="TextBox_TextChanged"/>
+
+                    <TextBlock Text="Текст SQL кода" FontSize="14" Foreground="#1a1a1a" Margin="0,0,0,8" FontWeight="SemiBold"/>
+                    <TextBox x:Name="QueryCodeTextBox" Height="150" FontSize="16" Padding="10" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" FontFamily="Courier New" TextChanged="TextBox_TextChanged"/>
+                </StackPanel>
+            </ScrollViewer>
 
                 <!-- КНОПКИ -->
                 <Border Grid.Row="2" Margin="30,10,30,30">

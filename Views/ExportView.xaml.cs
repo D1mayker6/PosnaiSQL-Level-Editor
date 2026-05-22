@@ -63,7 +63,7 @@ namespace PosnaiSQLauncher
             VariantsListBox.Items.Clear();
             foreach (var item in items)
             {
-                var displayText = $"ID {item.IdOption}: {item.NameQuery ?? "Без названия"} ({item.NameLocation})";
+                var displayText = $"Вариант № {item.IdOption}: {item.NameQuery ?? "Без названия"} ({item.NameLocation})";
                 VariantsListBox.Items.Add(new ListBoxItem 
                 { 
                     Content = displayText,

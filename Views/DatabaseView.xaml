@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Opacity="0">
     
-    <!-- Анимация появления -->
     <UserControl.Triggers>
         <EventTrigger RoutedEvent="Loaded">
             <BeginStoryboard>
@@ -16,7 +15,6 @@
         </EventTrigger>
     </UserControl.Triggers>
     <UserControl.Resources>
-        <!-- Стиль ComboBox -->
         <Style x:Key="StyledComboBox" TargetType="ComboBox">
             <Setter Property="Height" Value="45"/>
             <Setter Property="FontSize" Value="15"/>
@@ -44,7 +42,6 @@
                                 </ToggleButton.Template>
                             </ToggleButton>
                             
-                            <!-- ← ГЛАВНОЕ: ContentPresenter для отображения выбранного элемента -->
                             <ContentPresenter x:Name="ContentSite" 
                                             IsHitTestVisible="False" 
                                             Content="{TemplateBinding SelectionBoxItem}"
@@ -76,7 +73,6 @@
             </Setter>
         </Style>
 
-        <!-- Стиль для элементов ComboBox -->
         <Style TargetType="ComboBoxItem">
             <Setter Property="Height" Value="40"/>
             <Setter Property="Padding" Value="10,0,10,0"/>
@@ -97,7 +93,6 @@
         </Style>
     </UserControl.Resources>
     <Grid>
-        <!-- БЕЛЫЙ БЛОК -->
         <Border x:Name="MainBorder"
                 CornerRadius="20"
                 Background="#E8FFFFFF"
@@ -115,7 +110,6 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- STEPPER С МОСТИКАМИ -->
                 <Border Grid.Row="0" Margin="30,25,30,20" BorderThickness="0,0,0,0">
                     <Grid HorizontalAlignment="Center">
                         <Grid.ColumnDefinitions>
@@ -128,7 +122,6 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- ШАГ 1 - АКТИВНЫЙ -->
                         <StackPanel Grid.Column="0" VerticalAlignment="Center">
                             <Border Width="36" Height="36" CornerRadius="18" Background="#2196F3" 
                                    HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -139,10 +132,8 @@
                                       HorizontalAlignment="Center" FontWeight="SemiBold"/>
                         </StackPanel>
 
-                        <!-- МОСТИК 1 -->
                         <Rectangle Grid.Column="1" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
 
-                        <!-- ШАГ 2 -->
                         <StackPanel Grid.Column="2" VerticalAlignment="Center" Opacity="0.5">
                             <Border Width="36" Height="36" CornerRadius="18" Background="White" 
                                    BorderThickness="2" BorderBrush="#CCCCCC" HorizontalAlignment="Center">
@@ -153,52 +144,65 @@
                                       HorizontalAlignment="Center" FontWeight="SemiBold"/>
                         </StackPanel>
 
-                        <!-- МОСТИК 2 -->
                         <Rectangle Grid.Column="3" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
 
-                        <!-- ШАГ 3 -->
                         <StackPanel Grid.Column="4" VerticalAlignment="Center" Opacity="0.5">
                             <Border Width="36" Height="36" CornerRadius="18" Background="White" 
                                    BorderThickness="2" BorderBrush="#CCCCCC" HorizontalAlignment="Center">
                                 <TextBlock Text="3" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC"
                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
-                            <TextBlock Text="Уровень" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
+                            <TextBlock Text="Параметры" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
                                       HorizontalAlignment="Center" FontWeight="SemiBold"/>
                         </StackPanel>
 
-                        <!-- МОСТИК 3 -->
                         <Rectangle Grid.Column="5" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
 
-                        <!-- ШАГ 4 -->
                         <StackPanel Grid.Column="6" VerticalAlignment="Center" Opacity="0.5">
                             <Border Width="36" Height="36" CornerRadius="18" Background="White" 
                                    BorderThickness="2" BorderBrush="#CCCCCC" HorizontalAlignment="Center">
                                 <TextBlock Text="4" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC"
                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
-                            <TextBlock Text="Обзор" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
+                            <TextBlock Text="Сохранение" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
                                       HorizontalAlignment="Center" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Grid>
                 </Border>
 
-                <!-- КОНТЕНТ -->
                 <ScrollViewer Grid.Row="1" 
                              VerticalScrollBarVisibility="Auto" 
                              HorizontalScrollBarVisibility="Disabled">
                     <StackPanel x:Name="MainContent" Margin="30,20,30,20" VerticalAlignment="Top" HorizontalAlignment="Center">
-                        <!-- ЗАГОЛОВОК -->
-                        <TextBlock Text="Настройка базы данных" 
-                                  FontSize="24" FontWeight="Bold" Foreground="#1a1a1a"
-                                  Margin="0,0,0,8" TextAlignment="Center"/>
-                        <TextBlock x:Name="SubtitleText"
-                                  Text="Заполните информацию о базе данных"
-                                  FontSize="13" Foreground="#666666" Margin="0,0,0,25" TextAlignment="Center"/>
+                        
+                        <Grid MinWidth="550" Margin="0,0,0,25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <StackPanel Grid.Column="0" HorizontalAlignment="Left">
+                                <TextBlock Text="Настройка базы данных" 
+                                           FontSize="24" FontWeight="Bold" Foreground="#1a1a1a"
+                                           Margin="0,0,0,4"/>
+                                <TextBlock x:Name="SubtitleText"
+                                           Text="Заполните информацию о базе данных"
+                                           FontSize="13" Foreground="#666666"/>
+                            </StackPanel>
 
-                        <!-- ПОЛЯ ВВОДА -->
+                            <Button x:Name="ToggleEditButton"
+                                    Grid.Column="1"
+                                    Content="🔒 Разрешить изменение"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Height="42"
+                                    Padding="15,0"
+                                    FontSize="13"
+                                    VerticalAlignment="Center"
+                                    Visibility="Collapsed"
+                                    Click="ToggleEditButton_Click"/>
+                        </Grid>
+
                         <StackPanel MinWidth="550">
-                            <!-- ИМЯ БАЗЫ ДАННЫХ -->
                             <StackPanel Margin="0,0,0,30">
                                 <TextBlock Text="Имя базы данных"
                                           FontSize="14" Foreground="#1a1a1a" 
@@ -210,9 +214,7 @@
                                         VerticalContentAlignment="Center"/>
                             </StackPanel>
 
-                            <!-- СХЕМА БАЗЫ ДАННЫХ -->
                             <StackPanel Margin="0,0,0,20">
-                                <!-- ЗАГОЛОВОК И КНОПКА -->
                                 <Grid Margin="0,0,0,12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -226,7 +228,8 @@
                                                FontWeight="SemiBold"
                                                VerticalAlignment="Center"/>
 
-                                    <Button Grid.Column="2"
+                                    <Button x:Name="BrowseImageButton"
+                                            Grid.Column="2"
                                             Content="📁 Обзор"
                                             Style="{StaticResource SecondaryButtonStyle}"
                                             Click="BrowseImage_Click"
@@ -236,7 +239,6 @@
                                             FontSize="12"/>
                                 </Grid>
 
-                                <!-- ОБЛАСТЬ ДЛЯ ФОТОГРАФИИ -->
                                 <Border x:Name="ImagePreviewBorder"
                                         Width="350" Height="350"
                                         BorderThickness="2"
@@ -245,18 +247,16 @@
                                         Background="#F9F9F9"
                                         HorizontalAlignment="Center">
                                     <Grid>
-                                        <!-- ИЗОБРАЖЕНИЕ -->
                                         <Image x:Name="ImagePreview"
                                                Stretch="Uniform"/>
             
-                                        <!-- ПЛЕЙСХОЛДЕР (показывается когда изображения нет) -->
                                         <StackPanel x:Name="ImagePlaceholder"
                                                     VerticalAlignment="Center"
                                                     HorizontalAlignment="Center">
                                             <TextBlock Text="🖼️" FontSize="80" 
-                                                       HorizontalAlignment="Center"/>
+                                                   HorizontalAlignment="Center"/>
                                             <TextBlock Text="Выберите схему"
-                                                       FontSize="13" Foreground="#999999"
+                                                    FontSize="13" Foreground="#999999"
                                                        HorizontalAlignment="Center"
                                                        Margin="0,10,0,0"/>
                                         </StackPanel>
@@ -267,7 +267,6 @@
                     </StackPanel>
                 </ScrollViewer>
 
-                <!-- КНОПКИ -->
                 <Border Grid.Row="2" Margin="30,10,30,30">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -276,7 +275,6 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Назад -->
                         <Button Grid.Column="0"
                                 Content="← Назад"
                                 Style="{StaticResource SecondaryButtonStyle}"
@@ -284,7 +282,6 @@
                                 Height="50"
                                 Click="Back_Click"/>
 
-                        <!-- Далее -->
                         <Button Grid.Column="2"
                                 Content="Далее →"
                                 Style="{StaticResource PrimaryButtonStyle}"
@@ -297,114 +294,103 @@
             </Grid>
         </Border>
 
-        <!-- ОВЕРЛЕЙ С ВЫБОРОМ БД -->
-<!-- ОВЕРЛЕЙ С ВЫБОРОМ БД -->
         <Grid x:Name="DatabaseSelectorOverlay" Visibility="Collapsed" Background="Transparent" Panel.ZIndex="100">
-    <!-- МОДАЛЬНОЕ ОКНО -->
-    <Border Background="#E8FFFFFF"
-            CornerRadius="15"
-            Width="500"
-            VerticalAlignment="Center"
-            HorizontalAlignment="Center"
-            Opacity="0"
-            x:Name="DatabaseSelectorPanel">
-        <Border.Effect>
-            <DropShadowEffect ShadowDepth="10" Color="#000000" Opacity="0.3" BlurRadius="20"/>
-        </Border.Effect>
+            <Border Background="#E8FFFFFF"
+                    CornerRadius="15"
+                    Width="500"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Opacity="0"
+                    x:Name="DatabaseSelectorPanel">
+                <Border.Effect>
+                    <DropShadowEffect ShadowDepth="10" Color="#000000" Opacity="0.3" BlurRadius="20"/>
+                </Border.Effect>
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <!-- ЗАГОЛОВОК С КРЕСТИКОМ -->
-            <Grid Grid.Row="0" Background="White" Margin="0,0,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <TextBlock Grid.Column="0"
-                          Text="Выберите базу данных"
-                          FontSize="22" FontWeight="Bold" Foreground="#1a1a1a"
-                          Margin="30,20,0,20" VerticalAlignment="Center"/>
-
-                <!-- КРЕСТИК -->
-                <Button Grid.Column="1"
-                       Content="✕"
-                       Click="CloseDatabaseSelector_Click"
-                       Width="50"
-                       Height="50"
-                       Background="Transparent"
-                       BorderThickness="0"
-                       FontSize="24"
-                       Foreground="#999999"
-                       Cursor="Hand"
-                       VerticalAlignment="Top">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border x:Name="border" Background="Transparent">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="#F0F0F0"/>
-                                    <Setter Property="Foreground" Value="#E53935"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-            </Grid>
-
-            <!-- КОНТЕНТ -->
-            <StackPanel Grid.Row="1" Margin="30,15,30,30">
-                <TextBlock Text="Выберите существующую базу данных из списка"
-                          FontSize="13" Foreground="#666666" 
-                          Margin="0,0,0,20" TextAlignment="Center"/>
-
-                <!-- КОМБОБОКС -->
-                <ComboBox x:Name="DatabaseComboBox"
-                         Height="50"
-                         FontSize="15"
-                         Margin="0,0,0,25"
-                         SelectionChanged="DatabaseComboBox_SelectionChanged"
-                         Style="{StaticResource StyledComboBox}">
-                </ComboBox>
-
-                <!-- КНОПКА ВЫБРАТЬ -->
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="15"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                    <!-- Кнопка Удалить -->
-                    <Button x:Name="DeleteDatabaseButton"
-                            Grid.Column="0"
-                            Content="🗑  Удалить"
-                            Height="50"
-                            Style="{StaticResource SecondaryButtonStyle}"
-                            Foreground="#E53935"
-                            BorderBrush="#E53935"
-                            IsEnabled="False"
-                            Click="DeleteDatabase_Click"/>
+                    <Grid Grid.Row="0" Background="White" Margin="0,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <!-- Кнопка Выбрать -->
-                    <Button x:Name="SelectDatabaseButton"
-                            Grid.Column="2"
-                            Content="Выбрать"
-                            Height="50"
-                            Style="{StaticResource PrimaryButtonStyle}"
-                            IsEnabled="False"
-                            Click="SelectDatabase_Click"/>
+                        <TextBlock Grid.Column="0"
+                                   Text="Выберите базу данных"
+                                  FontSize="22" FontWeight="Bold" Foreground="#1a1a1a"
+                                  Margin="30,20,0,20" VerticalAlignment="Center"/>
+
+                        <Button Grid.Column="1"
+                               Content="✕"
+                               Click="CloseDatabaseSelector_Click"
+                               Width="50"
+                               Height="50"
+                               Background="Transparent"
+                               BorderThickness="0"
+                               FontSize="24"
+                               Foreground="#999999"
+                               Cursor="Hand"
+                               VerticalAlignment="Top">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="Transparent">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#F0F0F0"/>
+                                            <Setter Property="Foreground" Value="#E53935"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+
+                    <StackPanel Grid.Row="1" Margin="30,15,30,30">
+                        <TextBlock Text="Выберите существующую базу данных из списка"
+                                  FontSize="13" Foreground="#666666" 
+                                  Margin="0,0,0,20" TextAlignment="Center"/>
+
+                        <ComboBox x:Name="DatabaseComboBox"
+                                  Height="50"
+                                 Margin="0,0,0,25"
+                                 SelectionChanged="DatabaseComboBox_SelectionChanged"
+                                  Style="{StaticResource StyledComboBox}">
+                        </ComboBox>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Button x:Name="DeleteDatabaseButton"
+                                    Grid.Column="0"
+                                    Content="🗑  Удалить"
+                                    Height="50"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Foreground="#E53935"
+                                    BorderBrush="#E53935"
+                                    IsEnabled="False"
+                                    Click="DeleteDatabase_Click"/>
+
+                            <Button x:Name="SelectDatabaseButton"
+                                    Grid.Column="2"
+                                    Content="Выбрать"
+                                    Height="50"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    IsEnabled="False"
+                                    Click="SelectDatabase_Click"/>
+                        </Grid>
+                    </StackPanel>
                 </Grid>
-            </StackPanel>
+            </Border>
         </Grid>
-    </Border>
-</Grid>
         <Grid x:Name="LoadingOverlayContainer" Visibility="Collapsed" Panel.ZIndex="1000"/>
     </Grid>
 </UserControl>

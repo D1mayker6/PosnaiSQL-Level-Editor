@@ -2,8 +2,10 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Newtonsoft.Json.Linq;
 using PosnaiSQLauncher.Helpers;
 
@@ -39,21 +41,44 @@ namespace PosnaiSQLauncher
             }
         }
 
-        private void SaveSettings()
+        private bool ValidateGoogleSheetUrl(string url)
         {
-            try
+            if (string.IsNullOrWhiteSpace(url))
             {
-                var settings = new JObject
-                {
-                    ["googleSheetUrl"] = GoogleSheetUrlTextBox.Text.Trim()
-                };
+                ShowValidationError("Ссылка не может быть пустой");
+                return false;
+            }
 
-                File.WriteAllText(SETTINGS_FILE, settings.ToString());
-            }
-            catch (Exception ex)
+            // Проверяем что это Google Sheets URL
+            if (!url.Contains("docs.google.com/spreadsheets"))
             {
-                MessageBoxHelper.ShowError($"Ошибка сохранения настроек: {ex.Message}");
+                ShowValidationError("❌ Ссылка должна быть на Google Table (docs.google.com/spreadsheets)");
+                return false;
             }
+
+            // Проверяем что в URL есть ID таблицы
+            if (!Regex.IsMatch(url, @"/spreadsheets/d/[a-zA-Z0-9-_]+"))
+            {
+                ShowValidationError("❌ Некорректный формат ссылки на Google Table");
+                return false;
+            }
+
+            ShowValidationSuccess("✓ Ссылка прошла валидацию");
+            return true;
+        }
+
+        private void ShowValidationError(string message)
+        {
+            ValidationMessage.Text = message;
+            ValidationMessage.Foreground = new SolidColorBrush(Color.FromArgb(255, 229, 57, 53)); // Красный
+            ValidationMessage.Visibility = Visibility.Visible;
+        }
+
+        private void ShowValidationSuccess(string message)
+        {
+            ValidationMessage.Text = message;
+            ValidationMessage.Foreground = new SolidColorBrush(Color.FromArgb(255, 46, 125, 50)); // Зеленый
+            ValidationMessage.Visibility = Visibility.Visible;
         }
 
         private void CopyUrl_Click(object sender, RoutedEventArgs e)
@@ -108,15 +133,40 @@ namespace PosnaiSQLauncher
             }
         }
 
-        private void Save_Click(object sender, RoutedEventArgs e)
+        private void SaveUrl_Click(object sender, RoutedEventArgs e)
         {
-            SaveSettings();
-            MessageBoxHelper.ShowSuccess("Настройки успешно сохранены!");
+            string url = GoogleSheetUrlTextBox.Text.Trim();
+
+            if (!ValidateGoogleSheetUrl(url))
+                return;
+
+            // Показываем кастомный диалог подтверждения
+            var dialog = new CustomMessageBox(
+                "Подтвердите, что эта ссылка имеет права на редактирование.",
+                "Подтверждение",
+                CustomMessageBoxType.YesNo);
+
+            if (dialog.ShowDialog() != true || dialog.Result != MessageBoxResult.Yes)
+                return;
+
+            try
+            {
+                var settings = new JObject
+                {
+                    ["googleSheetUrl"] = url
+                };
+
+                File.WriteAllText(SETTINGS_FILE, settings.ToString());
+                MessageBoxHelper.ShowSuccess("Ссылка успешно сохранена!");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError($"Ошибка сохранения настроек: {ex.Message}");
+            }
         }
 
         private void ChangePassword_Click(object sender, RoutedEventArgs e)
         {
-            // Показываем диалог смены пароля
             var dialog = new ChangePasswordDialog();
             if (dialog.ShowDialog() == true)
             {
@@ -126,8 +176,6 @@ namespace PosnaiSQLauncher
                 if (VerifyAndChangePassword(oldPassword, newPassword))
                 {
                     MessageBoxHelper.ShowSuccess("Пароль успешно изменён!");
-                    
-                    // Возвращаем пользователя в окно авторизации
                     _parent.ShowLoginScreen();
                 }
                 else

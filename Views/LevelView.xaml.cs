@@ -31,15 +31,35 @@ namespace PosnaiSQLauncher
             _queryService = new QueryService(context);
             _locationService = new LocationService(context);
 
+            // Сначала загружаем дефолтное или сохраненное время
             UpdateTimeDisplay();
-            
-            // ← УБИРАЕМ автоматический выбор пустыни
-            // AnimateBorder(CardDesert, (Color)ColorConverter.ConvertFromString("#2196F3"), 3);
-            // _selectedLocationId = 1;
-            
-            NextButton.IsEnabled = false;  // ← Кнопка отключена по умолчанию
+    
+            // ВОССТАНОВЛЕНИЕ СОСТОЯНИЯ
+            RestoreFromState();
         }
+        
+        private void RestoreFromState()
+        {
+            if (_parent?.CurrentOption != null && _parent.CurrentOption.LocationId > 0)
+            {
+                _selectedLocationId = _parent.CurrentOption.LocationId;
+                _totalSeconds = _parent.CurrentOption.TimeLimit;
+                _locationSelected = true;
+                NextButton.IsEnabled = true;
 
+                UpdateTimeDisplay();
+
+                // Подсвечиваем сохраненную карточку визуально после загрузки интерфейса
+                this.Loaded += (s, e) =>
+                {
+                    if (_selectedLocationId == 1)
+                        AnimateBorder(CardDesert, (Color)ColorConverter.ConvertFromString("#2196F3"), 3);
+                    else if (_selectedLocationId == 2)
+                        AnimateBorder(CardForest, (Color)ColorConverter.ConvertFromString("#2196F3"), 3);
+                };
+            }
+        }
+        
         private void TimePlus5_Click(object sender, RoutedEventArgs e) => AddTime(5);
         private void TimePlus30_Click(object sender, RoutedEventArgs e) => AddTime(30);
         private void TimeMinus5_Click(object sender, RoutedEventArgs e) => AddTime(-5);
@@ -111,7 +131,22 @@ namespace PosnaiSQLauncher
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            FadeOutAndSwitch(() => _parent?.ShowQueryView());
+            int dbId = _parent.CurrentOption.DatabaseId;
+            string queryMode = _parent.CurrentOption.QueryMode ?? "new"; 
+
+            if (dbId > 0)
+            {
+                FadeOutAndSwitch(() => _parent?.ShowQueryView(dbId, queryMode));
+            }
+            else
+            {
+                var errorBox = new CustomMessageBox(
+                    "Ошибка: потерян идентификатор базы данных.", 
+                    "Ошибка", 
+                    CustomMessageBoxType.Error
+                );
+                errorBox.ShowDialog();
+            }
         }
 
         private void Next_Click(object sender, RoutedEventArgs e)

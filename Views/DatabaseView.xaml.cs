@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
@@ -22,6 +24,8 @@ namespace PosnaiSQLauncher
         private readonly DatabaseService _databaseService;
         private Database _currentDatabase;
 
+        private bool _isEditAllowed = false;
+
         public DatabaseView(MainWindow parent, string option)
         {
             InitializeComponent();
@@ -31,56 +35,74 @@ namespace PosnaiSQLauncher
             var context = new AppDbContext();
             _databaseService = new DatabaseService(context);
 
-            System.Threading.Tasks.Task.Run(() => LoadDatabasesAsync());
+            RestoreFromState(); 
 
-            if (option == "existing")
+            if (_parent.CurrentOption != null && _parent.CurrentOption.DatabaseId > 0)
+            {
+                _selectedOption = "existing";
+            }
+
+            ApplyInterfaceReadOnlyMode();
+
+            if (_selectedOption == "existing" && _currentDatabase == null)
             {
                 this.Loaded += (s, e) => ShowDatabaseSelector();
             }
         }
 
-        private async void LoadDatabasesAsync()
+        private void ApplyInterfaceReadOnlyMode()
+        {
+            if (_selectedOption == "existing")
+            {
+                DatabaseNameTextBox.IsReadOnly = true;
+                DatabaseNameTextBox.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F5F5F5"));
+                BrowseImageButton.IsEnabled = false; 
+                
+                ToggleEditButton.Visibility = Visibility.Visible;
+                ToggleEditButton.Content = "🔒 Разрешить изменение";
+                _isEditAllowed = false;
+            }
+            else
+            {
+                DatabaseNameTextBox.IsReadOnly = false;
+                DatabaseNameTextBox.Background = new SolidColorBrush(Colors.White);
+                BrowseImageButton.IsEnabled = true;
+                
+                ToggleEditButton.Visibility = Visibility.Collapsed;
+                _isEditAllowed = true;
+            }
+        }
+
+        private async Task LoadDatabasesAsync()
         {
             try
             {
-                // ← ПОКАЗЫВАЕМ загрузку
-                this.Dispatcher.Invoke(() =>
-                {
-                    var loading = new LoadingOverlay("Загрузка баз данных...");
-                    LoadingOverlayContainer.Children.Clear();
-                    LoadingOverlayContainer.Children.Add(loading);
-                    LoadingOverlayContainer.Visibility = Visibility.Visible;
-                });
+                LoadingOverlayContainer.Children.Clear();
+                LoadingOverlayContainer.Children.Add(new LoadingOverlay("Загрузка баз данных..."));
+                LoadingOverlayContainer.Visibility = Visibility.Visible;
 
                 var databases = await _databaseService.GetAllAsync();
-                
-                this.Dispatcher.Invoke(() =>
+        
+                LoadingOverlayContainer.Visibility = Visibility.Collapsed;
+
+                DatabaseComboBox.Items.Clear();
+        
+                foreach (var db in databases)
                 {
-                    // ← СКРЫВАЕМ загрузку
-                    LoadingOverlayContainer.Visibility = Visibility.Collapsed;
+                    DatabaseComboBox.Items.Add(new DatabaseComboItem 
+                    { 
+                        Id = db.IdDatabase,
+                        Name = db.Name
+                    });
+                }
 
-                    DatabaseComboBox.Items.Clear();
-                    
-                    foreach (var db in databases)
-                    {
-                        DatabaseComboBox.Items.Add(new DatabaseComboItem 
-                        { 
-                            Id = db.IdDatabase,
-                            Name = db.Name
-                        });
-                    }
-
-                    if (DatabaseComboBox.Items.Count > 0)
-                        DatabaseComboBox.SelectedIndex = 0;
-                });
+                if (DatabaseComboBox.Items.Count > 0)
+                    DatabaseComboBox.SelectedIndex = 0;
             }
             catch (Exception ex)
             {
-                this.Dispatcher.Invoke(() =>
-                {
-                    LoadingOverlayContainer.Visibility = Visibility.Collapsed;
-                    MessageBoxHelper.ShowError($"Ошибка загрузки баз данных: {ex.Message}");
-                });
+                LoadingOverlayContainer.Visibility = Visibility.Collapsed;
+                MessageBoxHelper.ShowError($"Ошибка загрузки баз данных: {ex.Message}");
             }
         }
 
@@ -97,14 +119,15 @@ namespace PosnaiSQLauncher
             };
 
             DatabaseSelectorPanel.BeginAnimation(OpacityProperty, fadeIn);
+            _ = LoadDatabasesAsync();
         }
 
         private void CloseDatabaseSelector_Click(object sender, RoutedEventArgs e)
         {
-            HideDatabaseSelector();
+            HideDatabaseSelector(true);
         }
 
-        private void HideDatabaseSelector()
+        private void HideDatabaseSelector(bool isBackClick = false)
         {
             var fadeOut = new DoubleAnimation
             {
@@ -117,6 +140,11 @@ namespace PosnaiSQLauncher
             fadeOut.Completed += (s, args) =>
             {
                 DatabaseSelectorOverlay.Visibility = Visibility.Collapsed;
+
+                if (isBackClick)
+                {
+                    FadeOutAndSwitch(() => _parent?.ShowDatabaseModeView()); 
+                }
             };
 
             DatabaseSelectorPanel.BeginAnimation(OpacityProperty, fadeOut);
@@ -140,16 +168,17 @@ namespace PosnaiSQLauncher
             {
                 try
                 {
-                    // ← ПОКАЗЫВАЕМ загрузку
                     var loading = new LoadingOverlay("Удаление базы данных...");
                     LoadingOverlayContainer.Children.Clear();
                     LoadingOverlayContainer.Children.Add(loading);
                     LoadingOverlayContainer.Visibility = Visibility.Visible;
 
                     await _databaseService.DeleteAsync(selectedItem.Id);
-                    
+            
                     LoadingOverlayContainer.Visibility = Visibility.Collapsed;
-                    System.Threading.Tasks.Task.Run(() => LoadDatabasesAsync());
+            
+                    await LoadDatabasesAsync();
+            
                     MessageBoxHelper.ShowSuccess($"База данных «{selectedItem.Name}» успешно удалена");
 
                     if (DatabaseComboBox.Items.Count == 0)
@@ -175,14 +204,13 @@ namespace PosnaiSQLauncher
 
             try
             {
-                // ← ПОКАЗЫВАЕМ загрузку
                 var loading = new LoadingOverlay("Загрузка базы данных...");
                 LoadingOverlayContainer.Children.Clear();
                 LoadingOverlayContainer.Children.Add(loading);
                 LoadingOverlayContainer.Visibility = Visibility.Visible;
 
                 _currentDatabase = await _databaseService.GetByIdAsync(selectedItem.Id);
-                
+        
                 LoadingOverlayContainer.Visibility = Visibility.Collapsed;
 
                 if (_currentDatabase == null)
@@ -192,8 +220,8 @@ namespace PosnaiSQLauncher
                         $"Она была удалена из системы. Обновляю список...",
                         "База данных не найдена"
                     );
-                    
-                    System.Threading.Tasks.Task.Run(() => LoadDatabasesAsync());
+            
+                    await LoadDatabasesAsync();
                     return;
                 }
 
@@ -210,18 +238,53 @@ namespace PosnaiSQLauncher
                     ImagePreview.Source = null;
                     ImagePlaceholder.Visibility = Visibility.Visible;
                 }
+
+                ApplyInterfaceReadOnlyMode();
+
+                HideDatabaseSelector();
             }
             catch (Exception ex)
             {
                 LoadingOverlayContainer.Visibility = Visibility.Collapsed;
-                MessageBoxHelper.ShowError(
-                    $"Ошибка загрузки БД: {ex.Message}",
-                    "Ошибка при загрузке"
-                );
-                return;
+                MessageBoxHelper.ShowError($"Ошибка загрузки БД: {ex.Message}", "Ошибка при загрузке");
             }
+        }
 
-            HideDatabaseSelector();
+        private void ToggleEditButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_isEditAllowed)
+            {
+                var confirmBox = new CustomMessageBox(
+                    "Вы уверены, что хотите разрешить редактирование полей этой базы данных?\n\nИзменение имени или её схемы может повлиять на сохраненную структуру запросов.",
+                    "Запрос на редактирование",
+                    CustomMessageBoxType.YesNo
+                );
+
+                // ИСПРАВЛЕНО: Используем кастомное свойство Result для проверки нажатия кнопки "Да" (Yes)
+                confirmBox.ShowDialog();
+
+                if (confirmBox.Result == MessageBoxResult.Yes)
+                {
+                    _isEditAllowed = true;
+                    
+                    DatabaseNameTextBox.IsReadOnly = false;
+                    DatabaseNameTextBox.Background = new SolidColorBrush(Colors.White);
+                    BrowseImageButton.IsEnabled = true; 
+                    
+                    ToggleEditButton.Content = "🔓 Изменение разрешено";
+                    DatabaseNameTextBox.Focus();
+                }
+            }
+            else
+            {
+                _isEditAllowed = false;
+                
+                DatabaseNameTextBox.IsReadOnly = true;
+                DatabaseNameTextBox.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F5F5F5"));
+                BrowseImageButton.IsEnabled = false; 
+                
+                ToggleEditButton.Content = "🔒 Разрешить изменение";
+            }
         }
 
         private void BrowseImage_Click(object sender, RoutedEventArgs e)
@@ -267,20 +330,12 @@ namespace PosnaiSQLauncher
 
             try
             {
-                // ← ПОКАЗЫВАЕМ загрузку при сохранении
                 var loading = new LoadingOverlay("Сохранение базы данных...");
                 LoadingOverlayContainer.Children.Clear();
                 LoadingOverlayContainer.Children.Add(loading);
                 LoadingOverlayContainer.Visibility = Visibility.Visible;
 
-                if (_selectedOption == "create" || _currentDatabase == null)
-                {
-                    _currentDatabase = await _databaseService.CreateAsync(
-                        DatabaseNameTextBox.Text.Trim(),
-                        _selectedImagePath
-                    );
-                }
-                else
+                if (_selectedOption == "existing" || (_currentDatabase != null && _currentDatabase.IdDatabase > 0))
                 {
                     _currentDatabase = await _databaseService.UpdateAsync(
                         _currentDatabase.IdDatabase,
@@ -288,14 +343,23 @@ namespace PosnaiSQLauncher
                         _selectedImagePath
                     );
                 }
+                else
+                {
+                    _currentDatabase = await _databaseService.CreateAsync(
+                        DatabaseNameTextBox.Text.Trim(),
+                        _selectedImagePath
+                    );
+                    
+                    _selectedOption = "existing"; 
+                }
 
-                // ← УБРАЛИ MessageBox здесь, только скрываем загрузку и переходим дальше
                 LoadingOverlayContainer.Visibility = Visibility.Collapsed;
 
                 _parent.CurrentOption.DatabaseId = _currentDatabase.IdDatabase;
                 _parent.CurrentOption.DatabaseName = _currentDatabase.Name;
+                _parent.CurrentOption.DatabaseSchemaImage = _currentDatabase.SchemaImage;
 
-                FadeOutAndSwitch(() => _parent.ShowQueryModeView(_currentDatabase.IdDatabase));
+                FadeOutAndSwitch(() => _parent?.ShowQueryModeView(_parent.CurrentOption.DatabaseId));
             }
             catch (Exception ex)
             {
@@ -318,6 +382,35 @@ namespace PosnaiSQLauncher
             storyboard.Children.Add(fadeOut);
             storyboard.Completed += (s, e) => { switchAction(); };
             storyboard.Begin(this);
+        }
+        
+        private void RestoreFromState()
+        {
+            var state = _parent.CurrentOption;
+
+            if (state != null && state.DatabaseId > 0)
+            {
+                DatabaseNameTextBox.Text = state.DatabaseName;
+                SubtitleText.Text = "Настройте выбранную базу данных";
+
+                if (!string.IsNullOrEmpty(state.DatabaseSchemaImage))
+                {
+                    ImagePreview.Source = ImageService.Base64ToImage(state.DatabaseSchemaImage);
+                    ImagePlaceholder.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    ImagePreview.Source = null;
+                    ImagePlaceholder.Visibility = Visibility.Visible;
+                }
+
+                _currentDatabase = new Database
+                {
+                    IdDatabase = state.DatabaseId,
+                    Name = state.DatabaseName,
+                    SchemaImage = state.DatabaseSchemaImage
+                };
+            }
         }
     }
 }

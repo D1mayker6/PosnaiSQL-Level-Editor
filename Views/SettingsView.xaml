@@ -201,63 +201,97 @@
                         <TextBlock Text="Google Таблица" 
                                  FontSize="16" 
                                  FontWeight="SemiBold" 
-                                 Margin="0,0,0,10"/>
+                                 Margin="0,0,0,15"/>
 
-                        <Grid Margin="0,0,0,30">
+                        <Grid Margin="0,0,12,10">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="10"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="10"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="10"/> <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="10"/> <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <TextBox x:Name="GoogleSheetUrlTextBox"
-                                   Grid.Column="0"
-                                   Style="{StaticResource ModernTextBox}"
-                                   Text="https://docs.google.com/spreadsheets/d/1234567890"/>
+                                     Grid.Column="0"
+                                     Style="{StaticResource ModernTextBox}"
+                                     Text="https://docs.google.com/spreadsheets/d/1234567890/edit?usp=sharing"
+                                     VerticalContentAlignment="Center"/>
 
                             <Button Grid.Column="2"
-                                  Style="{StaticResource IconButtonStyle}"
-                                  Content="📋"
-                                  ToolTip="Скопировать ссылку"
-                                  Click="CopyUrl_Click"/>
+                                    Style="{StaticResource IconButtonStyle}"
+                                    Content="📋"
+                                    ToolTip="Скопировать ссылку"
+                                    Click="CopyUrl_Click"/>
 
                             <Button Grid.Column="4"
-                                  Style="{StaticResource IconButtonStyle}"
-                                  Content="🌐"
-                                  ToolTip="Открыть в браузере"
-                                  Click="OpenUrl_Click"/>
+                                    Style="{StaticResource IconButtonStyle}"
+                                    Content="🌐"
+                                    ToolTip="Открыть в браузере"
+                                    Click="OpenUrl_Click"/>
                         </Grid>
 
-                        <Border Background="#E3F2FD" 
-                              CornerRadius="10" 
-                              Padding="15" 
-                              Margin="0,0,0,30">
-                            <StackPanel>
-                                <TextBlock Text="ℹ️ Информация" 
-                                         FontSize="14" 
-                                         FontWeight="SemiBold" 
-                                         Margin="0,0,0,8"/>
-                                <TextBlock Text="Google Таблица используется для хранения результатов игроков. Ссылка должна иметь права на редактирование." 
-                                         FontSize="12" 
-                                         Foreground="#555555" 
-                                         TextWrapping="Wrap"/>
-                            </StackPanel>
-                        </Border>
+                        <!-- Сообщение валидации -->
+                        <TextBlock x:Name="ValidationMessage"
+                                 FontSize="12"
+                                 Margin="0,8,0,15"
+                                 TextWrapping="Wrap"
+                                 Visibility="Collapsed"/>
+
+                        <!-- Grid с информацией и кнопкой на одном уровне -->
+                        <Grid Margin="0,0,0,30">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="Auto" MinWidth="180"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Блок информации -->
+                            <Border Grid.Column="0"
+                                    Background="#E3F2FD" 
+                                    CornerRadius="10" 
+                                    Padding="15">
+                                <StackPanel>
+                                    <TextBlock Text="ℹ️ Таблица результатов" 
+                                               FontSize="14" 
+                                               FontWeight="SemiBold" 
+                                               Margin="0,0,0,0"/>
+                                    <StackPanel>
+                                        <TextBlock Text="Google Таблица используется для хранения результатов игроков." 
+                                                   FontSize="10" 
+                                                   Foreground="#555555" 
+                                                   TextWrapping="Wrap"
+                                                   Margin="0,0,0,5"/>
+                                        <TextBlock Text="Ссылка должна быть на Google Table с правами редактора." 
+                                                   FontSize="10" 
+                                                   Foreground="#555555" 
+                                                   TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Кнопка сохранить -->
+                            <Button Grid.Column="2"
+                                    Content="💾 Сохранить" 
+                                    Style="{StaticResource PrimaryButtonStyle}" 
+                                    Click="SaveUrl_Click" 
+                                    Padding="20,15"
+                                    FontSize="13"
+                                    Height="Auto"
+                                    VerticalAlignment="Stretch"/>
+                        </Grid>
 
                         <!-- Смена пароля -->
                         <TextBlock Text="Безопасность" 
-                                 FontSize="16" 
-                                 FontWeight="SemiBold" 
-                                 Margin="0,20,0,10"/>
+                                   FontSize="16" 
+                                   FontWeight="SemiBold" 
+                                   Margin="0,20,0,10"/>
 
                         <Button Content="🔐 Изменить пароль" 
-                              Style="{StaticResource PrimaryButtonStyle}" 
-                              Click="ChangePassword_Click" 
-                              HorizontalAlignment="Left"
-                              Padding="20,15"
-                              FontSize="14"/>
+                                Style="{StaticResource PrimaryButtonStyle}" 
+                                Click="ChangePassword_Click" 
+                                HorizontalAlignment="Left"
+                                Margin="12,0,0,0"
+                                Padding="20,15"
+                                FontSize="14"/>
 
                         <Border Background="#FFF3E0" 
                               CornerRadius="10" 
@@ -278,36 +312,19 @@
                     </StackPanel>
                 </ScrollViewer>
 
-                <!-- Кнопки действий -->
+                <!-- Кнопка действия -->
                 <Border Grid.Row="2" 
                         Background="White" 
                         BorderBrush="#EEE" 
                         BorderThickness="0,1,0,0" 
                         Padding="30,20" 
                         CornerRadius="0,0,20,20">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="15"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Button Grid.Column="0" 
-                              Content="← Назад" 
-                              Style="{StaticResource SecondaryButtonStyle}" 
-                              Click="Back_Click" 
-                              HorizontalAlignment="Stretch" 
-                              MinWidth="0" 
-                              Height="50"/>
-
-                        <Button Grid.Column="2" 
-                              Content="💾 Сохранить изменения" 
-                              Style="{StaticResource PrimaryButtonStyle}" 
-                              Click="Save_Click" 
-                              HorizontalAlignment="Stretch" 
-                              MinWidth="0" 
-                              Height="50"/>
-                    </Grid>
+                    <Button Content="← Назад" 
+                          Style="{StaticResource SecondaryButtonStyle}" 
+                          Click="Back_Click" 
+                          HorizontalAlignment="Stretch" 
+                          MinWidth="0" 
+                          Height="50"/>
                 </Border>
             </Grid>
         </Border>

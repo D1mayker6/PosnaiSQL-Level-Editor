@@ -16,16 +16,51 @@ namespace PosnaiSQLauncher
         {
             InitializeComponent();
             _parent = parent;
+
+            this.Loaded += DatabaseModeView_Loaded;
+        }
+        
+        private void DatabaseModeView_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (_parent?.CurrentOption != null && !string.IsNullOrEmpty(_parent.CurrentOption.DatabaseMode))
+            {
+                string savedMode = _parent.CurrentOption.DatabaseMode;
+                if (savedMode == "create")
+                {
+                    SelectCard(Card1, Card2, "create");
+                }
+                else if (savedMode == "existing")
+                {
+                    SelectCard(Card2, Card1, "existing");
+                }
+            }
         }
 
         private void Card1_Click(object sender, MouseButtonEventArgs e)
         {
             SelectCard(Card1, Card2, "create");
+            ResetDatabaseState();
         }
 
         private void Card2_Click(object sender, MouseButtonEventArgs e)
         {
             SelectCard(Card2, Card1, "existing");
+            ResetDatabaseState();
+        }
+        
+        private void ResetDatabaseState()
+        {
+            if (_parent?.CurrentOption != null)
+            {
+                _parent.CurrentOption.DatabaseId = 0;
+                _parent.CurrentOption.DatabaseName = null;
+                _parent.CurrentOption.DatabaseSchemaImage = null;
+        
+                _parent.CurrentOption.QueryId = 0;
+                _parent.CurrentOption.QueryName = null;
+                _parent.CurrentOption.QueryCondition = null;
+                _parent.CurrentOption.QueryString = null;
+            }
         }
 
         private void SelectCard(Border selectedCard, Border otherCard, string option)
@@ -85,6 +120,7 @@ namespace PosnaiSQLauncher
             }
 
             // Переход на окно настройки БД
+            _parent.CurrentOption.DatabaseMode = _selectedOption;
             FadeOutAndSwitch(() => _parent.ShowDatabaseConfig(_selectedOption));
         }
 

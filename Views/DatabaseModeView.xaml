@@ -75,7 +75,7 @@
                             <TextBlock Text="3" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC"
                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <TextBlock Text="Уровень" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
+                        <TextBlock Text="Параметры" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
                                   HorizontalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
 
@@ -89,7 +89,7 @@
                             <TextBlock Text="4" FontSize="16" FontWeight="Bold" Foreground="#CCCCCC"
                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <TextBlock Text="Экспорт" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
+                        <TextBlock Text="Сохранение" FontSize="10" Foreground="#999999" Margin="0,6,0,0"
                                   HorizontalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Grid>
@@ -211,6 +211,7 @@
                             HorizontalAlignment="Stretch"
                             Height="50"
                             Name="NextButton"
+                            IsEnabled="False" 
                             Click="Next_Click"/>
                 </Grid>
             </Border>

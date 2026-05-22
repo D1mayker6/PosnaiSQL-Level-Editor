@@ -20,29 +20,52 @@ namespace PosnaiSQLauncher
 
             var context = new AppDbContext();
             _optionService = new OptionService(context);
+
+            this.Loaded += (s, e) => DisplaySummary();
+        }
+
+        private void DisplaySummary()
+        {
+            if (_parent?.CurrentOption == null) return;
+
+            var variant = _parent.CurrentOption;
+            
+            if (FindName("DbNameTextBlock") is TextBlock dbText) 
+                dbText.Text = variant.DatabaseName ?? "Не указано";
+
+            if (FindName("QueryNameTextBlock") is TextBlock queryText) 
+                queryText.Text = variant.QueryName ?? "Не указано";
+
+            if (FindName("LocationTextBlock") is TextBlock locText) 
+                locText.Text = variant.LocationName ?? "Не выбрана";
+
+            if (FindName("TimeTextBlock") is TextBlock timeText)
+            {
+                int min = variant.TimeLimit / 60;
+                int sec = variant.TimeLimit % 60;
+                timeText.Text = $"{min:D2}:{sec:D2}";
+            }
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            FadeOutAndSwitch(() => _parent?.ShowLevelView(_parent.CurrentOption.QueryId));
+            int dbId = _parent.CurrentOption.DatabaseId;
+            FadeOutAndSwitch(() => _parent?.ShowLevelView(dbId)); 
         }
 
         private async void Save_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Показываем загрузку
                 LoadingOverlayContainer.Visibility = Visibility.Visible;
                 LoadingOverlayContainer.Children.Clear();
                 LoadingOverlayContainer.Children.Add(new LoadingOverlay("Записываем в базу данных..."));
 
                 var variant = _parent.CurrentOption;
 
-                // Валидация перед записью
                 if (variant.QueryId == 0) throw new Exception("Данные запроса потеряны. Вернитесь назад.");
                 if (variant.LocationId == 0) throw new Exception("Локация не выбрана.");
 
-                // Сохранение (Option в твоей БД — это и есть вариант уровня)
                 await _optionService.CreateAsync(
                     variant.QueryId,
                     variant.LocationId,
@@ -53,7 +76,6 @@ namespace PosnaiSQLauncher
 
                 MessageBoxHelper.ShowSuccess("Вариант успешно добавлен в систему!");
                 
-                // Очищаем временные данные варианта после сохранения
                 _parent.CurrentOption = new Models.OptionData(); 
 
                 FadeOutAndSwitch(() => _parent?.ShowMainMenu());
@@ -61,7 +83,7 @@ namespace PosnaiSQLauncher
             catch (Exception ex)
             {
                 LoadingOverlayContainer.Visibility = Visibility.Collapsed;
-                MessageBoxHelper.ShowError($"Ошибка: {ex.Message}");
+                MessageBoxHelper.ShowError($"Ошибка при сохранении: {ex.Message}");
             }
         }
 

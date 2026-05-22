@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using PosnaiSQLauncher.Context;
 using PosnaiSQLauncher.Services;
@@ -21,22 +23,40 @@ namespace PosnaiSQLauncher
         private readonly DatabaseService _databaseService;
         private Query _currentQuery;
 
+        // Флаг разрешения редактирования
+        private bool _isEditAllowed = false;
+
         public QueryView(MainWindow parent, int databaseId, string mode = "new")
         {
             InitializeComponent();
             _parent = parent;
-            _databaseId = databaseId;
+            
+            if (_parent.CurrentOption.DatabaseId > 0)
+            {
+                _databaseId = _parent.CurrentOption.DatabaseId;
+            }
+            else
+            {
+                _databaseId = databaseId;
+                _parent.CurrentOption.DatabaseId = databaseId;
+            }
+    
             _mode = mode;
 
             var context = new AppDbContext();
             _queryService = new QueryService(context);
             _databaseService = new DatabaseService(context);
 
-            if (_mode == "existing")
+            RestoreFromState();
+    
+            // Переводим интерфейс в нужный режим (чтение или редактирование)
+            ApplyInterfaceReadOnlyMode();
+
+            if (_mode == "existing" && _currentQuery == null) 
             {
-                this.Loaded += (s, e) => ShowQuerySelector();
+                this.Loaded += async (s, e) => await ShowQuerySelectorAsync();
             }
-            else
+            else if (_mode == "new" && _currentQuery == null)
             {
                 QuerySelectorSection.Visibility = Visibility.Collapsed;
                 SubtitleText.Text = "Создайте новый SQL запрос";
@@ -44,70 +64,92 @@ namespace PosnaiSQLauncher
             }
         }
 
-        private async void LoadQueriesAsync()
+        // Метод управления режимом "Только для чтения"
+        private void ApplyInterfaceReadOnlyMode()
+        {
+            if (_mode == "existing" && _currentQuery != null)
+            {
+                // Блокируем текстовые поля
+                QueryNameTextBox.IsReadOnly = true;
+                QueryConditionTextBox.IsReadOnly = true;
+                QueryCodeTextBox.IsReadOnly = true;
+
+                // Красим фон полей в серый цвет
+                var readonlyBg = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F5F5F5"));
+                QueryNameTextBox.Background = readonlyBg;
+                QueryConditionTextBox.Background = readonlyBg;
+                QueryCodeTextBox.Background = readonlyBg;
+                
+                // Показываем кнопку разблокировки
+                ToggleEditButton.Visibility = Visibility.Visible;
+                ToggleEditButton.Content = "🔒 Разрешить изменение";
+                _isEditAllowed = false;
+            }
+            else
+            {
+                // Разблокируем всё (для новых запросов или если разрешили редактирование)
+                QueryNameTextBox.IsReadOnly = false;
+                QueryConditionTextBox.IsReadOnly = false;
+                QueryCodeTextBox.IsReadOnly = false;
+
+                var whiteBg = new SolidColorBrush(Colors.White);
+                QueryNameTextBox.Background = whiteBg;
+                QueryConditionTextBox.Background = whiteBg;
+                QueryCodeTextBox.Background = whiteBg;
+                
+                ToggleEditButton.Visibility = Visibility.Collapsed;
+                _isEditAllowed = true;
+            }
+        }
+
+        private async Task LoadQueriesAsync()
         {
             try
             {
-                // ← ПОКАЗЫВАЕМ загрузку
-                this.Dispatcher.Invoke(() =>
-                {
-                    var loading = new LoadingOverlay("Загрузка запросов...");
-                    LoadingOverlayContainer.Children.Clear();
-                    LoadingOverlayContainer.Children.Add(loading);
-                    LoadingOverlayContainer.Visibility = Visibility.Visible;
-                });
+                var loading = new LoadingOverlay("Загрузка запросов...");
+                LoadingOverlayContainer.Children.Clear();
+                LoadingOverlayContainer.Children.Add(loading);
+                LoadingOverlayContainer.Visibility = Visibility.Visible;
 
                 var queries = await _queryService.GetByDatabaseIdAsync(_databaseId);
         
-                this.Dispatcher.Invoke(() =>
+                LoadingOverlayContainer.Visibility = Visibility.Collapsed;
+
+                if (queries == null || queries.Count == 0)
                 {
-                    // ← СКРЫВАЕМ загрузку
-                    LoadingOverlayContainer.Visibility = Visibility.Collapsed;
+                    HideQuerySelector();
+                    MessageBoxHelper.ShowInfo(
+                        "В этой базе данных нет сохраненных запросов.\n\nСоздайте новый запрос.",
+                        "Запросы не найдены"
+                    );
+                    return;
+                }
 
-                    if (queries == null || queries.Count == 0)
-                    {
-                        HideQuerySelector();
-                        MessageBoxHelper.ShowInfo(
-                            "В этой базе данных нет сохраненных запросов.\n\n" +
-                            "Создайте новый запрос.",
-                            "Запросы не найдены"
-                        );
-                        return;
-                    }
+                QuerySelectorComboBox.Items.Clear();
+        
+                foreach (var query in queries)
+                {
+                    QuerySelectorComboBox.Items.Add(new QueryComboItem 
+                    { 
+                        Id = query.IdQuery,
+                        Name = query.Name
+                    });
+                }
 
-                    QuerySelectorComboBox.Items.Clear();
-            
-                    foreach (var query in queries)
-                    {
-                        QuerySelectorComboBox.Items.Add(new QueryComboItem 
-                        { 
-                            Id = query.IdQuery,
-                            Name = query.Name
-                        });
-                    }
-
-                    if (QuerySelectorComboBox.Items.Count > 0)
-                        QuerySelectorComboBox.SelectedIndex = 0;
-                });
+                if (QuerySelectorComboBox.Items.Count > 0)
+                    QuerySelectorComboBox.SelectedIndex = 0;
             }
             catch (Exception ex)
             {
-                this.Dispatcher.Invoke(() =>
-                {
-                    LoadingOverlayContainer.Visibility = Visibility.Collapsed;
-                    HideQuerySelector();
-                    MessageBoxHelper.ShowError(
-                        $"Ошибка загрузки запросов: {ex.Message}",
-                        "Ошибка при загрузке"
-                    );
-                });
+                LoadingOverlayContainer.Visibility = Visibility.Collapsed;
+                HideQuerySelector();
+                MessageBoxHelper.ShowError($"Ошибка загрузки запросов: {ex.Message}", "Ошибка при загрузке");
             }
         }
-        private void ShowQuerySelector()
+
+        private async Task ShowQuerySelectorAsync()
         {
             QuerySelectorOverlay.Visibility = Visibility.Visible;
-
-            System.Threading.Tasks.Task.Run(() => LoadQueriesAsync());
 
             var fadeIn = new DoubleAnimation
             {
@@ -118,14 +160,15 @@ namespace PosnaiSQLauncher
             };
 
             QuerySelectorPanel.BeginAnimation(OpacityProperty, fadeIn);
+            await LoadQueriesAsync();
         }
 
         private void CloseQuerySelector_Click(object sender, RoutedEventArgs e)
         {
-            HideQuerySelector();
+            HideQuerySelector(true);
         }
 
-        private void HideQuerySelector()
+        private void HideQuerySelector(bool isBackClick = false)
         {
             var fadeOut = new DoubleAnimation
             {
@@ -138,6 +181,12 @@ namespace PosnaiSQLauncher
             fadeOut.Completed += (s, args) =>
             {
                 QuerySelectorOverlay.Visibility = Visibility.Collapsed;
+
+                // Если вышли через крестик, возвращаем на экран выбора режима (новый/существующий)
+                if (isBackClick)
+                {
+                    FadeOutAndSwitch(() => _parent?.ShowQueryModeView(_databaseId));
+                }
             };
 
             QuerySelectorPanel.BeginAnimation(OpacityProperty, fadeOut);
@@ -170,30 +219,66 @@ namespace PosnaiSQLauncher
                         "Запрос не найден"
                     );
                     
-                    System.Threading.Tasks.Task.Run(() => LoadQueriesAsync());
+                    await LoadQueriesAsync();
                     return;
                 }
                 
                 QueryNameTextBox.Text = _currentQuery.Name;
                 QueryConditionTextBox.Text = _currentQuery.Condition ?? "";
                 QueryCodeTextBox.Text = _currentQuery.QueryString ?? "";
-                SubtitleText.Text = "Отредактируйте выбранный запрос";
+                SubtitleText.Text = "Настройте выбранный запрос";
 
                 _parent.CurrentOption.QueryId = _currentQuery.IdQuery;
                 _parent.CurrentOption.QueryName = _currentQuery.Name;
                 _parent.CurrentOption.QueryCondition = _currentQuery.Condition;
                 _parent.CurrentOption.QueryString = _currentQuery.QueryString;
+
+                // Включаем режим только для чтения после выбора существующего запроса
+                ApplyInterfaceReadOnlyMode();
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError(
-                    $"Ошибка загрузки запроса: {ex.Message}",
-                    "Ошибка при загрузке"
-                );
+                MessageBoxHelper.ShowError($"Ошибка загрузкизапроса: {ex.Message}", "Ошибка при загрузке");
                 return;
             }
 
             HideQuerySelector();
+        }
+
+        // ОБРАБОТЧИК КЛИКА КНОПКИ РАЗБЛОКИРОВКИ
+        private void ToggleEditButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_isEditAllowed)
+            {
+                var confirmBox = new CustomMessageBox(
+                    "Вы уверены, что хотите разрешить редактирование полей этого запроса?\n\nИзменение условия задачи или текста кода перезапишет текущие данные.",
+                    "Запрос на редактирование",
+                    CustomMessageBoxType.YesNo
+                );
+
+                confirmBox.ShowDialog();
+
+                if (confirmBox.Result == MessageBoxResult.Yes)
+                {
+                    _isEditAllowed = true;
+                    
+                    QueryNameTextBox.IsReadOnly = false;
+                    QueryConditionTextBox.IsReadOnly = false;
+                    QueryCodeTextBox.IsReadOnly = false;
+
+                    var whiteBg = new SolidColorBrush(Colors.White);
+                    QueryNameTextBox.Background = whiteBg;
+                    QueryConditionTextBox.Background = whiteBg;
+                    QueryCodeTextBox.Background = whiteBg;
+                    
+                    ToggleEditButton.Content = "🔓 Изменение разрешено";
+                    QueryNameTextBox.Focus();
+                }
+            }
+            else
+            {
+                ApplyInterfaceReadOnlyMode();
+            }
         }
 
         private async void DeleteQuery_Click(object sender, RoutedEventArgs e)
@@ -208,7 +293,7 @@ namespace PosnaiSQLauncher
                 try
                 {
                     await _queryService.DeleteAsync(selectedItem.Id);
-                    System.Threading.Tasks.Task.Run(() => LoadQueriesAsync());
+                    await LoadQueriesAsync();
                     MessageBoxHelper.ShowSuccess("Запрос успешно удален");
                 }
                 catch (Exception ex)
@@ -272,6 +357,7 @@ namespace PosnaiSQLauncher
                     );
                 }
 
+                _parent.CurrentOption.QueryMode = _mode; 
                 _parent.CurrentOption.QueryId = _currentQuery.IdQuery;
                 _parent.CurrentOption.QueryName = _currentQuery.Name;
                 _parent.CurrentOption.QueryCondition = _currentQuery.Condition;
@@ -284,7 +370,7 @@ namespace PosnaiSQLauncher
                 MessageBoxHelper.ShowError($"Ошибка сохранения: {ex.Message}");
             }
         }
-
+        
         private void FadeOutAndSwitch(Action switchAction)
         {
             var fadeOut = new DoubleAnimation 
@@ -299,6 +385,29 @@ namespace PosnaiSQLauncher
             storyboard.Children.Add(fadeOut);
             storyboard.Completed += (s, e) => { switchAction(); };
             storyboard.Begin(this);
+        }
+        
+        private void RestoreFromState()
+        {
+            var state = _parent.CurrentOption;
+
+            if (state.QueryId > 0)
+            {
+                QueryNameTextBox.Text = state.QueryName;
+                QueryConditionTextBox.Text = state.QueryCondition;
+                QueryCodeTextBox.Text = state.QueryString;
+
+                _currentQuery = new Query
+                {
+                    IdQuery = state.QueryId,
+                    Name = state.QueryName,
+                    Condition = state.QueryCondition,
+                    QueryString = state.QueryString,
+                    IdDatabase = state.DatabaseId
+                };
+
+                SubtitleText.Text = "Отредактируйте выбранный запрос";
+            }
         }
     }
 }

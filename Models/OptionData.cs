@@ -15,6 +15,12 @@ namespace PosnaiSQLauncher.Models
         public string LocationName { get; set; }
 
         public int TimeLimit { get; set; } = 300;
+        
+        public string DatabaseSchemaImage { get; set; }
+        
+        public string DatabaseMode { get; set; }
+        
+        public string QueryMode { get; set; }
 
         public OptionData()
         {

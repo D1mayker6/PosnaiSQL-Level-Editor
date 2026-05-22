@@ -87,7 +87,7 @@
                         <Border BorderBrush="#E0E0E0" BorderThickness="2" CornerRadius="10" Background="White" Height="42" Margin="0,0,0,10">
                             <Grid>
                                 <TextBox x:Name="SearchBox" Background="Transparent" BorderThickness="0" VerticalContentAlignment="Center" Padding="12,0" TextChanged="SearchBox_TextChanged"/>
-                                <TextBlock Text="Поиск по номеру" Margin="12,0" VerticalAlignment="Center" Foreground="#999999" IsHitTestVisible="False">
+                                <TextBlock Text="Поиск..." Margin="12,0" VerticalAlignment="Center" Foreground="#999999" IsHitTestVisible="False">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Visibility" Value="Collapsed"/>

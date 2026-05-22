@@ -24,11 +24,30 @@ namespace PosnaiSQLauncher
         private void CardNew_Click(object sender, MouseButtonEventArgs e)
         {
             SelectCard(CardNew, CardExisting, "new");
+            ResetQueryState();
         }
 
         private void CardExisting_Click(object sender, MouseButtonEventArgs e)
         {
             SelectCard(CardExisting, CardNew, "existing");
+            ResetQueryState();
+        }
+        
+        private void ResetQueryState()
+        {
+            if (_parent?.CurrentOption != null)
+            {
+                _parent.CurrentOption.QueryMode = _selectedMode;
+
+                _parent.CurrentOption.QueryId = 0;
+                _parent.CurrentOption.QueryName = null;
+                _parent.CurrentOption.QueryCondition = null;
+                _parent.CurrentOption.QueryString = null;
+
+                _parent.CurrentOption.LocationId = 0;
+                _parent.CurrentOption.LocationName = null;
+                _parent.CurrentOption.TimeLimit = 300; 
+            }
         }
 
         private void SelectCard(Border selectedCard, Border otherCard, string mode)
@@ -68,7 +87,8 @@ namespace PosnaiSQLauncher
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            FadeOutAndSwitch(() => _parent.ShowDatabaseConfig("existing"));
+            string originalDatabaseMode = _parent.CurrentOption.DatabaseMode ?? "new";
+            FadeOutAndSwitch(() => _parent.ShowDatabaseConfig(originalDatabaseMode));
         }
 
         private void Next_Click(object sender, RoutedEventArgs e)
