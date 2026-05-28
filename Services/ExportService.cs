@@ -35,19 +35,24 @@ namespace PosnaiSQLauncher.Services
                 .ToListAsync();
         }
 
-        // Экспорт в JSON
         public async Task ExportToJsonAsync(List<ShowOption> data, string filePath)
         {
-            var options = new JsonSerializerOptions 
-            { 
-                WriteIndented = true, 
-                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping 
+            string googleSheetUrl = "";
+            if (File.Exists("settings.json"))
+            {
+                string settingsJson = await File.ReadAllTextAsync("settings.json");
+                googleSheetUrl = Newtonsoft.Json.Linq.JObject.Parse(settingsJson)["googleSheetUrl"]?.ToString() ?? "";
+            }
+
+            var finalJson = new Newtonsoft.Json.Linq.JObject
+            {
+                ["GoogleSheetUrl"] = googleSheetUrl,
+                ["Options"] = Newtonsoft.Json.Linq.JArray.FromObject(data)
             };
-            string json = JsonSerializer.Serialize(data, options);
-            await File.WriteAllTextAsync(filePath, json);
+
+            await File.WriteAllTextAsync(filePath, finalJson.ToString(Newtonsoft.Json.Formatting.Indented));
         }
 
-        // Экспорт в Excel
         public async Task ExportToExcelAsync(List<ShowOption> data, string filePath)
         {
             await _excelService.ExportToExcelAsync(data, filePath);

@@ -76,7 +76,7 @@ namespace PosnaiSQLauncher.Services
         /// <summary>
         /// Обновить вариант
         /// </summary>
-        public async Task<Option> UpdateAsync(int id, int locationId, int timeLimit)
+        public async Task<Option> UpdateAsync(int id, int? locationId, int timeLimit)
         {
             var option = await _context.Options.FindAsync(id);
             if (option == null)

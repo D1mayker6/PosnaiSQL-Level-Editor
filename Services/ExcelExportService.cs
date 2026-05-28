@@ -1,7 +1,3 @@
-// Services/ExcelExportService.cs
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using ClosedXML.Excel;
 using PosnaiSQLauncher.Entities;
 
@@ -17,7 +13,6 @@ namespace PosnaiSQLauncher.Services
                 {
                     var worksheet = workbook.Worksheets.Add("Варианты");
                     
-                    // Заголовки
                     var headers = new[] 
                     { 
                         "Номер\nварианта", 
@@ -33,7 +28,6 @@ namespace PosnaiSQLauncher.Services
                         var headerCell = worksheet.Cell(1, col);
                         headerCell.Value = headers[col - 1];
                         
-                        // Стиль ТОЛЬКО для ячейки с заголовком
                         headerCell.Style.Font.Bold = true;
                         headerCell.Style.Font.FontSize = 12;
                         headerCell.Style.Fill.BackgroundColor = XLColor.FromArgb(0x2196F3);
@@ -51,18 +45,15 @@ namespace PosnaiSQLauncher.Services
                         headerCell.Style.Border.RightBorderColor = XLColor.FromArgb(0x1565C0);
                     }
                     
-                    // Высота заголовка
                     worksheet.Row(1).Height = 35;
                     
-                    // Ширина колонок
-                    worksheet.Column(1).Width = 13;  // Номер варианта
-                    worksheet.Column(2).Width = 18;  // Локация
-                    worksheet.Column(3).Width = 22;  // Заголовок
-                    worksheet.Column(4).Width = 28;  // Условие
-                    worksheet.Column(5).Width = 38;  // SQL код
-                    worksheet.Column(6).Width = 12;  // Лимит в сек.
+                    worksheet.Column(1).Width = 13;  
+                    worksheet.Column(2).Width = 18;  
+                    worksheet.Column(3).Width = 22;  
+                    worksheet.Column(4).Width = 28;  
+                    worksheet.Column(5).Width = 38;  
+                    worksheet.Column(6).Width = 12;  
                     
-                    // Данные
                     int row = 2;
                     bool isWhiteRow = true;
                     
@@ -75,11 +66,9 @@ namespace PosnaiSQLauncher.Services
                         worksheet.Cell(row, 5).Value = item.QueryString ?? "";
                         worksheet.Cell(row, 6).Value = item.TimeLimit;
                         
-                        // Стиль для строки данных
                         var dataRow = worksheet.Row(row);
                         dataRow.Height = 25;
                         
-                        // Шрифт для всех ячеек строки
                         for (int col = 1; col <= 6; col++)
                         {
                             var cell = worksheet.Cell(row, col);
@@ -87,14 +76,12 @@ namespace PosnaiSQLauncher.Services
                             cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
                             cell.Style.Alignment.WrapText = true;
                             
-                            // Courier New для SQL кода (колонка 5)
                             if (col == 5)
                             {
                                 cell.Style.Font.FontName = "Courier New";
                                 cell.Style.Font.FontSize = 10;
                             }
                             
-                            // Чередующиеся цвета - ТОЛЬКО для ячеек, не для всей строки
                             if (!isWhiteRow)
                             {
                                 cell.Style.Fill.BackgroundColor = XLColor.FromArgb(0xF5F5F5);
@@ -104,7 +91,6 @@ namespace PosnaiSQLauncher.Services
                                 cell.Style.Fill.BackgroundColor = XLColor.White;
                             }
                             
-                            // Границы для всех ячеек
                             cell.Style.Border.TopBorder = XLBorderStyleValues.Thin;
                             cell.Style.Border.BottomBorder = XLBorderStyleValues.Thin;
                             cell.Style.Border.LeftBorder = XLBorderStyleValues.Thin;
@@ -115,7 +101,7 @@ namespace PosnaiSQLauncher.Services
                             cell.Style.Border.RightBorderColor = XLColor.FromArgb(0xE0E0E0);
                         }
                         
-                        isWhiteRow = !isWhiteRow; // Переключаем цвет для следующей строки
+                        isWhiteRow = !isWhiteRow; 
                         row++;
                     }
                     

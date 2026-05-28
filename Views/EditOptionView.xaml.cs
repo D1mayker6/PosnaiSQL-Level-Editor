@@ -1,209 +1,497 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
 using Microsoft.Win32;
+using Microsoft.EntityFrameworkCore;
+using PosnaiSQLauncher.Context;
+using PosnaiSQLauncher.Entities;
+using PosnaiSQLauncher.Services;
+using PosnaiSQLauncher.Helpers; 
 
 namespace PosnaiSQLauncher
 {
     public partial class EditOptionView : UserControl
     {
         private MainWindow _parent;
-        private int _totalSeconds = 300;
-        private string _selectedImagePath;
+        private AppDbContext _context;
+        private DatabaseService _databaseService;
+        private QueryService _queryService;
+        private OptionService _optionService;
+        private LocationService _locationService;
+
+        private Option _currentOption;
+        private int _timeLimitSeconds = 300; 
+        private int? _selectedLocationId = 1; 
+        private string _currentImagePath = null; 
+        
+        private bool _isPopulating = false; 
 
         public EditOptionView(MainWindow parent)
         {
             InitializeComponent();
             _parent = parent;
-            UpdateTimeDisplay();
-            
-            // Изначально подсвечиваем пустыню как активную по умолчанию (опционально)
-            AnimateBorder(CardDesert, (Color)ColorConverter.ConvertFromString("#2196F3"), 3);
+
+            _context = new AppDbContext();
+            _databaseService = new DatabaseService(_context);
+            _queryService = new QueryService(_context);
+            _optionService = new OptionService(_context);
+            _locationService = new LocationService(_context);
+
+            this.Loaded += EditOptionView_Loaded;
+        }
+
+        private async void EditOptionView_Loaded(object sender, RoutedEventArgs e)
+        {
+            await LoadOptionsListAsync();
+            VariantOverlay.Visibility = Visibility.Visible;
+        }
+
+        private async Task LoadOptionsListAsync()
+        {
+            try
+            {
+                var options = await _context.Options
+                    .Include(o => o.IdQueryNavigation)
+                    .ThenInclude(q => q.IdDatabaseNavigation)
+                    .ToListAsync();
+
+                VariantComboBox.Items.Clear();
+
+                foreach (var option in options)
+                {
+                    var queryName = option.IdQueryNavigation?.Name ?? "Неизвестный запрос";
+                    var dbName = option.IdQueryNavigation?.IdDatabaseNavigation?.Name ?? "Неизвестная БД";
+                    
+                    VariantComboBox.Items.Add(new ComboBoxItem
+                    {
+                        Content = $"Вариант {option.IdOption}: {queryName} ({dbName})",
+                        Tag = option 
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError($"Ошибка при загрузке вариантов: {ex.Message}", "Ошибка");
+            }
+        }
+        
+        private void AddDatabase_Click(object sender, RoutedEventArgs e)
+        {
+            _isPopulating = true;
+    
+            DatabaseComboBox.SelectedItem = null;
+            DatabaseNameTextBox.Text = string.Empty;
+            ImagePreview.Source = null;
+            ImagePlaceholder.Visibility = Visibility.Visible;
+            _currentImagePath = null;
+            DeleteDatabaseButton.IsEnabled = false; 
+
+            _isPopulating = false;
+
+            ClearQueryFields();
+        }
+
+        private void AddQuery_Click(object sender, RoutedEventArgs e)
+        {
+            ClearQueryFields();
+        }
+
+        private void ClearQueryFields()
+        {
+            _isPopulating = true;
+    
+            QueryComboBox.SelectedItem = null;
+            QueryNameTextBox.Text = string.Empty;
+            QueryConditionTextBox.Text = string.Empty;
+            QuerySqlTextBox.Text = string.Empty;
+            DeleteQueryButton.IsEnabled = false;
+
+            _isPopulating = false;
         }
 
         private void VariantComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            bool hasSelection = VariantComboBox.SelectedItem != null;
-            OpenVariantButton.IsEnabled = hasSelection;
-            DeleteVariantButton.IsEnabled = hasSelection;
+            bool isSelected = VariantComboBox.SelectedItem != null;
+            OpenVariantButton.IsEnabled = isSelected;
+            DeleteVariantButton.IsEnabled = isSelected;
         }
-        
-        private void DeleteVariant_Click(object sender, RoutedEventArgs e)
-        {
-            if (VariantComboBox.SelectedItem is ComboBoxItem selectedItem)
-            {
-                var result = MessageBox.Show(
-                    $"Удалить вариант:\n\n{selectedItem.Content} ?",
-                    "Удаление",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning);
 
-                if (result == MessageBoxResult.Yes)
+        private async void OpenVariant_Click(object sender, RoutedEventArgs e)
+        {
+            if (VariantComboBox.SelectedItem is ComboBoxItem selectedItem && selectedItem.Tag is Option option)
+            {
+                try
                 {
-                    VariantComboBox.Items.Remove(selectedItem);
-                    OpenVariantButton.IsEnabled = false;
-                    DeleteVariantButton.IsEnabled = false;
+                    _currentOption = await _optionService.GetByIdAsync(option.IdOption);
+                    
+                    await PopulateMainFormAsync();
+
+                    VariantOverlay.Visibility = Visibility.Collapsed;
+                }
+                catch (Exception ex)
+                {
+                    MessageBoxHelper.ShowError($"Ошибка открытия: {ex.Message}", "Ошибка");
                 }
             }
         }
 
-        private void OpenVariant_Click(object sender, RoutedEventArgs e)
+        private async void DeleteVariant_Click(object sender, RoutedEventArgs e)
         {
-            var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(400));
-            fadeOut.Completed += (s, ev) => {
-                VariantOverlay.Visibility = Visibility.Collapsed;
-                MainBorder.Opacity = 1;
-                MainBorder.IsHitTestVisible = true;
-            };
-            VariantOverlay.BeginAnimation(OpacityProperty, fadeOut);
-        }
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (sender is TextBox tb)
+            if (VariantComboBox.SelectedItem is ComboBoxItem selectedItem && selectedItem.Tag is Option option)
             {
-                int len = tb.Text.Length;
-                if (len < 100) tb.FontSize = 16;
-                else if (len < 300) tb.FontSize = 14;
-                else tb.FontSize = 12;
-            }
-        }
-        
-        private void DatabaseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            DeleteDatabaseButton.IsEnabled = DatabaseComboBox.SelectedIndex > 0;
-        }
-
-        private void DeleteDatabase_Click(object sender, RoutedEventArgs e)
-        {
-            if (DatabaseComboBox.SelectedItem is ComboBoxItem selectedItem)
-            {
-                var result = MessageBox.Show(
-                    $"Удалить базу данных:\n\n{selectedItem.Content} ?",
-                    "Удаление",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning);
-
+                var result = MessageBoxHelper.ShowQuestion("Вы уверены, что хотите удалить этот вариант?", "Подтверждение");
                 if (result == MessageBoxResult.Yes)
                 {
-                    DatabaseComboBox.Items.Remove(selectedItem);
-                    DeleteDatabaseButton.IsEnabled = false;
-                }
-            }
-        }
-        
-        private void QueryComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            DeleteQueryButton.IsEnabled = QueryComboBox.SelectedIndex > 0;
-        }
-
-        private void DeleteQuery_Click(object sender, RoutedEventArgs e)
-        {
-            if (QueryComboBox.SelectedItem is ComboBoxItem selectedItem)
-            {
-                var result = MessageBox.Show(
-                    $"Удалить запрос:\n\n{selectedItem.Content} ?",
-                    "Удаление",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning);
-
-                if (result == MessageBoxResult.Yes)
-                {
-                    QueryComboBox.Items.Remove(selectedItem);
-                    DeleteQueryButton.IsEnabled = false;
+                    await _optionService.DeleteAsync(option.IdOption);
+                    await LoadOptionsListAsync(); 
                 }
             }
         }
 
-        // ===== ТАЙМЕР =====
-        private void TimePlus5_Click(object sender, RoutedEventArgs e) => AddTime(5);
-        private void TimePlus30_Click(object sender, RoutedEventArgs e) => AddTime(30);
-        private void TimeMinus5_Click(object sender, RoutedEventArgs e) => AddTime(-5);
-        private void TimeMinus30_Click(object sender, RoutedEventArgs e) => AddTime(-30);
-
-        private void AddTime(int s)
+        private async Task PopulateMainFormAsync()
         {
-            _totalSeconds = Math.Max(0, Math.Min(3595, _totalSeconds + s));
-            UpdateTimeDisplay();
-        }
+            if (_currentOption == null) return;
 
-        private void UpdateTimeDisplay()
-        {
-            MinDisplay.Text = (_totalSeconds / 60).ToString("D2");
-            SecDisplay.Text = (_totalSeconds % 60).ToString("D2");
-        }
-
-        // ===== КАРТОЧКИ ЛОКАЦИЙ (ПЛАВНАЯ АНИМАЦИЯ) =====
-        private void CardDesert_Click(object sender, MouseButtonEventArgs e)
-        {
-            AnimateBorder(CardDesert, (Color)ColorConverter.ConvertFromString("#2196F3"), 3);
-            AnimateBorder(CardForest, (Color)ColorConverter.ConvertFromString("#E0E0E0"), 2);
-        }
-
-        private void CardForest_Click(object sender, MouseButtonEventArgs e)
-        {
-            AnimateBorder(CardForest, (Color)ColorConverter.ConvertFromString("#2196F3"), 3);
-            AnimateBorder(CardDesert, (Color)ColorConverter.ConvertFromString("#E0E0E0"), 2);
-        }
-
-        private void AnimateBorder(Border border, Color targetColor, double targetThickness)
-        {
-            ColorAnimation colorAnim = new ColorAnimation { To = targetColor, Duration = TimeSpan.FromMilliseconds(300) };
-            ThicknessAnimation thickAnim = new ThicknessAnimation { To = new Thickness(targetThickness), Duration = TimeSpan.FromMilliseconds(300) };
-
-            if (border.BorderBrush is SolidColorBrush currentBrush)
+            _isPopulating = true; 
+            
+            try
             {
-                if (currentBrush.IsFrozen) border.BorderBrush = currentBrush.Clone();
-                border.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnim);
-            }
-            else
-            {
-                border.BorderBrush = new SolidColorBrush(Colors.Transparent);
-                border.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnim);
-            }
+                var query = _currentOption.IdQueryNavigation;
+                var database = query?.IdDatabaseNavigation;
 
-            border.BeginAnimation(Border.BorderThicknessProperty, thickAnim);
+                await LoadDatabasesAsync();
+                await LoadQueriesAsync(database?.IdDatabase ?? 0);
+
+                if (database != null)
+                {
+                    SelectInComboBox(DatabaseComboBox, database.IdDatabase);
+                    DatabaseNameTextBox.Text = database.Name;
+                    
+                    if (!string.IsNullOrEmpty(database.SchemaImage))
+                    {
+                        ImagePreview.Source = ImageService.Base64ToImage(database.SchemaImage);
+                        ImagePlaceholder.Visibility = Visibility.Collapsed;
+                    }
+                    DeleteDatabaseButton.IsEnabled = true;
+                }
+
+                if (query != null)
+                {
+                    SelectInComboBox(QueryComboBox, query.IdQuery);
+                    QueryNameTextBox.Text = query.Name;
+                    QueryConditionTextBox.Text = query.Condition;
+                    QuerySqlTextBox.Text = query.QueryString;
+                    DeleteQueryButton.IsEnabled = true;
+                }
+
+                _selectedLocationId = _currentOption.IdLocation;
+                UpdateLocationVisuals();
+
+                _timeLimitSeconds = _currentOption.TimeLimit;
+                UpdateTimerDisplay();
+            }
+            finally
+            {
+                _isPopulating = false; 
+            }
         }
 
-        // ===== ФАЙЛЫ И НАВИГАЦИЯ =====
+        private void SelectInComboBox(ComboBox comboBox, int id)
+        {
+            foreach (ComboBoxItem item in comboBox.Items)
+            {
+                if (item.Tag is int itemId && itemId == id)
+                {
+                    comboBox.SelectedItem = item;
+                    break;
+                }
+            }
+        }
+
+        private async Task LoadDatabasesAsync()
+        {
+            DatabaseComboBox.SelectionChanged -= DatabaseComboBox_SelectionChanged; 
+            DatabaseComboBox.Items.Clear();
+
+            var databases = await _databaseService.GetAllAsync();
+            foreach (var db in databases)
+            {
+                DatabaseComboBox.Items.Add(new ComboBoxItem { Content = db.Name, Tag = db.IdDatabase });
+            }
+            DatabaseComboBox.SelectionChanged += DatabaseComboBox_SelectionChanged;
+        }
+
+        private async Task LoadQueriesAsync(int dbId)
+        {
+            QueryComboBox.SelectionChanged -= QueryComboBox_SelectionChanged;
+            QueryComboBox.Items.Clear();
+
+            var queries = await _queryService.GetByDatabaseIdAsync(dbId);
+            foreach (var q in queries)
+            {
+                QueryComboBox.Items.Add(new ComboBoxItem { Content = q.Name, Tag = q.IdQuery });
+            }
+            QueryComboBox.SelectionChanged += QueryComboBox_SelectionChanged;
+        }
+
+        private async void DatabaseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_isPopulating) return; 
+
+            if (DatabaseComboBox.SelectedItem is ComboBoxItem item && item.Tag is int dbId)
+            {
+                var db = await _databaseService.GetByIdAsync(dbId);
+                DatabaseNameTextBox.Text = db.Name;
+                
+                if (!string.IsNullOrEmpty(db.SchemaImage))
+                {
+                    ImagePreview.Source = ImageService.Base64ToImage(db.SchemaImage);
+                    ImagePlaceholder.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    ImagePreview.Source = null;
+                    ImagePlaceholder.Visibility = Visibility.Visible;
+                }
+
+                _currentImagePath = null; 
+                await LoadQueriesAsync(dbId);
+            }
+        }
+
+        private async void QueryComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_isPopulating) return; 
+
+            if (QueryComboBox.SelectedItem is ComboBoxItem item && item.Tag is int queryId)
+            {
+                var query = await _queryService.GetByIdAsync(queryId);
+                QueryNameTextBox.Text = query.Name;
+                QueryConditionTextBox.Text = query.Condition;
+                QuerySqlTextBox.Text = query.QueryString;
+            }
+        }
+
+private async void DeleteDatabase_Click(object sender, RoutedEventArgs e)
+{
+    if (DatabaseComboBox.SelectedItem is ComboBoxItem item && item.Tag is int dbId)
+    {
+        var result = MessageBoxHelper.ShowQuestion(
+            "Удаление БД приведет к безвозвратному удалению ВСЕХ её запросов и ВСЕХ связанных игровых вариантов, включая ТЕКУЩИЙ. Вы уверены?", 
+            "Полное удаление");
+            
+        if (result == MessageBoxResult.Yes)
+        {
+            try
+            {
+                var queries = await _context.Queries.Where(q => q.IdDatabase == dbId).ToListAsync();
+                var queryIds = queries.Select(q => q.IdQuery).ToList();
+
+                var relatedOptions = await _context.Options
+                    .Where(o => o.IdQuery != null && queryIds.Contains(o.IdQuery.Value))
+                    .ToListAsync();
+
+                if (relatedOptions.Any())
+                {
+                    _context.Options.RemoveRange(relatedOptions);
+                }
+
+                if (queries.Any())
+                {
+                    _context.Queries.RemoveRange(queries);
+                }
+
+                var db = await _context.Databases.FindAsync(dbId);
+                if (db != null)
+                {
+                    _context.Databases.Remove(db);
+                }
+
+                await _context.SaveChangesAsync();
+                
+                MessageBoxHelper.ShowSuccess("База данных, её запросы и связанные варианты успешно удалены!", "Успех");
+                
+                _parent.ShowMainMenu();
+            }
+            catch (Exception ex) 
+            { 
+                MessageBoxHelper.ShowError($"Ошибка каскадного удаления БД: {ex.Message}", "Ошибка"); 
+            }
+        }
+    }
+}
+        private async void DeleteQuery_Click(object sender, RoutedEventArgs e)
+        {
+            if (QueryComboBox.SelectedItem is ComboBoxItem item && item.Tag is int queryId)
+            {
+                var result = MessageBoxHelper.ShowQuestion(
+                    "Удаление запроса приведет к безвозвратному удалению ВСЕХ связанных с ним игровых вариантов, включая ТЕКУЩИЙ. Вы уверены?", 
+                    "Полное удаление");
+            
+                if (result == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        var relatedOptions = await _context.Options.Where(o => o.IdQuery == queryId).ToListAsync();
+                        if (relatedOptions.Any())
+                        {
+                            _context.Options.RemoveRange(relatedOptions);
+                        }
+
+                        var query = await _context.Queries.FindAsync(queryId);
+                        if (query != null)
+                        {
+                            _context.Queries.Remove(query);
+                        }
+
+                        await _context.SaveChangesAsync();
+                
+                        MessageBoxHelper.ShowSuccess("Запрос и все связанные варианты успешно удалены!", "Успех");
+                
+                        _parent.ShowMainMenu();
+                    }
+                    catch (Exception ex) 
+                    { 
+                        MessageBoxHelper.ShowError($"Ошибка каскадного удаления запроса: {ex.Message}", "Ошибка"); 
+                    }
+                }
+            }
+        }
         private void BrowseImage_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new OpenFileDialog
+            OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "Изображения|*.png;*.jpg;*.jpeg;*.bmp|Все файлы|*.*",
-                Title = "Выберите изображение базы данных"
+                Filter = "Изображения|*.jpg;*.jpeg;*.png;*.bmp",
+                Title = "Выберите схему базы данных"
             };
 
             if (openFileDialog.ShowDialog() == true)
             {
-                _selectedImagePath = openFileDialog.FileName;
-                try
-                {
-                    ImagePreview.Source = new BitmapImage(new Uri(_selectedImagePath));
-                    ImagePlaceholder.Visibility = Visibility.Collapsed;
-                }
-                catch
-                {
-                    MessageBox.Show("Не удалось загрузить изображение", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                _currentImagePath = openFileDialog.FileName;
+                
+                var uri = new Uri(_currentImagePath);
+                ImagePreview.Source = new System.Windows.Media.Imaging.BitmapImage(uri);
+                ImagePlaceholder.Visibility = Visibility.Collapsed;
             }
         }
 
-        private void Save_Click(object sender, RoutedEventArgs e)
+        private void CardDesert_Click(object sender, MouseButtonEventArgs e)
         {
-            MessageBox.Show("Изменения успешно сохранены!", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
-            Back_Click(sender, e);
+            _selectedLocationId = 1; 
+            UpdateLocationVisuals();
         }
 
+        private void CardForest_Click(object sender, MouseButtonEventArgs e)
+        {
+            _selectedLocationId = 2; 
+            UpdateLocationVisuals();
+        }
+
+        private void UpdateLocationVisuals()
+        {
+            CardDesert.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E0E0E0"));
+            CardForest.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E0E0E0"));
+
+            if (_selectedLocationId == 1)
+                CardDesert.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E65100")); 
+            else if (_selectedLocationId == 2)
+                CardForest.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2E7D32")); 
+        }
+
+        private void TimeMinus30_Click(object sender, RoutedEventArgs e) { ChangeTime(-30); }
+        private void TimeMinus5_Click(object sender, RoutedEventArgs e) { ChangeTime(-5); }
+        private void TimePlus5_Click(object sender, RoutedEventArgs e) { ChangeTime(5); }
+        private void TimePlus30_Click(object sender, RoutedEventArgs e) { ChangeTime(30); }
+
+        private void ChangeTime(int seconds)
+        {
+            _timeLimitSeconds += seconds;
+            if (_timeLimitSeconds < 0) _timeLimitSeconds = 0;
+            if (_timeLimitSeconds > 3599) _timeLimitSeconds = 3599; 
+            UpdateTimerDisplay();
+        }
+
+        private void UpdateTimerDisplay()
+        {
+            int minutes = _timeLimitSeconds / 60;
+            int seconds = _timeLimitSeconds % 60;
+
+            MinDisplay.Text = minutes.ToString("D2");
+            SecDisplay.Text = seconds.ToString("D2");
+        }
+
+private async void Save_Click(object sender, RoutedEventArgs e)
+{
+    if (_currentOption == null) return;
+
+    try
+    {
+        int finalDbId = 0;
+
+        if (DatabaseComboBox.SelectedItem is ComboBoxItem dbItem && dbItem.Tag is int dbId)
+        {
+            await _databaseService.UpdateAsync(dbId, DatabaseNameTextBox.Text, _currentImagePath);
+            finalDbId = dbId;
+        }
+        else if (!string.IsNullOrWhiteSpace(DatabaseNameTextBox.Text))
+        {
+            var newDb = await _databaseService.CreateAsync(DatabaseNameTextBox.Text, _currentImagePath);
+            finalDbId = newDb.IdDatabase;
+        }
+        else
+        {
+            MessageBoxHelper.ShowWarning("Имя базы данных не может быть пустым!", "Предупреждение");
+            return;
+        }
+
+        int finalQueryId = 0;
+        if (QueryComboBox.SelectedItem is ComboBoxItem qItem && qItem.Tag is int queryId)
+        {
+            await _queryService.UpdateAsync(queryId, QueryNameTextBox.Text, QueryConditionTextBox.Text, QuerySqlTextBox.Text);
+            finalQueryId = queryId;
+        }
+        else if (!string.IsNullOrWhiteSpace(QueryNameTextBox.Text))
+        {
+            var newQuery = await _queryService.CreateAsync(finalDbId, QueryNameTextBox.Text, QueryConditionTextBox.Text, QuerySqlTextBox.Text);
+            finalQueryId = newQuery.IdQuery;
+        }
+        else
+        {
+            MessageBoxHelper.ShowWarning("Имя запроса не может быть пустым!", "Предупреждение");
+            return;
+        }
+
+
+        _currentOption.IdLocation = _selectedLocationId;
+        _currentOption.TimeLimit = _timeLimitSeconds;
+        _currentOption.IdQuery = finalQueryId; 
+
+        _context.Options.Update(_currentOption);
+        await _context.SaveChangesAsync();
+
+        MessageBoxHelper.ShowSuccess("Изменения успешно сохранены!", "Успех");
+        
+        _parent.ShowMainMenu();
+    }
+    catch (Exception ex)
+    {
+        MessageBoxHelper.ShowError($"Ошибка при сохранении: {ex.Message}", "Ошибка");
+    }
+}
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(300));
-            fadeOut.Completed += (s, ev) => _parent.ShowMainMenu();
-            this.BeginAnimation(OpacityProperty, fadeOut);
+            _parent.ShowMainMenu();
+        }
+
+        private void GoBack()
+        {
+            VariantOverlay.Visibility = Visibility.Visible;
+            _currentOption = null;
         }
     }
 }
