@@ -5,7 +5,6 @@
              Focusable="False">
 
     <UserControl.Resources>
-        <!-- Стиль для TextBox -->
         <Style x:Key="ModernTextBox" TargetType="TextBox">
             <Setter Property="Height" Value="50"/>
             <Setter Property="FontSize" Value="16"/>
@@ -39,7 +38,6 @@
             </Setter>
         </Style>
 
-        <!-- Стиль для PasswordBox -->
         <Style x:Key="ModernPasswordBox" TargetType="PasswordBox">
             <Setter Property="Height" Value="50"/>
             <Setter Property="FontSize" Value="16"/>
@@ -73,7 +71,6 @@
             </Setter>
         </Style>
 
-        <!-- Стиль кнопки показать/скрыть пароль -->
         <Style x:Key="TogglePasswordButtonStyle" TargetType="ToggleButton">
             <Setter Property="Width" Value="40"/>
             <Setter Property="Height" Value="40"/>
@@ -123,7 +120,6 @@
     </UserControl.Triggers>
 
     <Grid Background="#B0000000" Focusable="False">
-        <!-- Центральная карточка входа -->
         <Border Background="White" 
                 CornerRadius="20" 
                 Width="450" 
@@ -139,7 +135,6 @@
             </Border.Effect>
 
             <StackPanel Focusable="False">
-                <!-- Иконка замка -->
                 <Border Width="80" Height="80" 
                        Background="#E3F2FD" 
                        CornerRadius="40" 
@@ -152,7 +147,6 @@
                              Focusable="False"/>
                 </Border>
 
-                <!-- Заголовок -->
                 <TextBlock Text="Вход в редактор уровней" 
                           FontSize="26" 
                           FontWeight="Bold" 
@@ -167,7 +161,6 @@
                           Margin="0,0,0,35"
                           Focusable="False"/>
 
-                <!-- Поле логина -->
                 <TextBlock Text="Логин" 
                           FontSize="14" 
                           FontWeight="SemiBold" 
@@ -178,7 +171,6 @@
                         TabIndex="0"
                         Margin="0,0,0,20"/>
 
-                <!-- Поле пароля -->
                 <TextBlock Text="Пароль" 
                           FontSize="14" 
                           FontWeight="SemiBold" 
@@ -186,20 +178,17 @@
                           Focusable="False"/>
                 
                 <Grid Margin="0,0,0,30" Focusable="False">
-                    <!-- PasswordBox (скрытый пароль) -->
                     <PasswordBox x:Name="PasswordBox"
                                  TabIndex="1"
                                 Style="{StaticResource ModernPasswordBox}"
                                 PasswordChanged="PasswordBox_PasswordChanged"/>
                     
-                    <!-- TextBox (видимый пароль) -->
                     <TextBox x:Name="PasswordTextBox"
                             Style="{StaticResource ModernTextBox}"
                             Visibility="Collapsed"
                             TabIndex="1"
                             TextChanged="PasswordTextBox_TextChanged"/>
                     
-                    <!-- Кнопка показать/скрыть пароль -->
                     <ToggleButton x:Name="ShowPasswordToggle"
                                  Style="{StaticResource TogglePasswordButtonStyle}"
                                  HorizontalAlignment="Right"
@@ -210,7 +199,6 @@
                                  Unchecked="ShowPasswordToggle_Unchecked"/>
                 </Grid>
 
-                <!-- Сообщение об ошибке -->
                 <TextBlock x:Name="ErrorMessage"
                           Text="Неверный логин или пароль"
                           Foreground="#E53935"
@@ -220,7 +208,6 @@
                           Visibility="Collapsed"
                           Focusable="False"/>
 
-                <!-- Кнопка входа -->
                 <Button Content="Войти" 
                        Style="{StaticResource PrimaryButtonStyle}"
                        Click="Login_Click"

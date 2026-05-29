@@ -66,7 +66,7 @@ namespace PosnaiSQLauncher
                 if (variant.QueryId == 0) throw new Exception("Данные запроса потеряны. Вернитесь назад.");
                 if (variant.LocationId == 0) throw new Exception("Локация не выбрана.");
 
-                await _optionService.CreateAsync(
+                var savedVariant = await _optionService.CreateAsync(
                     variant.QueryId,
                     variant.LocationId,
                     variant.TimeLimit
@@ -74,8 +74,10 @@ namespace PosnaiSQLauncher
 
                 LoadingOverlayContainer.Visibility = Visibility.Collapsed;
 
-                MessageBoxHelper.ShowSuccess("Вариант успешно добавлен в систему!");
+                int variantId = savedVariant.IdOption; 
                 
+                MessageBoxHelper.ShowSuccess($"Вариант успешно добавлен в систему! Номер варианта: {variantId}");
+        
                 _parent.CurrentOption = new Models.OptionData(); 
 
                 FadeOutAndSwitch(() => _parent?.ShowMainMenu());
@@ -86,7 +88,6 @@ namespace PosnaiSQLauncher
                 MessageBoxHelper.ShowError($"Ошибка при сохранении: {ex.Message}");
             }
         }
-
         private void FadeOutAndSwitch(Action switchAction)
         {
             var fadeOut = new DoubleAnimation { From = 1, To = 0, Duration = TimeSpan.FromMilliseconds(300) };

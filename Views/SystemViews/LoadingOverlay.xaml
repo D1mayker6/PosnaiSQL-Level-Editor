@@ -49,7 +49,6 @@
             </StackPanel>
 
 
-            <!-- ТЕКСТ -->
             <TextBlock x:Name="LoadingText"
                       Text="Загрузка..."
                       FontSize="16" 

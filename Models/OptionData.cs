@@ -1,4 +1,3 @@
-// Models/VariantData.cs
 namespace PosnaiSQLauncher.Models
 {
     public class OptionData

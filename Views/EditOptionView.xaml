@@ -4,7 +4,6 @@
              Opacity="0">
 
     <UserControl.Resources>
-        <!-- СТИЛЬ ВЫПАДАЮЩИХ ПУНКТОВ -->
         <Style TargetType="ComboBoxItem">
             <Setter Property="Padding" Value="10,8"/>
             <Setter Property="Margin" Value="2"/>
@@ -25,7 +24,6 @@
             </Setter>
         </Style>
 
-        <!-- СТИЛЬ ВЫПАДАШКИ -->
         <Style x:Key="StyledComboBox" TargetType="ComboBox">
             <Setter Property="Height" Value="45"/>
             <Setter Property="FontSize" Value="15"/>
@@ -59,9 +57,7 @@
             </Setter>
         </Style>
 
-        <!-- СТИЛЬ КНОПОК ТАЙМЕРА (Жестко обнуляем Padding, чтобы влез текст) -->
         <Style x:Key="TimerButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}">
-            <Setter Property="MinWidth" Value="0"/>
             <Setter Property="Width" Value="50"/>
             <Setter Property="Height" Value="40"/>
             <Setter Property="FontSize" Value="13"/>
@@ -76,7 +72,6 @@
             <Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Foreground" Value="#1976D2"/></Trigger></Style.Triggers>
         </Style>
 
-        <!-- СТИЛЬ КНОПКИ КОРЗИНЫ -->
         <Style x:Key="TrashButtonStyle" TargetType="Button">
             <Setter Property="FontSize" Value="22"/>
             <Setter Property="Foreground" Value="#E53935"/>
@@ -110,7 +105,6 @@
     </UserControl.Triggers>
 
     <Grid>
-        <!-- УБРАЛИ Height="620", теперь блок сам адаптируется под окно -->
         <Border x:Name="MainBorder" CornerRadius="20" Background="#E8FFFFFF" Margin="20" Width="800" VerticalAlignment="Stretch" HorizontalAlignment="Center">
             <Border.Effect><DropShadowEffect ShadowDepth="8" Color="Black" Opacity="0.2" BlurRadius="15"/></Border.Effect>
 
@@ -123,9 +117,16 @@
                 <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Margin="10,20,10,5">
                     <StackPanel Margin="35,0,35,20">
 
-                        <!-- 1. БАЗА ДАННЫХ -->
+                        <TextBlock x:Name="HeaderTitleTextBlock" 
+                                   Text="Редактирование варианта № N" 
+                                   FontSize="22" 
+                                   FontWeight="Bold" 
+                                   HorizontalAlignment="Center"
+                                   Visibility="Collapsed"
+                                   Margin="0,0,0,25" 
+                                   Foreground="#1a1a1a"/>
+
                         <Grid Margin="0,0,0,60">
-                            <!-- Цифра поднята в самый верх -->
                             <TextBlock Text="1" FontSize="220" FontWeight="Bold" Foreground="#06000000" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-40,0,0" IsHitTestVisible="False"/>                            
                             
                             <StackPanel>
@@ -143,17 +144,13 @@
                                               Grid.Column="0"
                                               Style="{StaticResource StyledComboBox}"
                                               SelectionChanged="DatabaseComboBox_SelectionChanged">
-                                        <ComboBoxItem Content="Вариант 1: Основы Select"/>
-                                        <ComboBoxItem Content="Вариант 2: Сложные соединения"/>
                                     </ComboBox>
 
-                                    <!-- плюс -->
                                     <Button Grid.Column="2"
                                             Click="AddDatabase_Click"
                                             Content="➕"
                                             Style="{StaticResource PlusButtonStyle}"/>
 
-                                    <!-- корзина -->
                                     <Button x:Name="DeleteDatabaseButton"
                                             Grid.Column="4"
                                             Content="🗑"
@@ -164,8 +161,7 @@
 
                                 <TextBlock Text="Имя базы данных" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,5"/>
                                 <TextBox x:Name="DatabaseNameTextBox" Height="45" FontSize="18" Padding="12,0" VerticalContentAlignment="Center" Margin="0,0,0,25"/>
-
-                                <!-- БЛОК СХЕМЫ -->
+                                
                                 <Grid Margin="0,0,0,12">
                                     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="20"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                     <TextBlock Text="Схема базы данных" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
@@ -183,7 +179,6 @@
                             </StackPanel>
                         </Grid>
 
-                        <!-- 2. ЗАПРОС -->
                         <Grid Margin="0,0,0,60">
                             <TextBlock Text="2" FontSize="220" FontWeight="Bold" Foreground="#06000000" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-40,0,0" IsHitTestVisible="False"/>
                             <StackPanel>
@@ -204,13 +199,11 @@
                                         <ComboBoxItem Content="Новый запрос (пустой)"/>
                                     </ComboBox>
 
-                                    <!-- плюс -->
                                     <Button Grid.Column="2"
                                             Click="AddQuery_Click"
                                             Content="➕"
                                             Style="{StaticResource PlusButtonStyle}"/>
 
-                                    <!-- корзина -->
                                     <Button x:Name="DeleteQueryButton"
                                             Grid.Column="4"
                                             Content="🗑"
@@ -219,17 +212,16 @@
                                             Click="DeleteQuery_Click"/>
                                 </Grid>
                                 <TextBlock Text="Имя запроса" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                                <TextBox x:Name="QueryNameTextBox" Height="45" FontSize="16" Padding="10,0" VerticalContentAlignment="Center" Margin="0,0,0,15"/>
+                                <TextBox x:Name="QueryNameTextBox" Height="45" FontSize="16" Padding="10,0" VerticalContentAlignment="Center" Margin="0,0,0,15" />
 
                                 <TextBlock Text="Условие задачи" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                                <TextBox x:Name="QueryConditionTextBox" Height="80" Padding="10" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,0,0,15"/>
+                                <TextBox x:Name="QueryConditionTextBox" Height="80" Padding="10" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,0,0,15" TextChanged="TextBox_TextChanged"/>
 
                                 <TextBlock Text="Текст SQL кода" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                                <TextBox x:Name="QuerySqlTextBox" Height="120" Padding="10" FontFamily="Courier New" AcceptsReturn="True"/>
+                                <TextBox x:Name="QuerySqlTextBox" Height="120" Padding="10" TextWrapping="Wrap" FontFamily="Courier New" AcceptsReturn="True" TextChanged="TextBox_TextChanged"/>
                             </StackPanel>
                         </Grid>
 
-                        <!-- 3. ЛОКАЦИЯ И ТАЙМЕР (ПОЛНОЦЕННЫЕ КАРТОЧКИ) -->
                         <Grid Margin="0,0,0,20">
                             <TextBlock Text="3" FontSize="220" FontWeight="Bold" Foreground="#06000000" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-40,0,0" IsHitTestVisible="False"/>
                             <StackPanel>
@@ -242,7 +234,6 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     
-                                    <!-- ПУСТЫНЯ -->
                                     <Border x:Name="CardDesert" Grid.Column="0" CornerRadius="15" Background="White" BorderThickness="2" BorderBrush="#E0E0E0" Cursor="Hand" MouseLeftButtonDown="CardDesert_Click" MinWidth="260" MaxWidth="300">
                                         <Border.Effect><DropShadowEffect ShadowDepth="2" Color="#000000" Opacity="0.08" BlurRadius="6"/></Border.Effect>
                                         <StackPanel Margin="20">
@@ -252,7 +243,6 @@
                                         </StackPanel>
                                     </Border>
                                     
-                                    <!-- ЛЕС -->
                                     <Border x:Name="CardForest" Grid.Column="2" CornerRadius="15" Background="White" BorderThickness="2" BorderBrush="#E0E0E0" Cursor="Hand" MouseLeftButtonDown="CardForest_Click" MinWidth="260" MaxWidth="300">
                                         <Border.Effect><DropShadowEffect ShadowDepth="2" Color="#000000" Opacity="0.08" BlurRadius="6"/></Border.Effect>
                                         <StackPanel Margin="20">
@@ -280,7 +270,6 @@
                     </StackPanel>
                 </ScrollViewer>
 
-                <!-- ПАНЕЛЬ КНОПОК (АДАПТИВНАЯ) -->
                 <Border Grid.Row="1" Background="White" BorderBrush="#EEE" BorderThickness="0,1,0,0" Padding="20,15" CornerRadius="0,0,20,20">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -289,73 +278,28 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         
-                        <!-- Кнопки растягиваются поровну, убран MinWidth, добавлены внутренние отступы -->
-                        <Button Grid.Column="0" Content="← В главное меню" Style="{StaticResource SecondaryButtonStyle}" Click="Back_Click" HorizontalAlignment="Stretch" MinWidth="0" Height="50" Padding="10,0"/>
+                        <Button Grid.Column="0" Content="В главное меню" Style="{StaticResource SecondaryButtonStyle}" Click="Back_Click" HorizontalAlignment="Stretch" MinWidth="0" Height="50" Padding="10,0"/>
                         <Button Grid.Column="2" Content="💾 Сохранить изменения" Style="{StaticResource PrimaryButtonStyle}" Click="Save_Click" HorizontalAlignment="Stretch" MinWidth="0" Height="50" Padding="10,0"/>
                     </Grid>
                 </Border>
             </Grid>
         </Border>
 
-        <!-- ОВЕРЛЕЙ ВЫБОРА -->
         <Grid x:Name="VariantOverlay" Visibility="Visible" Background="#80000000">
-            
-            <Border CornerRadius="20"
-                    Background="White"
-                    Width="650" 
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    Padding="40,35">
-                <Border.Effect>
-                    <DropShadowEffect ShadowDepth="5" Color="Black" Opacity="0.2" BlurRadius="15"/>
-                </Border.Effect>
-
+            <Border CornerRadius="20" Background="White" Width="650" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="40,35">
+                <Border.Effect><DropShadowEffect ShadowDepth="5" Color="Black" Opacity="0.2" BlurRadius="15"/></Border.Effect>
                 <StackPanel>
-                    <TextBlock Text="Выбор варианта для редактирования"
-                               FontSize="20"
-                               FontWeight="SemiBold"
-                               Foreground="#333333"
-                               Margin="0,0,0,25"
-                               HorizontalAlignment="Center"/>
-
-                    <ComboBox x:Name="VariantComboBox"
-                              Style="{StaticResource StyledComboBox}"
-                              Height="50"
-                              Margin="0,0,0,25"
-                              HorizontalAlignment="Stretch"
-                              SelectionChanged="VariantComboBox_SelectionChanged"/>
-
+                    <TextBlock Text="Выбор варианта для редактирования" FontSize="20" FontWeight="SemiBold" Foreground="#333333" Margin="0,0,0,25" HorizontalAlignment="Center"/>
+                    <ComboBox x:Name="VariantComboBox" Style="{StaticResource StyledComboBox}" Height="50" Margin="0,0,0,25" HorizontalAlignment="Stretch" SelectionChanged="VariantComboBox_SelectionChanged"/>
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
-                        
-                        <Button x:Name="OpenVariantButton"
-                                Content="🚀 Открыть вариант"
-                                Style="{StaticResource PrimaryButtonStyle}"
-                                Height="52"
-                                IsEnabled="False"
-                                Click="OpenVariant_Click"
-                                HorizontalAlignment="Stretch"
-                                Margin="0,0,0,12"/>
-
-                        <Button x:Name="DeleteVariantButton"
-                                Content="🗑 Удалить вариант"
-                                Style="{StaticResource SecondaryButtonStyle}"
-                                Height="52"
-                                FontSize="14"
-                                Foreground="#E53935"
-                                BorderBrush="#E53935"
-                                IsEnabled="False"
-                                Click="DeleteVariant_Click"
-                                HorizontalAlignment="Stretch"
-                                Margin="0,0,0,12"/>
-
-                        <Button Content="Назад в меню"
-                                Style="{StaticResource SecondaryButtonStyle}"
-                                Height="48"
-                                Click="Back_Click"
-                                HorizontalAlignment="Stretch"/>
+                        <Button x:Name="OpenVariantButton" Content="Открыть вариант" Style="{StaticResource PrimaryButtonStyle}" Height="52" IsEnabled="False" Click="OpenVariant_Click" HorizontalAlignment="Stretch" Margin="0,0,0,12"/>
+                        <Button x:Name="DeleteVariantButton" Content="🗑 Удалить вариант" Style="{StaticResource SecondaryButtonStyle}" Height="52" FontSize="14" Foreground="#E53935" BorderBrush="#E53935" IsEnabled="False" Click="DeleteVariant_Click" HorizontalAlignment="Stretch" Margin="0,0,0,12"/>
+                        <Button Content="Назад" Style="{StaticResource SecondaryButtonStyle}" Height="48" Click="Back_Click" HorizontalAlignment="Stretch"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
         </Grid>
+
+        <Grid x:Name="LoadingOverlayContainer" Visibility="Collapsed" Panel.ZIndex="1000"/>
     </Grid>
 </UserControl>

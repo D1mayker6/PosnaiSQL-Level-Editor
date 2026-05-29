@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PosnaiSQLauncher.Context;
 using PosnaiSQLauncher.Entities;
@@ -17,9 +13,6 @@ namespace PosnaiSQLauncher.Services
             _context = context;
         }
 
-        /// <summary>
-        /// Создать новый запрос
-        /// </summary>
         public async Task<Query> CreateAsync(int databaseId, string name, string condition, string queryString)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -43,9 +36,6 @@ namespace PosnaiSQLauncher.Services
             return query;
         }
 
-        /// <summary>
-        /// Получить все запросы для конкретной БД
-        /// </summary>
         public async Task<List<Query>> GetByDatabaseIdAsync(int databaseId)
         {
             return await _context.Queries
@@ -54,9 +44,6 @@ namespace PosnaiSQLauncher.Services
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Получить запрос по ID
-        /// </summary>
         public async Task<Query> GetByIdAsync(int id)
         {
             var query = await _context.Queries
@@ -69,9 +56,6 @@ namespace PosnaiSQLauncher.Services
             return query;
         }
 
-        /// <summary>
-        /// Обновить запрос
-        /// </summary>
         public async Task<Query> UpdateAsync(int id, string name, string condition, string queryString)
         {
             var query = await _context.Queries.FindAsync(id);
@@ -89,10 +73,7 @@ namespace PosnaiSQLauncher.Services
 
             return query;
         }
-
-        /// <summary>
-        /// Удалить запрос
-        /// </summary>
+        
         public async Task DeleteAsync(int id)
         {
             var query = await _context.Queries
@@ -113,10 +94,7 @@ namespace PosnaiSQLauncher.Services
             _context.Queries.Remove(query);
             await _context.SaveChangesAsync();
         }
-
-        /// <summary>
-        /// Получить все запросы
-        /// </summary>
+        
         public async Task<List<Query>> GetAllAsync()
         {
             return await _context.Queries

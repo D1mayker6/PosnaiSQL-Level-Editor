@@ -17,9 +17,6 @@
     </WindowChrome.WindowChrome>
 
     <Grid>
-        <!-- ← УБРАЛИ затемняющий Rectangle -->
-
-        <!-- ЦЕНТРАЛЬНАЯ КАРТОЧКА -->
         <Border CornerRadius="20"
                 Background="White"
                 Width="400"
@@ -31,7 +28,6 @@
             </Border.Effect>
 
             <StackPanel>
-                <!-- ИКОНКА И ТИП -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
                     <TextBlock x:Name="IconBlock"
                               FontSize="32"
@@ -45,7 +41,6 @@
                               VerticalAlignment="Center"/>
                 </StackPanel>
 
-                <!-- СООБЩЕНИЕ -->
                 <TextBlock x:Name="MessageBlock"
                           FontSize="14"
                           Foreground="#555555"
@@ -54,7 +49,6 @@
                           Margin="0,0,0,25"
                           TextAlignment="Center"/>
 
-                <!-- КНОПКИ -->
                 <Grid x:Name="ButtonPanel" Margin="0,0,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -62,7 +56,6 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Кнопка 1 (ОК / Отмена / Нет) -->
                     <Button x:Name="Button1"
                             Grid.Column="0"
                             Content="ОК"
@@ -71,7 +64,6 @@
                             HorizontalAlignment="Stretch"
                             Click="Button1_Click"/>
 
-                    <!-- Кнопка 2 (Да / Удалить) - опциональная -->
                     <Button x:Name="Button2"
                             Grid.Column="2"
                             Content="Да"

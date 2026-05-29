@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -23,7 +20,6 @@ namespace PosnaiSQLauncher
         private readonly DatabaseService _databaseService;
         private Query _currentQuery;
 
-        // Флаг разрешения редактирования
         private bool _isEditAllowed = false;
 
         public QueryView(MainWindow parent, int databaseId, string mode = "new")
@@ -49,7 +45,6 @@ namespace PosnaiSQLauncher
 
             RestoreFromState();
     
-            // Переводим интерфейс в нужный режим (чтение или редактирование)
             ApplyInterfaceReadOnlyMode();
 
             if (_mode == "existing" && _currentQuery == null) 
@@ -64,30 +59,25 @@ namespace PosnaiSQLauncher
             }
         }
 
-        // Метод управления режимом "Только для чтения"
         private void ApplyInterfaceReadOnlyMode()
         {
             if (_mode == "existing" && _currentQuery != null)
             {
-                // Блокируем текстовые поля
                 QueryNameTextBox.IsReadOnly = true;
                 QueryConditionTextBox.IsReadOnly = true;
                 QueryCodeTextBox.IsReadOnly = true;
 
-                // Красим фон полей в серый цвет
                 var readonlyBg = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F5F5F5"));
                 QueryNameTextBox.Background = readonlyBg;
                 QueryConditionTextBox.Background = readonlyBg;
                 QueryCodeTextBox.Background = readonlyBg;
                 
-                // Показываем кнопку разблокировки
                 ToggleEditButton.Visibility = Visibility.Visible;
                 ToggleEditButton.Content = "🔒 Разрешить изменение";
                 _isEditAllowed = false;
             }
             else
             {
-                // Разблокируем всё (для новых запросов или если разрешили редактирование)
                 QueryNameTextBox.IsReadOnly = false;
                 QueryConditionTextBox.IsReadOnly = false;
                 QueryCodeTextBox.IsReadOnly = false;
@@ -182,7 +172,6 @@ namespace PosnaiSQLauncher
             {
                 QuerySelectorOverlay.Visibility = Visibility.Collapsed;
 
-                // Если вышли через крестик, возвращаем на экран выбора режима (новый/существующий)
                 if (isBackClick)
                 {
                     FadeOutAndSwitch(() => _parent?.ShowQueryModeView(_databaseId));
@@ -233,7 +222,6 @@ namespace PosnaiSQLauncher
                 _parent.CurrentOption.QueryCondition = _currentQuery.Condition;
                 _parent.CurrentOption.QueryString = _currentQuery.QueryString;
 
-                // Включаем режим только для чтения после выбора существующего запроса
                 ApplyInterfaceReadOnlyMode();
             }
             catch (Exception ex)
@@ -245,7 +233,6 @@ namespace PosnaiSQLauncher
             HideQuerySelector();
         }
 
-        // ОБРАБОТЧИК КЛИКА КНОПКИ РАЗБЛОКИРОВКИ
         private void ToggleEditButton_Click(object sender, RoutedEventArgs e)
         {
             if (!_isEditAllowed)
@@ -308,10 +295,10 @@ namespace PosnaiSQLauncher
             if (sender is TextBox textBox)
             {
                 int textLength = textBox.Text.Length;
-                if (textLength < 100) textBox.FontSize = 16;
-                else if (textLength < 300) textBox.FontSize = 14;
-                else if (textLength < 600) textBox.FontSize = 12;
-                else textBox.FontSize = 11;
+                if (textLength < 100) textBox.FontSize = 25;
+                else if (textLength < 300) textBox.FontSize = 20;
+                else if (textLength < 600) textBox.FontSize = 15;
+                else textBox.FontSize = 12;
             }
         }
 

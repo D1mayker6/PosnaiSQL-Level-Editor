@@ -1,4 +1,3 @@
-using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -65,12 +64,10 @@ namespace PosnaiSQLauncher
 
         private void SelectCard(Border selectedCard, Border otherCard, string option)
         {
-            // Анимация снятия выделения с другой карточки
             AnimateBorder(otherCard, 
                 new SolidColorBrush(Color.FromArgb(255, 224, 224, 224)), 
                 new Thickness(2));
 
-            // Анимация выделения выбранной карточки
             AnimateBorder(selectedCard, 
                 new SolidColorBrush(Color.FromArgb(255, 33, 150, 243)), 
                 new Thickness(3));
@@ -81,7 +78,6 @@ namespace PosnaiSQLauncher
 
         private void AnimateBorder(Border border, SolidColorBrush targetBrush, Thickness targetThickness)
         {
-            // Анимация цвета обводки
             var colorAnimation = new ColorAnimation
             {
                 To = targetBrush.Color,
@@ -89,7 +85,6 @@ namespace PosnaiSQLauncher
                 EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
             };
 
-            // Анимация толщины обводки
             var thicknessAnimation = new ThicknessAnimation
             {
                 To = targetThickness,
@@ -97,11 +92,9 @@ namespace PosnaiSQLauncher
                 EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
             };
 
-            // Создаём новую кисть для анимации
             var animatedBrush = new SolidColorBrush(((SolidColorBrush)border.BorderBrush).Color);
             border.BorderBrush = animatedBrush;
 
-            // Запускаем анимации
             animatedBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             border.BeginAnimation(Border.BorderThicknessProperty, thicknessAnimation);
         }
@@ -119,7 +112,6 @@ namespace PosnaiSQLauncher
                 return;
             }
 
-            // Переход на окно настройки БД
             _parent.CurrentOption.DatabaseMode = _selectedOption;
             FadeOutAndSwitch(() => _parent.ShowDatabaseConfig(_selectedOption));
         }

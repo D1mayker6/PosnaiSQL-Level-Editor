@@ -1,4 +1,3 @@
-// Services/ExportService.cs
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,13 +20,11 @@ namespace PosnaiSQLauncher.Services
             _excelService = new ExcelExportService();
         }
 
-        // Получить все данные из ShowOption
         public async Task<List<ShowOption>> GetAllAsync()
         {
             return await _context.ShowOptions.ToListAsync();
         }
 
-        // Получить данные по ID
         public async Task<List<ShowOption>> GetExportDataAsync(List<int> selectedIds)
         {
             return await _context.ShowOptions
@@ -38,15 +35,15 @@ namespace PosnaiSQLauncher.Services
         public async Task ExportToJsonAsync(List<ShowOption> data, string filePath)
         {
             string googleSheetUrl = "";
-            if (File.Exists("settings.json"))
+            if (File.Exists("databin.json"))
             {
-                string settingsJson = await File.ReadAllTextAsync("settings.json");
-                googleSheetUrl = Newtonsoft.Json.Linq.JObject.Parse(settingsJson)["googleSheetUrl"]?.ToString() ?? "";
+                string settingsJson = await File.ReadAllTextAsync("databin.json");
+                googleSheetUrl = Newtonsoft.Json.Linq.JObject.Parse(settingsJson)["GoogleSheet"]?.ToString() ?? "";
             }
 
             var finalJson = new Newtonsoft.Json.Linq.JObject
             {
-                ["GoogleSheetUrl"] = googleSheetUrl,
+                ["GoogleSheet"] = googleSheetUrl,
                 ["Options"] = Newtonsoft.Json.Linq.JArray.FromObject(data)
             };
 

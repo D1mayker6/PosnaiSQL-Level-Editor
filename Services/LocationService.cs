@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PosnaiSQLauncher.Context;
 using PosnaiSQLauncher.Entities;
@@ -17,9 +13,6 @@ namespace PosnaiSQLauncher.Services
             _context = context;
         }
 
-        /// <summary>
-        /// Получить все локации
-        /// </summary>
         public async Task<List<Location>> GetAllAsync()
         {
             return await _context.Locations
@@ -27,9 +20,6 @@ namespace PosnaiSQLauncher.Services
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Получить локацию по ID
-        /// </summary>
         public async Task<Location> GetByIdAsync(int id)
         {
             var location = await _context.Locations.FindAsync(id);

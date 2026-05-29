@@ -1,11 +1,9 @@
-<!-- ExportView.xaml -->
 <UserControl x:Class="PosnaiSQLauncher.ExportView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Opacity="0">
 
     <UserControl.Resources>
-        <!-- СТИЛЬ ЭЛЕМЕНТА СПИСКА -->
         <Style x:Key="VariantItemStyle" TargetType="ListBoxItem">
             <Setter Property="Padding" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
@@ -65,25 +63,21 @@
 
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/> <!-- Header -->
-                    <RowDefinition Height="*"/>    <!-- Content (Scroll) -->
-                    <RowDefinition Height="Auto"/> <!-- Footer -->
+                    <RowDefinition Height="Auto"/> 
+                    <RowDefinition Height="*"/>    
+                    <RowDefinition Height="Auto"/> 
                 </Grid.RowDefinitions>
 
-                <!-- 1. ЗАГОЛОВОК -->
                 <StackPanel Grid.Row="0" Margin="30,25,30,10">
                     <TextBlock Text="Экспорт вариантов" FontSize="28" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#1a1a1a"/>
                     <TextBlock Text="Массовая выгрузка созданных задач" FontSize="13" Foreground="#666666" HorizontalAlignment="Center"/>
                 </StackPanel>
 
-                <!-- 2. КОНТЕНТ -->
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" MaxHeight="480">
                     <StackPanel Margin="40,5,40,20">
                         
-                        <!-- ВЫБОР ВАРИАНТОВ -->
                         <TextBlock Text="1. Выберите варианты" FontSize="15" FontWeight="Bold" Margin="0,0,0,8" Foreground="#2196F3"/>
                         
-                        <!-- Поле поиска -->
                         <Border BorderBrush="#E0E0E0" BorderThickness="2" CornerRadius="10" Background="White" Height="42" Margin="0,0,0,10">
                             <Grid>
                                 <TextBox x:Name="SearchBox" Background="Transparent" BorderThickness="0" VerticalContentAlignment="Center" Padding="12,0" TextChanged="SearchBox_TextChanged"/>
@@ -100,36 +94,43 @@
                             </Grid>
                         </Border>
 
-                        <!-- Чекбокс "Выбрать все" -->
-                        <Border Background="#F0F7FF" CornerRadius="8" BorderBrush="#2196F3" BorderThickness="1" Padding="12,8" Margin="0,0,0,10">
+                        <Border CornerRadius="8" BorderBrush="#2196F3" BorderThickness="1" Padding="12,8" Margin="0,0,0,10"
+                                Cursor="Hand" MouseLeftButtonDown="SelectAllBorder_Click">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="#F0F7FF"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#E3F2FD"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+    
                             <StackPanel Orientation="Horizontal">
                                 <CheckBox x:Name="SelectAllCheckBox" 
-                                         VerticalAlignment="Center" 
-                                         Checked="SelectAllCheckBox_Checked" 
-                                         Unchecked="SelectAllCheckBox_Unchecked"
-                                         RenderTransformOrigin="0.5,0.5">
+                                          VerticalAlignment="Center" 
+                                          Checked="SelectAllCheckBox_Checked" 
+                                          Unchecked="SelectAllCheckBox_Unchecked"
+                                          RenderTransformOrigin="0.5,0.5">
                                     <CheckBox.RenderTransform>
                                         <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
                                     </CheckBox.RenderTransform>
                                 </CheckBox>
                                 <TextBlock Text="Выбрать все варианты" 
-                                         VerticalAlignment="Center" 
-                                         Margin="10,0,0,0" 
-                                         FontSize="13" 
-                                         FontWeight="SemiBold" 
-                                         Foreground="#2196F3"/>
+                                           VerticalAlignment="Center" 
+                                           Margin="10,0,0,0" 
+                                           FontSize="13" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#2196F3"/>
                             </StackPanel>
                         </Border>
-
-                        <!-- Список вариантов -->
                         <Border Background="White" CornerRadius="12" BorderBrush="#E0E0E0" BorderThickness="2" Height="140">
                             <ListBox x:Name="VariantsListBox" ItemContainerStyle="{StaticResource VariantItemStyle}" SelectionMode="Multiple" BorderThickness="0" Margin="5" HorizontalContentAlignment="Stretch" SelectionChanged="VariantsListBox_SelectionChanged">
-                                <!-- Список заполняется из бэкенда -->
                             </ListBox>
                         </Border>
                         <TextBlock x:Name="SelectedCountText" Text="Выбрано: 0" FontSize="12" FontWeight="SemiBold" Foreground="#2196F3" Margin="5,5,0,20"/>
 
-                        <!-- ВЫБОР ФОРМАТА -->
                         <TextBlock Text="2. Выберите формат" FontSize="16" FontWeight="Bold" Margin="0,0,0,15" Foreground="#2196F3"/>
 
                         <Grid HorizontalAlignment="Center" Margin="0,0,0,25">
@@ -139,7 +140,6 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- КАРТОЧКА JSON -->
                             <Border x:Name="CardJson" Grid.Column="0" CornerRadius="15" Background="White" BorderThickness="2" BorderBrush="#E0E0E0" Cursor="Hand" MouseLeftButtonDown="CardJson_Click" MinWidth="280" MaxWidth="320">
                                 <Border.Effect><DropShadowEffect ShadowDepth="2" Color="#000000" Opacity="0.08" BlurRadius="6"/></Border.Effect>
                                 <StackPanel Margin="20">
@@ -151,7 +151,6 @@
                                 </StackPanel>
                             </Border>
 
-                            <!-- КАРТОЧКА EXCEL -->
                             <Border x:Name="CardExcel" Grid.Column="2" CornerRadius="15" Background="White" BorderThickness="2" BorderBrush="#E0E0E0" Cursor="Hand" MouseLeftButtonDown="CardExcel_Click" MinWidth="280" MaxWidth="320">
                                 <Border.Effect><DropShadowEffect ShadowDepth="2" Color="#000000" Opacity="0.08" BlurRadius="6"/></Border.Effect>
                                 <StackPanel Margin="20">
@@ -164,7 +163,6 @@
                             </Border>
                         </Grid>
 
-                        <!-- ПАПКА СОХРАНЕНИЯ -->
                         <TextBlock Text="3. Папка сохранения" FontSize="15" FontWeight="Bold" Margin="0,0,0,8" Foreground="#2196F3"/>
                         <Grid Height="55">
                             <Grid.ColumnDefinitions>
@@ -181,7 +179,6 @@
                     </StackPanel>
                 </ScrollViewer>
 
-                <!-- 3. ФУТЕР (КНОПКИ) -->
                 <Border Grid.Row="2" Background="#08000000" Padding="40,25" CornerRadius="0,0,20,20">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -189,14 +186,13 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Button Content="← Назад" Style="{StaticResource SecondaryButtonStyle}" Click="Back_Click" MinWidth="140" Height="50" Padding="15,0"/>
+                        <Button Content="Назад" Style="{StaticResource SecondaryButtonStyle}" Click="Back_Click" MinWidth="140" Height="50" Padding="15,0"/>
                         <Button Grid.Column="2" x:Name="ExportButton" Content="📩 Начать экспорт" Style="{StaticResource PrimaryButtonStyle}" IsEnabled="False" Click="Export_Click" MinWidth="260" Height="50" Padding="15,0"/>
                     </Grid>
                 </Border>
             </Grid>
         </Border>
 
-        <!-- ОВЕРЛЕЙ ЗАГРУЗКИ -->
         <Grid x:Name="LoadingOverlayContainer" Panel.ZIndex="1000" Visibility="Collapsed"/>
     </Grid>
 </UserControl>

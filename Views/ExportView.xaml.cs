@@ -1,9 +1,4 @@
-// ExportView.cs
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Diagnostics; 
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -30,14 +25,12 @@ namespace PosnaiSQLauncher
             _parent = parent;
             _exportService = new ExportService(new AppDbContext());
             
-            // Сначала показываем окно, потом загружаем данные
             ShowWindow();
             LoadVariantsAsync();
         }
 
         private void ShowWindow()
         {
-            // Анимация появления окна
             var anim = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(400));
             this.BeginAnimation(OpacityProperty, anim);
         }
@@ -211,6 +204,11 @@ namespace PosnaiSQLauncher
                 ValidateExport(); 
             }
         }
+        
+        private void SelectAllBorder_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            SelectAllCheckBox.IsChecked = !SelectAllCheckBox.IsChecked;
+        }
 
         private async void Export_Click(object sender, RoutedEventArgs e) 
         {
@@ -223,7 +221,6 @@ namespace PosnaiSQLauncher
                     .Select(i => (int)i.Tag)
                     .ToList();
 
-                // Получаем данные уже загруженные в памяти
                 var dataToExport = _allVariants
                     .Where(v => selectedIds.Contains(v.IdOption))
                     .ToList();
@@ -240,7 +237,6 @@ namespace PosnaiSQLauncher
                 HideLoading();
                 MessageBoxHelper.ShowSuccess($"Экспорт завершен успешно!\nФайл сохранен: {PathTextBox.Text}");
                 
-                // Открываем файл
                 OpenFile(PathTextBox.Text);
                 
                 _parent.ShowMainMenu();

@@ -1,9 +1,7 @@
-using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using Newtonsoft.Json.Linq;
-using BCrypt.Net;
 
 namespace PosnaiSQLauncher
 {
@@ -47,10 +45,6 @@ namespace PosnaiSQLauncher
         {
             try
             {
-                if (!File.Exists(CONFIG_FILE))
-                {
-                    CreateDefaultConfig();
-                }
 
                 string json = File.ReadAllText(CONFIG_FILE);
                 JObject authData = JObject.Parse(json);
@@ -61,7 +55,6 @@ namespace PosnaiSQLauncher
                 if (storedLogin == null || storedPassword == null)
                     return false;
 
-                // Сравниваем логин и проверяем хэш пароля
                 bool loginMatch = login == storedLogin;
                 bool passwordMatch = BCrypt.Net.BCrypt.Verify(password, storedPassword);
 
@@ -74,22 +67,8 @@ namespace PosnaiSQLauncher
                 return false;
             }
         }
+        
 
-        private void CreateDefaultConfig()
-        {
-            // Хэшируем дефолтный пароль "fik" перед сохранением
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword("fik");
-
-            var defaultAuth = new JObject
-            {
-                ["DataStream"] = "fik",       // логин
-                ["InfoVault"] = hashedPassword // пароль в виде хэша
-            };
-
-            File.WriteAllText(CONFIG_FILE, defaultAuth.ToString());
-        }
-
-        // Метод для смены пароля (пригодится)
         public void ChangePassword(string newPassword)
         {
             string json = File.ReadAllText(CONFIG_FILE);

@@ -209,7 +209,8 @@
                                           Margin="0,0,0,8" FontWeight="SemiBold"/>
                                 <TextBox x:Name="DatabaseNameTextBox"
                                         Height="40"
-                                        FontSize="14"
+                                        FontSize="20"
+                                        Width="550"
                                         Padding="12,0,12,0"
                                         VerticalContentAlignment="Center"/>
                             </StackPanel>
@@ -276,14 +277,14 @@
                         </Grid.ColumnDefinitions>
 
                         <Button Grid.Column="0"
-                                Content="← Назад"
+                                Content="Назад"
                                 Style="{StaticResource SecondaryButtonStyle}"
                                 HorizontalAlignment="Stretch"
                                 Height="50"
                                 Click="Back_Click"/>
 
                         <Button Grid.Column="2"
-                                Content="Далее →"
+                                Content="Далее"
                                 Style="{StaticResource PrimaryButtonStyle}"
                                 HorizontalAlignment="Stretch"
                                 Height="50"

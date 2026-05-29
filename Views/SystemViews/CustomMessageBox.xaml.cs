@@ -1,7 +1,6 @@
-// CustomMessageBox.xaml.cs
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media; // ← ВАЖНО
+using System.Windows.Media;
 
 namespace PosnaiSQLauncher
 {
@@ -53,11 +52,10 @@ namespace PosnaiSQLauncher
             }
         }
 
-        // ← ИСПРАВЛЕННЫЕ МЕТОДЫ
         private void SetupOkButton()
         {
             IconBlock.Text = "ℹ️";
-            IconBlock.Foreground = new SolidColorBrush(Color.FromArgb(255, 33, 150, 243)); // #2196F3
+            IconBlock.Foreground = new SolidColorBrush(Color.FromArgb(255, 33, 150, 243)); 
             Button1.Content = "ОК";
             Button1.Style = (Style)FindResource("PrimaryButtonStyle");
             Button2.Visibility = Visibility.Collapsed;
@@ -68,33 +66,31 @@ namespace PosnaiSQLauncher
         private void SetupYesNoButtons()
         {
             IconBlock.Text = "❓";
-            IconBlock.Foreground = new SolidColorBrush(Color.FromArgb(255, 255, 152, 0)); // #FF9800
+            IconBlock.Foreground = new SolidColorBrush(Color.FromArgb(255, 255, 152, 0)); 
             Button1.Content = "Нет";
             Button1.Style = (Style)FindResource("SecondaryButtonStyle");
             Button2.Content = "Да";
             Button2.Style = (Style)FindResource("PrimaryButtonStyle");
             Button2.Visibility = Visibility.Visible;
 
-            GridTwoColumns();
         }
 
         private void SetupOkCancelButtons()
         {
             IconBlock.Text = "⚠️";
-            IconBlock.Foreground = new SolidColorBrush(Color.FromArgb(255, 255, 152, 0)); // #FF9800
+            IconBlock.Foreground = new SolidColorBrush(Color.FromArgb(255, 255, 152, 0));
             Button1.Content = "Отмена";
             Button1.Style = (Style)FindResource("SecondaryButtonStyle");
             Button2.Content = "ОК";
             Button2.Style = (Style)FindResource("PrimaryButtonStyle");
             Button2.Visibility = Visibility.Visible;
 
-            GridTwoColumns();
         }
 
         private void SetupSuccess()
         {
             IconBlock.Text = "✓";
-            IconBlock.Foreground = new SolidColorBrush(Color.FromArgb(255, 56, 142, 60)); // #388E3C
+            IconBlock.Foreground = new SolidColorBrush(Color.FromArgb(255, 56, 142, 60)); 
             TitleBlock.Text = "Успешно!";
             Button1.Content = "ОК";
             Button1.Style = (Style)FindResource("PrimaryButtonStyle");
@@ -106,7 +102,7 @@ namespace PosnaiSQLauncher
         private void SetupError()
         {
             IconBlock.Text = "✕";
-            IconBlock.Foreground = new SolidColorBrush(Color.FromArgb(255, 229, 57, 53)); // #E53935
+            IconBlock.Foreground = new SolidColorBrush(Color.FromArgb(255, 229, 57, 53)); 
             TitleBlock.Text = "Ошибка";
             Button1.Content = "ОК";
             Button1.Style = (Style)FindResource("PrimaryButtonStyle");
@@ -118,7 +114,7 @@ namespace PosnaiSQLauncher
         private void SetupWarning()
         {
             IconBlock.Text = "⚠️";
-            IconBlock.Foreground = new SolidColorBrush(Color.FromArgb(255, 255, 152, 0)); // #FF9800
+            IconBlock.Foreground = new SolidColorBrush(Color.FromArgb(255, 255, 152, 0)); 
             TitleBlock.Text = "Внимание";
             Button1.Content = "ОК";
             Button1.Style = (Style)FindResource("PrimaryButtonStyle");
@@ -130,7 +126,7 @@ namespace PosnaiSQLauncher
         private void SetupDeleteConfirm()
         {
             IconBlock.Text = "🗑";
-            IconBlock.Foreground = new SolidColorBrush(Color.FromArgb(255, 229, 57, 53)); // #E53935
+            IconBlock.Foreground = new SolidColorBrush(Color.FromArgb(255, 229, 57, 53));
             TitleBlock.Text = "Удаление";
             Button1.Content = "Отмена";
             Button1.Style = (Style)FindResource("SecondaryButtonStyle");
@@ -139,8 +135,7 @@ namespace PosnaiSQLauncher
             Button2.BorderBrush = new SolidColorBrush(Color.FromArgb(255, 229, 57, 53));
             Button2.Style = (Style)FindResource("SecondaryButtonStyle");
             Button2.Visibility = Visibility.Visible;
-
-            GridTwoColumns();
+            
         }
 
         private void GridColumn2Definition()
@@ -154,10 +149,6 @@ namespace PosnaiSQLauncher
             }
         }
 
-        private void GridTwoColumns()
-        {
-            // Оставляем оба столбца видимыми
-        }
 
         private void Button1_Click(object sender, RoutedEventArgs e)
         {

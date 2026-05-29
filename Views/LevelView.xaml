@@ -5,7 +5,6 @@
 
     <UserControl.Resources>
         <Style x:Key="TimerButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}">
-            <Setter Property="MinWidth" Value="0"/>
             <Setter Property="Width" Value="55"/>
             <Setter Property="Height" Value="45"/>
             <Setter Property="Padding" Value="0"/>
@@ -38,7 +37,6 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- 1. STEPPER -->
                 <Border Grid.Row="0" Margin="30,25,30,20">
                     <Grid HorizontalAlignment="Center">
                         <Grid.ColumnDefinitions>
@@ -54,7 +52,6 @@
                     </Grid>
                 </Border>
 
-                <!-- 2. КОНТЕНТ -->
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel Margin="40,0,40,25">
                         <TextBlock Text="Выбор локации" FontSize="26" FontWeight="Bold" Foreground="#1a1a1a" Margin="0,0,0,8" TextAlignment="Center"/>
@@ -67,12 +64,10 @@
                                 <ColumnDefinition Width="320"/>
                             </Grid.ColumnDefinitions>
                             
-                            <!-- КАРТОЧКА ПУСТЫНЯ -->
                             <Border x:Name="CardDesert" Grid.Column="0" CornerRadius="20" Background="White" BorderThickness="2" BorderBrush="#E0E0E0" Cursor="Hand" MouseLeftButtonDown="CardDesert_Click">
                                 <Border.Effect><DropShadowEffect ShadowDepth="4" Color="#000000" Opacity="0.1" BlurRadius="10"/></Border.Effect>
                                 <StackPanel Margin="25">
                                     <Border Width="100" Height="100" Background="#FFF3E0" CornerRadius="50" Margin="0,5,0,20">
-                                        <!-- КАРТИНКА ПУСТЫНИ -->
                                         <Image Source="pack://application:,,,/Assets/desert.png" Width="60" Height="60" Stretch="Uniform"/>
                                     </Border>
                                     <TextBlock Text="Знойная пустыня" FontSize="20" FontWeight="Bold" Foreground="#E65100" HorizontalAlignment="Center" Margin="0,0,0,12"/>
@@ -80,12 +75,10 @@
                                 </StackPanel>
                             </Border>
 
-                            <!-- КАРТОЧКА ЛЕС -->
                             <Border x:Name="CardForest" Grid.Column="2" CornerRadius="20" Background="White" BorderThickness="2" BorderBrush="#E0E0E0" Cursor="Hand" MouseLeftButtonDown="CardForest_Click">
                                 <Border.Effect><DropShadowEffect ShadowDepth="4" Color="#000000" Opacity="0.1" BlurRadius="10"/></Border.Effect>
                                 <StackPanel Margin="25">
                                     <Border Width="100" Height="100" Background="#E8F5E9" CornerRadius="50" Margin="0,5,0,20">
-                                        <!-- КАРТИНКА ЛЕСА -->
                                         <Image Source="pack://application:,,,/Assets/forest.png" Width="60" Height="60" Stretch="Uniform"/>
                                     </Border>
                                     <TextBlock Text="Шёпот листвы" FontSize="20" FontWeight="Bold" Foreground="#2E7D32" HorizontalAlignment="Center" Margin="0,0,0,12"/>
@@ -131,7 +124,6 @@
                     </StackPanel>
                 </ScrollViewer>
 
-                <!-- 3. КНОПКИ -->
                 <Border Grid.Row="2" Margin="30,10,30,35">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -139,8 +131,8 @@
                             <ColumnDefinition Width="20"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0" Content="← Назад" Style="{StaticResource SecondaryButtonStyle}" Click="Back_Click" Height="55"/>
-                        <Button Grid.Column="2" x:Name="NextButton" Content="Далее →" Style="{StaticResource PrimaryButtonStyle}" Click="Next_Click" IsEnabled="False" Height="55"/>
+                        <Button Grid.Column="0" Content="Назад" Style="{StaticResource SecondaryButtonStyle}" Click="Back_Click" Height="55"/>
+                        <Button Grid.Column="2" x:Name="NextButton" Content="Далее" Style="{StaticResource PrimaryButtonStyle}" Click="Next_Click" IsEnabled="False" Height="55"/>
                     </Grid>
                 </Border>
             </Grid>

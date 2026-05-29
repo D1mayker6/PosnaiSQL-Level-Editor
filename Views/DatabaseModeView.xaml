@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Opacity="0">
     
-    <!-- Анимация появления -->
     <UserControl.Triggers>
         <EventTrigger RoutedEvent="Loaded">
             <BeginStoryboard>
@@ -16,7 +15,6 @@
         </EventTrigger>
     </UserControl.Triggers>
 
-    <!-- БЕЛЫЙ БЛОК -->
     <Border CornerRadius="20"
             Background="#E8FFFFFF"
             Margin="40"
@@ -27,7 +25,6 @@
         </Border.Effect>
 
         <StackPanel>
-            <!-- STEPPER С МОСТИКАМИ -->
             <Border Margin="30,25,30,20" BorderThickness="0,0,0,0">
                 <Grid HorizontalAlignment="Center">
                     <Grid.ColumnDefinitions>
@@ -40,7 +37,6 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- ШАГ 1 - АКТИВНЫЙ -->
                     <StackPanel Grid.Column="0" VerticalAlignment="Center">
                         <Border Width="36" Height="36" CornerRadius="18" Background="#2196F3" 
                                HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -51,10 +47,8 @@
                                   HorizontalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
 
-                    <!-- МОСТИК 1 -->
                     <Rectangle Grid.Column="1" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
 
-                    <!-- ШАГ 2 -->
                     <StackPanel Grid.Column="2" VerticalAlignment="Center" Opacity="0.5">
                         <Border Width="36" Height="36" CornerRadius="18" Background="White" 
                                BorderThickness="2" BorderBrush="#CCCCCC" HorizontalAlignment="Center">
@@ -65,10 +59,8 @@
                                   HorizontalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
 
-                    <!-- МОСТИК 2 -->
                     <Rectangle Grid.Column="3" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
 
-                    <!-- ШАГ 3 -->
                     <StackPanel Grid.Column="4" VerticalAlignment="Center" Opacity="0.5">
                         <Border Width="36" Height="36" CornerRadius="18" Background="White" 
                                BorderThickness="2" BorderBrush="#CCCCCC" HorizontalAlignment="Center">
@@ -79,10 +71,8 @@
                                   HorizontalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
 
-                    <!-- МОСТИК 3 -->
                     <Rectangle Grid.Column="5" Height="2" Fill="#D0D0D0" Margin="0,0,0,12" VerticalAlignment="Center"/>
 
-                    <!-- ШАГ 4 -->
                     <StackPanel Grid.Column="6" VerticalAlignment="Center" Opacity="0.5">
                         <Border Width="36" Height="36" CornerRadius="18" Background="White" 
                                BorderThickness="2" BorderBrush="#CCCCCC" HorizontalAlignment="Center">
@@ -95,16 +85,13 @@
                 </Grid>
             </Border>
 
-            <!-- КОНТЕНТ -->
             <StackPanel Margin="30,20,30,30" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <!-- ЗАГОЛОВОК -->
                 <TextBlock Text="Настройка базы данных" 
                           FontSize="24" FontWeight="Bold" Foreground="#1a1a1a"
                           Margin="0,0,0,8" TextAlignment="Center"/>
                 <TextBlock Text="Выберите способ настройки базы данных"
                           FontSize="13" Foreground="#666666" Margin="0,0,0,25" TextAlignment="Center"/>
 
-                <!-- КАРТОЧКИ -->
                 <Grid Width="550">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -112,7 +99,6 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- КАРТОЧКА 1 - СОЗДАТЬ БД -->
                     <Border x:Name="Card1"
                            Grid.Column="0"
                            CornerRadius="10"
@@ -132,14 +118,12 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <!-- ИКОНКА -->
                             <Grid Grid.Row="0" Height="80" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,10">
                                 <Image Width="80" Height="80" 
                                        Source="pack://application:,,,/Assets/add.png"
                                        Stretch="Uniform"/>
                             </Grid>
 
-                            <!-- ТЕКСТ -->
                             <TextBlock Grid.Row="1" Text="Создать БД"
                                       FontSize="16" FontWeight="SemiBold" Foreground="#1a1a1a"
                                       TextAlignment="Center" Margin="15,0,15,5"/>
@@ -148,7 +132,6 @@
                         </Grid>
                     </Border>
 
-                    <!-- КАРТОЧКА 2 - СУЩЕСТВУЮЩАЯ БД -->
                     <Border x:Name="Card2"
                            Grid.Column="2"
                            CornerRadius="10"
@@ -168,14 +151,12 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <!-- ИКОНКА -->
                             <Grid Grid.Row="0" Height="80" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,10">
                                 <Image Width="80" Height="80" 
                                        Source="pack://application:,,,/Assets/choose.png"
                                        Stretch="Uniform"/>
                             </Grid>
 
-                            <!-- ТЕКСТ -->
                             <TextBlock Grid.Row="1" Text="Существующая"
                                        FontSize="16" FontWeight="SemiBold" Foreground="#1a1a1a"
                                        TextAlignment="Center" Margin="15,0,15,5"/>
@@ -187,7 +168,6 @@
                 
             </StackPanel>
 
-            <!-- КНОПКИ -->
             <Border Margin="30,10,30,30">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -196,17 +176,15 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Назад -->
                     <Button Grid.Column="0"
-                            Content="← Назад"
+                            Content="Назад"
                             Style="{StaticResource SecondaryButtonStyle}"
                             HorizontalAlignment="Stretch"
                             Height="50"
                             Click="Back_Click"/>
 
-                    <!-- Далее -->
                     <Button Grid.Column="2"
-                            Content="Далее →"
+                            Content="Далее"
                             Style="{StaticResource PrimaryButtonStyle}"
                             HorizontalAlignment="Stretch"
                             Height="50"

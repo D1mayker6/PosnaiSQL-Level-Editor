@@ -1,5 +1,3 @@
-// LevelView.xaml.cs
-using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -19,7 +17,7 @@ namespace PosnaiSQLauncher
         private readonly LocationService _locationService;
         private int _selectedLocationId;
         private int _totalSeconds = 300;
-        private bool _locationSelected = false;  // ← НОВОЕ: флаг выбора
+        private bool _locationSelected = false;  
 
         public LevelView(MainWindow parent, int queryId)
         {
@@ -31,10 +29,8 @@ namespace PosnaiSQLauncher
             _queryService = new QueryService(context);
             _locationService = new LocationService(context);
 
-            // Сначала загружаем дефолтное или сохраненное время
             UpdateTimeDisplay();
     
-            // ВОССТАНОВЛЕНИЕ СОСТОЯНИЯ
             RestoreFromState();
         }
         
@@ -49,7 +45,6 @@ namespace PosnaiSQLauncher
 
                 UpdateTimeDisplay();
 
-                // Подсвечиваем сохраненную карточку визуально после загрузки интерфейса
                 this.Loaded += (s, e) =>
                 {
                     if (_selectedLocationId == 1)
@@ -77,7 +72,6 @@ namespace PosnaiSQLauncher
             SecDisplay.Text = (_totalSeconds % 60).ToString("D2");
         }
 
-        // ← НОВОЕ: Метод для включения кнопки
         private void EnableNextButton()
         {
             NextButton.IsEnabled = _locationSelected;
@@ -88,8 +82,8 @@ namespace PosnaiSQLauncher
             AnimateBorder(CardDesert, (Color)ColorConverter.ConvertFromString("#2196F3"), 3);
             AnimateBorder(CardForest, (Color)ColorConverter.ConvertFromString("#E0E0E0"), 2);
             _selectedLocationId = 1;
-            _locationSelected = true;  // ← НОВОЕ
-            EnableNextButton();          // ← НОВОЕ
+            _locationSelected = true;  
+            EnableNextButton();          
         }
 
         private void CardForest_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -97,8 +91,8 @@ namespace PosnaiSQLauncher
             AnimateBorder(CardForest, (Color)ColorConverter.ConvertFromString("#2196F3"), 3);
             AnimateBorder(CardDesert, (Color)ColorConverter.ConvertFromString("#E0E0E0"), 2);
             _selectedLocationId = 2;
-            _locationSelected = true;  // ← НОВОЕ
-            EnableNextButton();          // ← НОВОЕ
+            _locationSelected = true;  
+            EnableNextButton();          
         }
 
         private void AnimateBorder(Border border, Color targetColor, double targetThickness)
@@ -153,7 +147,6 @@ namespace PosnaiSQLauncher
         {
             try
             {
-                // ← ПРОВЕРЯЕМ выбор локации
                 if (!_locationSelected)
                 {
                     MessageBoxHelper.ShowWarning("Выберите локацию");
@@ -172,7 +165,6 @@ namespace PosnaiSQLauncher
                     return;
                 }
 
-                // ← СОХРАНЯЕМ локацию и время
                 _parent.CurrentOption.LocationId = _selectedLocationId;
                 _parent.CurrentOption.LocationName = _selectedLocationId == 1 ? "Пустыня" : "Лес";
                 _parent.CurrentOption.TimeLimit = _totalSeconds;

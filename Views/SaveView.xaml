@@ -22,12 +22,11 @@
 
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/> <!-- Stepper -->
-                    <RowDefinition Height="*"/>    <!-- Content -->
-                    <RowDefinition Height="Auto"/> <!-- Buttons -->
+                    <RowDefinition Height="Auto"/> 
+                    <RowDefinition Height="*"/>    
+                    <RowDefinition Height="Auto"/> 
                 </Grid.RowDefinitions>
 
-                <!-- STEPPER -->
                 <Border Grid.Row="0" Margin="30,25,30,20">
                     <Grid HorizontalAlignment="Center">
                         <Grid.ColumnDefinitions>
@@ -43,7 +42,6 @@
                     </Grid>
                 </Border>
 
-                <!-- КОНТЕНТ -->
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel Margin="40,10,40,30">
                         <TextBlock Text="Завершение настройки" FontSize="26" FontWeight="Bold" Foreground="#1a1a1a" Margin="0,0,0,8" TextAlignment="Center"/>
@@ -51,13 +49,11 @@
 
                         <Border Background="#F5F9FF" CornerRadius="25" Padding="40" MinWidth="600">
                             <StackPanel>
-                                <!-- НОВАЯ ИКОНКА SAVE.PNG -->
                                 <Border Width="110" Height="110" Background="White" CornerRadius="55" Margin="0,0,0,25" HorizontalAlignment="Center">
                                     <Border.Effect><DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/></Border.Effect>
                                     <Image Source="pack://application:,,,/Assets/save.png" Width="60" Height="60" Stretch="Uniform"/>
                                 </Border>
         
-                                <!-- Текст описания -->
                                 <TextBlock FontSize="14" Foreground="#1E88E5" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" LineHeight="22" MaxWidth="550">
                                     Созданный вариант будет записан в общую базу данных. 
                                     Вы сможете найти его в разделе <Bold>"Редактировать существующий вариант"</Bold> по названию выбранного запроса.
@@ -71,7 +67,6 @@
                     </StackPanel>
                 </ScrollViewer>
 
-                <!-- КНОПКИ -->
                 <Border Grid.Row="2" Margin="30,10,30,40">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -80,14 +75,13 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button Grid.Column="0" Content="← Назад" Style="{StaticResource SecondaryButtonStyle}" Click="Back_Click" Height="55"/>
+                        <Button Grid.Column="0" Content="Назад" Style="{StaticResource SecondaryButtonStyle}" Click="Back_Click" Height="55"/>
                         <Button Grid.Column="2" Content="💾 Сохранить вариант" Style="{StaticResource PrimaryButtonStyle}" Click="Save_Click" Height="55"/>
                     </Grid>
                 </Border>
             </Grid>
         </Border>
 
-        <!-- КОНТЕЙНЕР ЗАГРУЗКИ -->
         <Grid x:Name="LoadingOverlayContainer" Panel.ZIndex="1000" Visibility="Collapsed"/>
     </Grid>
 </UserControl>

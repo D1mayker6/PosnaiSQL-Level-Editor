@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Windows.Media.Imaging;
 
@@ -6,9 +5,6 @@ namespace PosnaiSQLauncher.Services
 {
     public static class ImageService
     {
-        /// <summary>
-        /// Конвертирует файл изображения в Base64
-        /// </summary>
         public static string ImageToBase64(string imagePath)
         {
             if (string.IsNullOrEmpty(imagePath) || !File.Exists(imagePath))
@@ -24,10 +20,7 @@ namespace PosnaiSQLauncher.Services
                 return null;
             }
         }
-
-        /// <summary>
-        /// Конвертирует Base64 в BitmapImage для WPF
-        /// </summary>
+        
         public static BitmapImage Base64ToImage(string base64String)
         {
             if (string.IsNullOrEmpty(base64String))
@@ -52,9 +45,6 @@ namespace PosnaiSQLauncher.Services
             }
         }
 
-        /// <summary>
-        /// Получает размер файла в KB
-        /// </summary>
         public static double GetFileSizeInKB(string imagePath)
         {
             if (string.IsNullOrEmpty(imagePath) || !File.Exists(imagePath))

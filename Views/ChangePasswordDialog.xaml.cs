@@ -1,4 +1,3 @@
-// ChangePasswordDialog.xaml.cs
 using System.Windows;
 
 namespace PosnaiSQLauncher

@@ -1,8 +1,4 @@
-// MainWindow.cs
-using System;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using PosnaiSQLauncher.Context;
 using PosnaiSQLauncher.Models;
 using PosnaiSQLauncher.Services;
@@ -32,7 +28,6 @@ namespace PosnaiSQLauncher
 
         private void LoginView_LoginSuccessful(object sender, EventArgs e)
         {
-            // После успешной авторизации инициализируем БД и загружаем данные
             InitializeDatabaseAndLoadData();
         }
 
@@ -40,17 +35,13 @@ namespace PosnaiSQLauncher
         {
             try
             {
-                // Показываем экран загрузки
                 ShowLoadingScreen("Загрузка данных...");
 
-                // Инициализируем контекст БД
                 _dbContext = new AppDbContext();
                 _dataLoadService = new DataLoadService(_dbContext);
 
-                // Загружаем все необходимые данные в фоне
                 await _dataLoadService.LoadAllDataAsync();
 
-                // Скрываем загрузку и показываем меню
                 HideLoadingScreen();
                 ShowMainMenu();
             }
@@ -71,7 +62,6 @@ namespace PosnaiSQLauncher
 
         private void HideLoadingScreen()
         {
-            // Загрузка просто заменяется на следующий контент
         }
 
         public void ShowMainMenu()

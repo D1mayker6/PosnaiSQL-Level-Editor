@@ -1,5 +1,3 @@
-// SettingsView.cs
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -13,9 +11,9 @@ namespace PosnaiSQLauncher
 {
     public partial class SettingsView : UserControl
     {
-        private MainWindow _parent;
-        private const string SETTINGS_FILE = "settings.json";
-        private const string CONFIG_FILE = "databin.json";
+        private readonly MainWindow _parent;
+        private readonly string CONFIG_FILE = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory, "databin.json");
 
         public SettingsView(MainWindow parent)
         {
@@ -24,16 +22,26 @@ namespace PosnaiSQLauncher
             LoadSettings();
         }
 
+        private JObject LoadConfig()
+        {
+            if (!File.Exists(CONFIG_FILE))
+                return new JObject();
+
+            string json = File.ReadAllText(CONFIG_FILE);
+            return JObject.Parse(json);
+        }
+
+        private void SaveConfig(JObject settings)
+        {
+            File.WriteAllText(CONFIG_FILE, settings.ToString());
+        }
+
         private void LoadSettings()
         {
             try
             {
-                if (File.Exists(SETTINGS_FILE))
-                {
-                    string json = File.ReadAllText(SETTINGS_FILE);
-                    JObject settings = JObject.Parse(json);
-                    GoogleSheetUrlTextBox.Text = settings["googleSheetUrl"]?.ToString() ?? "";
-                }
+                JObject settings = LoadConfig();
+                GoogleSheetUrlTextBox.Text = settings["GoogleSheet"]?.ToString() ?? "";
             }
             catch (Exception ex)
             {
@@ -49,14 +57,12 @@ namespace PosnaiSQLauncher
                 return false;
             }
 
-            // Проверяем что это Google Sheets URL
             if (!url.Contains("docs.google.com/spreadsheets"))
             {
                 ShowValidationError("❌ Ссылка должна быть на Google Table (docs.google.com/spreadsheets)");
                 return false;
             }
 
-            // Проверяем что в URL есть ID таблицы
             if (!Regex.IsMatch(url, @"/spreadsheets/d/[a-zA-Z0-9-_]+"))
             {
                 ShowValidationError("❌ Некорректный формат ссылки на Google Table");
@@ -70,14 +76,14 @@ namespace PosnaiSQLauncher
         private void ShowValidationError(string message)
         {
             ValidationMessage.Text = message;
-            ValidationMessage.Foreground = new SolidColorBrush(Color.FromArgb(255, 229, 57, 53)); // Красный
+            ValidationMessage.Foreground = new SolidColorBrush(Color.FromArgb(255, 229, 57, 53));
             ValidationMessage.Visibility = Visibility.Visible;
         }
 
         private void ShowValidationSuccess(string message)
         {
             ValidationMessage.Text = message;
-            ValidationMessage.Foreground = new SolidColorBrush(Color.FromArgb(255, 46, 125, 50)); // Зеленый
+            ValidationMessage.Foreground = new SolidColorBrush(Color.FromArgb(255, 46, 125, 50));
             ValidationMessage.Visibility = Visibility.Visible;
         }
 
@@ -140,23 +146,22 @@ namespace PosnaiSQLauncher
             if (!ValidateGoogleSheetUrl(url))
                 return;
 
-            // Показываем кастомный диалог подтверждения
             var dialog = new CustomMessageBox(
                 "Подтвердите, что эта ссылка имеет права на редактирование.",
                 "Подтверждение",
                 CustomMessageBoxType.YesNo);
 
-            if (dialog.ShowDialog() != true || dialog.Result != MessageBoxResult.Yes)
+            dialog.ShowDialog();
+
+            if (dialog.Result != MessageBoxResult.Yes)
                 return;
 
             try
             {
-                var settings = new JObject
-                {
-                    ["googleSheetUrl"] = url
-                };
+                JObject settings = LoadConfig();
+                settings["GoogleSheet"] = url;
+                SaveConfig(settings);
 
-                File.WriteAllText(SETTINGS_FILE, settings.ToString());
                 MessageBoxHelper.ShowSuccess("Ссылка успешно сохранена!");
             }
             catch (Exception ex)
@@ -189,20 +194,15 @@ namespace PosnaiSQLauncher
         {
             try
             {
-                if (!File.Exists(CONFIG_FILE))
-                    return false;
+                JObject authData = LoadConfig();
 
-                string json = File.ReadAllText(CONFIG_FILE);
-                JObject authData = JObject.Parse(json);
-
-                string storedPassword = authData["InfoVault"]?.ToString();
+                string? storedPassword = authData["InfoVault"]?.ToString();
 
                 if (storedPassword == null || !BCrypt.Net.BCrypt.Verify(oldPassword, storedPassword))
                     return false;
 
                 authData["InfoVault"] = BCrypt.Net.BCrypt.HashPassword(newPassword);
-                
-                File.WriteAllText(CONFIG_FILE, authData.ToString());
+                SaveConfig(authData);
 
                 return true;
             }

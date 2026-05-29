@@ -1,5 +1,6 @@
 {
   "DataStream": "fik",
   "InfoVault": "$2a$11$5pkkYSBLa5qFoVdPNHepWeToLxZ28BCy.dw/sm3n2z7ctN2PouupC",
-  "SQLString": "Server=D1MAYKER6;Database=PosnaiSQL;Trusted_Connection=True;TrustServerCertificate=True;"
+  "SQLString": "Server=D1MAYKER6;Database=PosnaiSQL;Trusted_Connection=True;TrustServerCertificate=True;",
+  "GoogleSheet": ""
 }
